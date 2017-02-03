@@ -37,9 +37,9 @@ import java.util.Set;
  * Implementations should be thread safe.
  *
  * @param <K> the type of the identifier.
- * @param <T> the type of the version.
+ * @param <T> the type of the timestamp.
  */
-public interface VersionVector<K, T extends Comparable<T>> extends Comparable<VersionVector<K, T>> {
+public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K, T>> {
 
     /**
      * Returns a map that represents the version vector. The map will be created
@@ -49,6 +49,7 @@ public interface VersionVector<K, T extends Comparable<T>> extends Comparable<Ve
      *
      * @return a map representing the version vector.
      */
+    @Override
     Map<K, T> get();
 
     /**
@@ -84,31 +85,14 @@ public interface VersionVector<K, T extends Comparable<T>> extends Comparable<Ve
 
     /**
      * Synchronise a single node's timestamp. If the timestamp given is greater
-     * than the local timestamp for the same node, then
+     * than the local timestamp for the same node, then it should be set to the
+     * provided value. If the the provided id has not been initialised locally,
+     * then it should be initialised.
      *
      * @param id the id of the node to synchronise within the vector.
      * @param value the timestamp of the node.
      */
     void sync(K id, T value);
-
-    /**
-     * Synchronise the local vector with another version vector. Only the local
-     * vector is mutated and so to perform a two way merge,
-     * {@code a.sync(b); b.sync(a);} must be performed.
-     *
-     * @param other the version vector to synchronise with.
-     */
-    void sync(VersionVector<K, T> other);
-
-    /**
-     * Determine if this version happened before the provided one. If they are
-     * equal, then this method will also return true.
-     *
-     * @param other the vector to compare with.
-     * @return {@code true} if this {@link VersionVector} is concurrent with the
-     * {@code other} {@link VersionVector}, {@code false} otherwise.
-     */
-    boolean happenedBefore(VersionVector<K, T> other);
 
     /**
      * Determine if this version is concurrent with the provided one. Useful for
@@ -123,24 +107,14 @@ public interface VersionVector<K, T extends Comparable<T>> extends Comparable<Ve
     /**
      * Compares this version vector to another provided version vector.
      *
-     * @param other the version vector to compare to
+     * @param other the version vector to compare to.
      * @return {@code 0} if this {@link VersionVector} and the {@code other}
      * {@link VersionVector} are identical or concurrent, negative if this
      * {@link VersionVector} happened before and positive if the {@code other}
      * {@link VersionVector} happened before.
      */
     @Override
-    public int compareTo(VersionVector<K, T> other);
-
-    /**
-     * Checks if the version vector is equal to the provided version vector.
-     *
-     * @param obj
-     * @return {@code true} if this {@link VersionVector} and the {@code other}
-     * {@link VersionVector} are identical, {@code false} otherwise.
-     */
-    @Override
-    public boolean equals(Object obj);
+    public int compareTo(Version<Map<K, T>> other);
 
     /**
      * Determine if this version vector will be treated as a dotted version
