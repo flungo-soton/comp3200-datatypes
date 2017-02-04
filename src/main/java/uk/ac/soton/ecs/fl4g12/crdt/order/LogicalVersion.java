@@ -38,4 +38,7 @@ public interface LogicalVersion<T extends Comparable<T>> extends Version<T> {
      * amount.
      */
     void increment();
+
+    @Override
+    public LogicalVersion<T> copy();
 }

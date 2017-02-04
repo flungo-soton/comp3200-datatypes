@@ -45,8 +45,7 @@ public class IntegerVersion extends AbstractLogicalVersion<Integer> {
     }
 
     @Override
-    public void sync(Version<Integer> version) {
-        Integer other = version.get();
+    public void sync(Integer other) {
         while (true) {
             Integer self = get();
             // Is the other clock ahead
@@ -59,6 +58,13 @@ public class IntegerVersion extends AbstractLogicalVersion<Integer> {
                 return;
             }
         }
+    }
+
+    @Override
+    public IntegerVersion copy() {
+        IntegerVersion copy = new IntegerVersion();
+        copy.timestamp = timestamp;
+        return copy;
     }
 
 }

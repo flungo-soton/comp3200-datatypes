@@ -38,6 +38,11 @@ public abstract class AbstractVersion<T> implements Version<T> {
     }
 
     @Override
+    public void sync(Version<T> other) {
+        sync(other.get());
+    }
+
+    @Override
     public int hashCode() {
         return get().hashCode();
     }
@@ -66,5 +71,8 @@ public abstract class AbstractVersion<T> implements Version<T> {
         }
         return true;
     }
+
+    @Override
+    public abstract AbstractVersion<T> copy();
 
 }

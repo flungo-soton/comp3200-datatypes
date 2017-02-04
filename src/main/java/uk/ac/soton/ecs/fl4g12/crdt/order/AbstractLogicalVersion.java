@@ -40,4 +40,7 @@ public abstract class AbstractLogicalVersion<T extends Comparable<T>>
         return get().compareTo(o.get());
     }
 
+    @Override
+    public abstract AbstractLogicalVersion<T> copy();
+
 }

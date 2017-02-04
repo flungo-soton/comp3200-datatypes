@@ -31,7 +31,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
  *
  * @param <T> the type of the timestamp.
  */
-public interface Version<T> extends Comparable<Version<T>>, Cloneable {
+public interface Version<T> extends Comparable<Version<T>> {
 
     /**
      * Gets a usable representation of the timestamp for this
@@ -68,6 +68,14 @@ public interface Version<T> extends Comparable<Version<T>>, Cloneable {
     void sync(Version<T> version);
 
     /**
+     * Synchronise the local version with the given timestamp.
+     *
+     * @param timestamp the timestamp to synchronise with.
+     * @see #sync(Version) for more detail on synchronisation.
+     */
+    void sync(T timestamp);
+
+    /**
      * Checks if the {@linkplain Version} is equal to the provided version.
      *
      * @param obj the object to evaluate equality with.
@@ -76,5 +84,12 @@ public interface Version<T> extends Comparable<Version<T>>, Cloneable {
      */
     @Override
     public boolean equals(Object obj);
+
+    /**
+     * Make a copy of the version with the same state.
+     *
+     * @return the cloned version.
+     */
+    public Version<T> copy();
 
 }

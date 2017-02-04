@@ -45,8 +45,7 @@ public class LongVersion extends AbstractLogicalVersion<Long> {
     }
 
     @Override
-    public void sync(Version<Long> version) {
-        Long other = version.get();
+    public void sync(Long other) {
         while (true) {
             Long self = get();
             // Is the other clock ahead
@@ -59,6 +58,13 @@ public class LongVersion extends AbstractLogicalVersion<Long> {
                 return;
             }
         }
+    }
+
+    @Override
+    public LongVersion copy() {
+        LongVersion copy = new LongVersion();
+        copy.timestamp = timestamp;
+        return copy;
     }
 
 }
