@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class LongVersion extends AbstractLogicalVersion<Long> {
 
-    AtomicLong timestamp = new AtomicLong();
+    private AtomicLong timestamp = new AtomicLong();
 
     @Override
     public Long get() {

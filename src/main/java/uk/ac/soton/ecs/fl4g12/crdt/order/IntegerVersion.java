@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class IntegerVersion extends AbstractLogicalVersion<Integer> {
 
-    AtomicInteger timestamp = new AtomicInteger();
+    private AtomicInteger timestamp = new AtomicInteger();
 
     @Override
     public Integer get() {
