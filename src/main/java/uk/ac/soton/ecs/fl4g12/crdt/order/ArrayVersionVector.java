@@ -27,9 +27,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Version vector backed by array. This is particularly useful where the
- * identifiers are incrementally assigned integers. This will perform
- * inefficiently where IDs are sparse.
+ * Version vector backed by array. This is particularly useful where the identifiers are incrementally assigned
+ * integers. This will perform inefficiently where IDs are sparse.
  *
  * @param <T> the type of the timestamps stored in this version vector.
  */
@@ -41,12 +40,10 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
     private final HashSet<Integer> identifiers;
 
     /**
-     * Construct an {@linkplain ArrayVersionVector}. The {@link LogicalVersion}
-     * provided as {@code zero} will be cloned when initialising a new
-     * identifier.
+     * Construct an {@linkplain ArrayVersionVector}. The {@link LogicalVersion} provided as {@code zero} will be cloned
+     * when initialising a new identifier.
      *
-     * @param zero a {@link LogicalVersion} representing the zero value of the
-     * type wanted for the timestamps.
+     * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the timestamps.
      * @param dotted whether or not this is a dotted {@link VersionVector}.
      */
     public ArrayVersionVector(LogicalVersion<T> zero, boolean dotted) {

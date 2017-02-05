@@ -24,11 +24,9 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * Abstract {@linkplain LogicalVersion} that can be extended by other
- * {@linkplain LogicalVersion} implementations.
+ * Abstract {@linkplain LogicalVersion} that can be extended by other {@linkplain LogicalVersion} implementations.
  *
- * {@link #compareTo(uk.ac.soton.ecs.fl4g12.crdt.order.Version)} compares the
- * values of the timestamps.
+ * {@link #compareTo(uk.ac.soton.ecs.fl4g12.crdt.order.Version)} compares the values of the timestamps.
  *
  * @param <T> the type of the timestamp.
  */

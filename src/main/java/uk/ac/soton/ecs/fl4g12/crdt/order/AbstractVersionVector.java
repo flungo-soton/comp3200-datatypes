@@ -29,10 +29,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Abstract {@link VersionVector}. To be extended by implementations
- * {@link VersionVector} that wish to take advantage of the abstract methods
- * provided by this class. When extending this abstract class, it is assumed
- * that timestamps are stored internally as {@link LogicalVersions}.
+ * Abstract {@link VersionVector}. To be extended by implementations {@link VersionVector} that wish to take advantage
+ * of the abstract methods provided by this class. When extending this abstract class, it is assumed that timestamps are
+ * stored internally as {@link LogicalVersions}.
  *
  * @param <K> the type of the identifier.
  * @param <T> the type of the version.
@@ -46,8 +45,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     /**
      * Construct an {@linkplain AbstractVersionVector}.
      *
-     * The {@code zero} timestamp provided should be immutable or ensured to
-     * never be mutated.
+     * The {@code zero} timestamp provided should be immutable or ensured to never be mutated.
      *
      * @param zero the timestamp that represents zero.
      * @param dotted whether or not this is a dotted {@link VersionVector}.

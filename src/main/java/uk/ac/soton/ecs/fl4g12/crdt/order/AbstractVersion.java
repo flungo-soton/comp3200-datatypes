@@ -24,9 +24,8 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * An abstract {@linkplain Version}. To be extended by implementations
- * {@link Version} that wish to take advantage of the abstract methods provided
- * by this class.
+ * An abstract {@linkplain Version}. To be extended by implementations {@link Version} that wish to take advantage of
+ * the abstract methods provided by this class.
  *
  * @param <T> the type of the timestamp.
  */

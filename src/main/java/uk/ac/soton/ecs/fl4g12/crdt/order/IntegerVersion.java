@@ -26,9 +26,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing
- * integer. Uses an {@link AtomicInteger} to ensure the thread safety of the
- * version.
+ * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an {@link AtomicInteger} to
+ * ensure the thread safety of the version.
  */
 public class IntegerVersion extends AbstractLogicalVersion<Integer> {
 

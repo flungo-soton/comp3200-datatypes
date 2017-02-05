@@ -24,18 +24,16 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * A logical version is a simple {@linkplain Verion} which can be incremented.
- * The type of the timestamp is comparable and the ordering of the timestamp
- * values provides the partial order of the timestamps.
+ * A logical version is a simple {@linkplain Verion} which can be incremented. The type of the timestamp is comparable
+ * and the ordering of the timestamp values provides the partial order of the timestamps.
  *
  * @param <T> the type of the timestamp.
  */
 public interface LogicalVersion<T extends Comparable<T>> extends Version<T> {
 
     /**
-     * Increment the {@linkplain Verion}'s timestamp. Typically increments
-     * should be of the same amount each time and of the smallest incrementable
-     * amount.
+     * Increment the {@linkplain Verion}'s timestamp. Typically increments should be of the same amount each time and of
+     * the smallest incrementable amount.
      */
     void increment();
 

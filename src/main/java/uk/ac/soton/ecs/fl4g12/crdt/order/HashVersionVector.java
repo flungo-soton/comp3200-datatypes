@@ -39,12 +39,10 @@ public class HashVersionVector<K, T extends Comparable<T>>
     private final HashMap<K, LogicalVersion<T>> vector;
 
     /**
-     * Construct a {@linkplain HashVersionVector}. The {@link LogicalVersion}
-     * provided as {@code zero} will be cloned when initialising a new
-     * identifier.
+     * Construct a {@linkplain HashVersionVector}. The {@link LogicalVersion} provided as {@code zero} will be cloned
+     * when initialising a new identifier.
      *
-     * @param zero a {@link LogicalVersion} representing the zero value of the
-     * type wanted for the timestamps.
+     * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the timestamps.
      * @param dotted whether or not this is a dotted {@link VersionVector}.
      */
     public HashVersionVector(LogicalVersion<T> zero, boolean dotted) {
