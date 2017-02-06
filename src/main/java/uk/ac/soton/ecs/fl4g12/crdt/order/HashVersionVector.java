@@ -66,7 +66,10 @@ public class HashVersionVector<K, T extends Comparable<T>>
 
     @Override
     public synchronized void init(K id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (vector.containsKey(id)) {
+            return;
+        }
+        vector.put(id, zero.copy());
     }
 
     @Override
