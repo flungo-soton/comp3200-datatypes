@@ -23,6 +23,7 @@
  */
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -62,7 +63,7 @@ public class LongVersion extends AbstractLogicalVersion<Long> {
     @Override
     public LongVersion copy() {
         LongVersion copy = new LongVersion();
-        copy.timestamp = timestamp;
+        copy.timestamp = new AtomicLong(get());
         return copy;
     }
 

@@ -62,7 +62,7 @@ public class IntegerVersion extends AbstractLogicalVersion<Integer> {
     @Override
     public IntegerVersion copy() {
         IntegerVersion copy = new IntegerVersion();
-        copy.timestamp = timestamp;
+        copy.timestamp = new AtomicInteger(get());
         return copy;
     }
 

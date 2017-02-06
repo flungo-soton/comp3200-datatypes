@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,47 +24,13 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * An abstract {@linkplain Version}. To be extended by implementations {@link Version} that wish to take advantage of
- * the abstract methods provided by this class.
- *
- * @param <T> the type of the timestamp.
+ * Exception for when a version is incremented to the point of overflowing.
  */
-public abstract class AbstractVersion<T> implements Version<T> {
+public class VersionOverflowException extends ArithmeticException {
 
-    @Override
-    public boolean happenedBefore(Version<T> version) {
-        return this.compareTo(version) < 0;
+    /**
+     * Creates a new instance of <code>VersionOverflowException</code>.
+     */
+    public VersionOverflowException() {
     }
-
-    @Override
-    public void sync(Version<T> other) {
-        sync(other.get());
-    }
-
-    @Override
-    public int hashCode() {
-        return get().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Version)) {
-            return false;
-        }
-        final Version other = (Version) obj;
-        if (!this.get().equals(other.get())) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public abstract AbstractVersion<T> copy();
-
 }

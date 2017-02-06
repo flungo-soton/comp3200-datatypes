@@ -34,8 +34,10 @@ public interface LogicalVersion<T extends Comparable<T>> extends Version<T> {
     /**
      * Increment the {@linkplain Verion}'s timestamp. Typically increments should be of the same amount each time and of
      * the smallest incrementable amount.
+     *
+     * @throws VersionOverflowException when incremented beyond the maximum value for the version.
      */
-    void increment();
+    void increment() throws VersionOverflowException;
 
     @Override
     public LogicalVersion<T> copy();

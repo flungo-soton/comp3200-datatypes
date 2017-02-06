@@ -25,8 +25,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
  * Interface for synchronisable {@linkplain Version}s. {@linkplain Version}s represent the a timestamp which can be used
- * to determine causality between versioned objects. {@linkplain Version}s have a happened-before relationship between
- * them which can be used to determine causal order.
+ * to determine causality between versioned objects. {@linkplain Version}s should be monotonically increasing.
+ * {@linkplain Version}s have a happened-before relationship between them which can be used to determine causal order.
  *
  * @param <T> the type of the timestamp.
  */
@@ -42,7 +42,7 @@ public interface Version<T> extends Comparable<Version<T>> {
 
     /**
      * Determine if this {@linkplain Version} happened before the provided one. If they are equal, then this method will
-     * also return true. If {@code a} happened-before {@code b} then {@code a.happenedBefore(b) == true}.
+     * also return false. If {@code a} happened-before {@code b} then {@code a.happenedBefore(b) == true}.
      *
      * @param version the {@linkplain Version} to compare with.
      * @return {@code true} if this {@linkplain Version} is concurrent with the {@code other}
