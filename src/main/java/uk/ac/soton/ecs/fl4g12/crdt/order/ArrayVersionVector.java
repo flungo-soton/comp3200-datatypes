@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Version vector backed by array. This is particularly useful where the identifiers are incrementally assigned
- * integers. This will perform inefficiently where IDs are sparse.
+ * {@linkplain VersionVector} backed by an {@linkplain ArrayList}. This is particularly useful where the identifiers are
+ * incrementally assigned integers. This will perform inefficiently where IDs are sparse.
  *
  * @param <T> the type of the timestamps stored in this version vector.
  */

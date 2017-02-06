@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * Abstract {@link VersionVector}. To be extended by implementations {@link VersionVector} that wish to take advantage
  * of the abstract methods provided by this class. When extending this abstract class, it is assumed that timestamps are
- * stored internally as {@link LogicalVersions}.
+ * stored internally as {@link LogicalVersion}s.
  *
  * @param <K> the type of the identifier.
  * @param <T> the type of the version.

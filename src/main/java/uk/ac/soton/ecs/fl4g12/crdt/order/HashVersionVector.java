@@ -27,9 +27,12 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
+ * {@linkplain VersionVector} backed by a {@linkplain HashMap}. Flexible implementation of a {@link VersionVector}
+ * allowing the type of identifier and timestamp to be configured. Unlike an {@link ArrayVersionVector}, this
+ * implementation works well with non-integer identifiers and sparse integer identifiers.
  *
- * @param <K>
- * @param <T>
+ * @param <K> the type of the identifier.
+ * @param <T> the type of the timestamp.
  */
 public class HashVersionVector<K, T extends Comparable<T>>
         extends AbstractVersionVector<K, T> implements VersionVector<K, T> {
