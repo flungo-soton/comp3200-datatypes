@@ -1,0 +1,3 @@
+# Visual Paradigm files are sqlite3
+*.vpp diff=sqlite3
+*.vux diff=sqlite3
