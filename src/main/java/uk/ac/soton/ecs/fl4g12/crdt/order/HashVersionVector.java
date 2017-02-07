@@ -34,8 +34,7 @@ import java.util.Set;
  * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
  */
-public class HashVersionVector<K, T extends Comparable<T>>
-        extends AbstractVersionVector<K, T> implements VersionVector<K, T> {
+public class HashVersionVector<K, T extends Comparable<T>> extends AbstractVersionVector<K, T> {
 
     private final LogicalVersion<T> zero;
 
