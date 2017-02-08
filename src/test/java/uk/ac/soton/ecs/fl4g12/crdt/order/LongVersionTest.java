@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 /**
- * Tests for integer versions.
+ * Tests for the {@link LongVersion} class.
  */
 public class LongVersionTest {
 

@@ -33,8 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
- * @author Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
+ * Tests of the {@linkplain AbstractVersion} class.
  */
 public class AbstractVersionTest {
 
