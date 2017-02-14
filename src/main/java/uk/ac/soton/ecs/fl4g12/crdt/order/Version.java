@@ -77,13 +77,13 @@ public interface Version<T> extends Comparable<Version<T>> {
      * {@code false} otherwise.
      */
     @Override
-    public boolean equals(Object obj);
+    boolean equals(Object obj);
 
     /**
      * Make a copy of the version with the same state.
      *
      * @return the cloned version.
      */
-    public Version<T> copy();
+    Version<T> copy();
 
 }

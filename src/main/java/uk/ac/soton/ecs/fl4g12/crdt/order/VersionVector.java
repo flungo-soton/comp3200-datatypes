@@ -106,7 +106,7 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
      * {@link VersionVector} happened before.
      */
     @Override
-    public int compareTo(Version<Map<K, T>> other);
+    int compareTo(Version<Map<K, T>> other);
 
     /**
      * Determine if this version vector will be treated as a dotted version vector for the purposes of incrementing and
@@ -117,5 +117,5 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
     boolean isDotted();
 
     @Override
-    public VersionVector<K, T> copy();
+    VersionVector<K, T> copy();
 }

@@ -40,5 +40,5 @@ public interface LogicalVersion<T extends Comparable<T>> extends Version<T> {
     void increment() throws VersionOverflowException;
 
     @Override
-    public LogicalVersion<T> copy();
+    LogicalVersion<T> copy();
 }
