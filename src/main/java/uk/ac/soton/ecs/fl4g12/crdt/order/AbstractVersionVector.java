@@ -81,8 +81,8 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
     @Override
     public void sync(Map<K, T> timestamp) {
-        for (K id : timestamp.keySet()) {
-            sync(id, timestamp.get(id));
+        for (Map.Entry<K, T> entry : timestamp.entrySet()) {
+            sync(entry.getKey(), entry.getValue());
         }
     }
 
@@ -95,7 +95,9 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
         // Iterate through all ids known locally. Any id that might exist in
         // other that does not exist locally will be greater than or equal to
         // zero and so satisfies the happens-before relation.
-        for (K id : local.keySet()) {
+        for (Map.Entry<K, T> entry : local.entrySet()) {
+            // Get the ID
+            K id = entry.getKey();
             // Get the local and other value for the current ID.
             T localValue = local.get(id);
             if (localValue == null) {
