@@ -28,9 +28,9 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
  */
 public class VersionOverflowException extends ArithmeticException {
 
-    /**
-     * Creates a new instance of <code>VersionOverflowException</code>.
-     */
-    public VersionOverflowException() {
-    }
+  /**
+   * Creates a new instance of <code>VersionOverflowException</code>.
+   */
+  public VersionOverflowException() {
+  }
 }

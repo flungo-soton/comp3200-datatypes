@@ -27,44 +27,44 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an {@link AtomicInteger} to
- * ensure the thread safety of the version.
+ * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an
+ * {@link AtomicInteger} to ensure the thread safety of the version.
  */
 public class LongVersion extends AbstractLogicalVersion<Long> {
 
-    private AtomicLong timestamp = new AtomicLong();
+  private AtomicLong timestamp = new AtomicLong();
 
-    @Override
-    public Long get() {
-        return timestamp.get();
-    }
+  @Override
+  public Long get() {
+    return timestamp.get();
+  }
 
-    @Override
-    public void increment() {
-        timestamp.incrementAndGet();
-    }
+  @Override
+  public void increment() {
+    timestamp.incrementAndGet();
+  }
 
-    @Override
-    public void sync(Long other) {
-        while (true) {
-            Long self = get();
-            // Is the other clock ahead
-            if (other <= self) {
-                // Nothing to do
-                return;
-            }
-            // Try to set, uses compare and set to ensure that the previous gaurd is still valid.
-            if (timestamp.compareAndSet(self, other)) {
-                return;
-            }
-        }
+  @Override
+  public void sync(Long other) {
+    while (true) {
+      Long self = get();
+      // Is the other clock ahead
+      if (other <= self) {
+        // Nothing to do
+        return;
+      }
+      // Try to set, uses compare and set to ensure that the previous gaurd is still valid.
+      if (timestamp.compareAndSet(self, other)) {
+        return;
+      }
     }
+  }
 
-    @Override
-    public LongVersion copy() {
-        LongVersion copy = new LongVersion();
-        copy.timestamp = new AtomicLong(get());
-        return copy;
-    }
+  @Override
+  public LongVersion copy() {
+    LongVersion copy = new LongVersion();
+    copy.timestamp = new AtomicLong(get());
+    return copy;
+  }
 
 }

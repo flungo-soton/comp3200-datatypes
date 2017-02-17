@@ -26,24 +26,25 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 import java.io.Serializable;
 
 /**
- * A message containing an update. Messages are used to communicate the relevant changes that need to be applied to
- * other nodes.
+ * A message containing an update. Messages are used to communicate the relevant changes that need
+ * to be applied to other nodes.
  *
- * The contents of the message will be defined by subclasses and will typically be specific for the {@link Updatable}
- * which they are used for. Generics are used as part of the {@link Updatable} interface in order to allow this.
+ * The contents of the message will be defined by subclasses and will typically be specific for the
+ * {@link Updatable} which they are used for. Generics are used as part of the {@link Updatable}
+ * interface in order to allow this.
  *
- * Implementations of {@linkplain UpdateMessage} should be serializable so that the {@link DeliveryChannel} which
- * communicates the messages can serialize them.
+ * Implementations of {@linkplain UpdateMessage} should be serializable so that the
+ * {@link DeliveryChannel} which communicates the messages can serialize them.
  *
  * @param <K> the type of identifier used to identify nodes.
  */
 public interface UpdateMessage<K> extends Serializable {
 
-    /**
-     * Gets the identifier of the node that generated the message.
-     *
-     * @return the identifier of the node which created the message.
-     */
-    K getIdentifier();
+  /**
+   * Gets the identifier of the node that generated the message.
+   *
+   * @return the identifier of the node which created the message.
+   */
+  K getIdentifier();
 
 }

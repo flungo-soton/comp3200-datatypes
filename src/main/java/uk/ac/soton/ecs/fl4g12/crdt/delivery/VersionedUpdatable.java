@@ -26,8 +26,9 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * An {@link Updatable} object that keeps a {@link VersionVector}. The version can be used to track the changes in the
- * {@link Updatable} object and determine causality between events and states of the object.
+ * An {@link Updatable} object that keeps a {@link VersionVector}. The version can be used to track
+ * the changes in the {@link Updatable} object and determine causality between events and states of
+ * the object.
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
@@ -35,12 +36,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  */
 public interface VersionedUpdatable<K, T extends Comparable<T>, U extends UpdateMessage<K>> extends Updatable<K, U> {
 
-    /**
-     * Get a copy of the current version of the {@linkplain VersionedUpdatable}. The version is tracked and represented
-     * as a {@link VersionVector}.
-     *
-     * @return a copy of the current version of this object.
-     */
-    VersionVector<K, T> getVersion();
+  /**
+   * Get a copy of the current version of the {@linkplain VersionedUpdatable}. The version is
+   * tracked and represented as a {@link VersionVector}.
+   *
+   * @return a copy of the current version of this object.
+   */
+  VersionVector<K, T> getVersion();
 
 }

@@ -24,21 +24,23 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * Abstract {@linkplain LogicalVersion} that can be extended by other {@linkplain LogicalVersion} implementations.
+ * Abstract {@linkplain LogicalVersion} that can be extended by other {@linkplain LogicalVersion}
+ * implementations.
  *
- * {@link #compareTo(uk.ac.soton.ecs.fl4g12.crdt.order.Version)} compares the values of the timestamps.
+ * {@link #compareTo(uk.ac.soton.ecs.fl4g12.crdt.order.Version)} compares the values of the
+ * timestamps.
  *
  * @param <T> the type of the timestamp.
  */
 public abstract class AbstractLogicalVersion<T extends Comparable<T>>
         extends AbstractVersion<T> implements LogicalVersion<T> {
 
-    @Override
-    public int compareTo(Version<T> o) {
-        return get().compareTo(o.get());
-    }
+  @Override
+  public int compareTo(Version<T> o) {
+    return get().compareTo(o.get());
+  }
 
-    @Override
-    public abstract AbstractLogicalVersion<T> copy();
+  @Override
+  public abstract AbstractLogicalVersion<T> copy();
 
 }

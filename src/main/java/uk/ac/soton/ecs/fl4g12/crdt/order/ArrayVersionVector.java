@@ -27,66 +27,68 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * {@linkplain VersionVector} backed by an {@linkplain ArrayList}. This is particularly useful where the identifiers are
- * incrementally assigned integers. This will perform inefficiently where IDs are sparse.
+ * {@linkplain VersionVector} backed by an {@linkplain ArrayList}. This is particularly useful where
+ * the identifiers are incrementally assigned integers. This will perform inefficiently where IDs
+ * are sparse.
  *
  * @param <T> the type of the timestamps stored in this version vector.
  */
 public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersionVector<Integer, T> {
 
-    private final LogicalVersion<T> zero;
+  private final LogicalVersion<T> zero;
 
-    private final ArrayList<LogicalVersion<T>> vector;
-    private final HashSet<Integer> identifiers;
+  private final ArrayList<LogicalVersion<T>> vector;
+  private final HashSet<Integer> identifiers;
 
-    /**
-     * Construct an {@linkplain ArrayVersionVector}. The {@link LogicalVersion} provided as {@code zero} will be cloned
-     * when initialising a new identifier.
-     *
-     * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the timestamps.
-     * @param dotted whether or not this is a dotted {@link VersionVector}.
-     */
-    public ArrayVersionVector(LogicalVersion<T> zero, boolean dotted) {
-        super(zero.get(), dotted);
-        this.zero = zero.copy();
-        this.vector = new ArrayList<>();
-        this.identifiers = new HashSet<>();
+  /**
+   * Construct an {@linkplain ArrayVersionVector}. The {@link LogicalVersion} provided as
+   * {@code zero} will be cloned when initialising a new identifier.
+   *
+   * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
+   * timestamps.
+   * @param dotted whether or not this is a dotted {@link VersionVector}.
+   */
+  public ArrayVersionVector(LogicalVersion<T> zero, boolean dotted) {
+    super(zero.get(), dotted);
+    this.zero = zero.copy();
+    this.vector = new ArrayList<>();
+    this.identifiers = new HashSet<>();
+  }
+
+  @Override
+  protected LogicalVersion<T> getInternal(Integer id) {
+    return vector.get(id);
+  }
+
+  @Override
+  public HashSet<Integer> getIdentifiers() {
+    return new HashSet<>(identifiers);
+  }
+
+  @Override
+  public synchronized void init(Integer id) {
+    if (identifiers.contains(id)) {
+      return;
     }
+    vector.set(id, zero.copy());
+    identifiers.add(id);
+  }
 
-    @Override
-    protected LogicalVersion<T> getInternal(Integer id) {
-        return vector.get(id);
-    }
+  @Override
+  public void sync(Integer id, T value) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
 
-    @Override
-    public HashSet<Integer> getIdentifiers() {
-        return new HashSet<>(identifiers);
-    }
+  @Override
+  public boolean isDotted() {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    @Override
-    public synchronized void init(Integer id) {
-        if (identifiers.contains(id)) {
-            return;
-        }
-        vector.set(id, zero.copy());
-        identifiers.add(id);
-    }
-
-    @Override
-    public void sync(Integer id, T value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isDotted() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public ArrayVersionVector<T> copy() {
-        ArrayVersionVector<T> copy = new ArrayVersionVector<>(zero, isDotted());
-        copy.sync(this);
-        return copy;
-    }
+  @Override
+  public ArrayVersionVector<T> copy() {
+    ArrayVersionVector<T> copy = new ArrayVersionVector<>(zero, isDotted());
+    copy.sync(this);
+    return copy;
+  }
 
 }

@@ -26,9 +26,10 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Interface for objects that represent a mutable state which is updatable via a {@linkplain DeliveryChannel}. States
- * can be snapshotted into a {@link StateSnapshot} which is also the {@link UpdateMessage} that can be used to update
- * other {@linkplain State}s of the same type.
+ * Interface for objects that represent a mutable state which is updatable via a
+ * {@linkplain DeliveryChannel}. States can be snapshotted into a {@link StateSnapshot} which is
+ * also the {@link UpdateMessage} that can be used to update other {@linkplain State}s of the same
+ * type.
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
@@ -36,12 +37,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  */
 public interface State<K, T extends Comparable<T>, S extends StateSnapshot<K, T>> extends VersionedUpdatable<K, T, S> {
 
-    /**
-     * Creates a snapshot of the state which can be used as an {@linkplain UpdateMessage}. The snapshot takes a snapshot
-     * of the state at a given time.
-     *
-     * @return a snapshot of the state.
-     */
-    S snapshot();
+  /**
+   * Creates a snapshot of the state which can be used as an {@linkplain UpdateMessage}. The
+   * snapshot takes a snapshot of the state at a given time.
+   *
+   * @return a snapshot of the state.
+   */
+  S snapshot();
 
 }

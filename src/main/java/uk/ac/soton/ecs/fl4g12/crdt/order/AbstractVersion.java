@@ -24,47 +24,47 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * An abstract {@linkplain Version}. To be extended by implementations {@link Version} that wish to take advantage of
- * the abstract methods provided by this class.
+ * An abstract {@linkplain Version}. To be extended by implementations {@link Version} that wish to
+ * take advantage of the abstract methods provided by this class.
  *
  * @param <T> the type of the timestamp.
  */
 public abstract class AbstractVersion<T> implements Version<T> {
 
-    @Override
-    public boolean happenedBefore(Version<T> version) {
-        return this.compareTo(version) < 0;
-    }
+  @Override
+  public boolean happenedBefore(Version<T> version) {
+    return this.compareTo(version) < 0;
+  }
 
-    @Override
-    public void sync(Version<T> other) {
-        sync(other.get());
-    }
+  @Override
+  public void sync(Version<T> other) {
+    sync(other.get());
+  }
 
-    @Override
-    public int hashCode() {
-        return get().hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return get().hashCode();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Version)) {
-            return false;
-        }
-        final Version other = (Version) obj;
-        if (!this.get().equals(other.get())) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof Version)) {
+      return false;
+    }
+    final Version other = (Version) obj;
+    if (!this.get().equals(other.get())) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public abstract AbstractVersion<T> copy();
+  @Override
+  public abstract AbstractVersion<T> copy();
 
 }

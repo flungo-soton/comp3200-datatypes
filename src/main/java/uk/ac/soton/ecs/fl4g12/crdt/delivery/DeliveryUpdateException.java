@@ -28,12 +28,13 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  */
 public class DeliveryUpdateException extends Exception {
 
-    /**
-     * Constructs an instance of <code>DeliveryUpdateException</code> with the specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    public DeliveryUpdateException(String msg) {
-        super(msg);
-    }
+  /**
+   * Constructs an instance of <code>DeliveryUpdateException</code> with the specified detail
+   * message.
+   *
+   * @param msg the detail message.
+   */
+  public DeliveryUpdateException(String msg) {
+    super(msg);
+  }
 }

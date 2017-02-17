@@ -26,44 +26,44 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an {@link AtomicInteger} to
- * ensure the thread safety of the version.
+ * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an
+ * {@link AtomicInteger} to ensure the thread safety of the version.
  */
 public class IntegerVersion extends AbstractLogicalVersion<Integer> {
 
-    private AtomicInteger timestamp = new AtomicInteger();
+  private AtomicInteger timestamp = new AtomicInteger();
 
-    @Override
-    public Integer get() {
-        return timestamp.get();
-    }
+  @Override
+  public Integer get() {
+    return timestamp.get();
+  }
 
-    @Override
-    public void increment() {
-        timestamp.incrementAndGet();
-    }
+  @Override
+  public void increment() {
+    timestamp.incrementAndGet();
+  }
 
-    @Override
-    public void sync(Integer other) {
-        while (true) {
-            Integer self = get();
-            // Is the other clock ahead
-            if (other <= self) {
-                // Nothing to do
-                return;
-            }
-            // Try to set, uses compare and set to ensure that the previous gaurd is still valid.
-            if (timestamp.compareAndSet(self, other)) {
-                return;
-            }
-        }
+  @Override
+  public void sync(Integer other) {
+    while (true) {
+      Integer self = get();
+      // Is the other clock ahead
+      if (other <= self) {
+        // Nothing to do
+        return;
+      }
+      // Try to set, uses compare and set to ensure that the previous gaurd is still valid.
+      if (timestamp.compareAndSet(self, other)) {
+        return;
+      }
     }
+  }
 
-    @Override
-    public IntegerVersion copy() {
-        IntegerVersion copy = new IntegerVersion();
-        copy.timestamp = new AtomicInteger(get());
-        return copy;
-    }
+  @Override
+  public IntegerVersion copy() {
+    IntegerVersion copy = new IntegerVersion();
+    copy.timestamp = new AtomicInteger(get());
+    return copy;
+  }
 
 }

@@ -26,8 +26,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * An update message which has an associated version. The version is the version of the {@link Updatable} at the time
- * that the {@link UpdateMessage} was generated.
+ * An update message which has an associated version. The version is the version of the
+ * {@link Updatable} at the time that the {@link UpdateMessage} was generated.
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
@@ -35,10 +35,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 public interface VersionedUpdateMessage<K, T extends Comparable<T>>
         extends UpdateMessage<K>, Comparable<VersionedUpdateMessage<K, T>> {
 
-    /**
-     * Get the version of the {@linkplain Updatable} at the time this {@linkplain UpdateMessage} was created.
-     *
-     * @return a copy of the {@link VersionVector} at the time that the {@linkplain VersionedUpdateMessage} was created.
-     */
-    VersionVector<K, T> getVersionVector();
+  /**
+   * Get the version of the {@linkplain Updatable} at the time this {@linkplain UpdateMessage} was
+   * created.
+   *
+   * @return a copy of the {@link VersionVector} at the time that the
+   * {@linkplain VersionedUpdateMessage} was created.
+   */
+  VersionVector<K, T> getVersionVector();
 }

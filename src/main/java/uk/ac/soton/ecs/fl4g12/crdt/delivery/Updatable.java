@@ -24,36 +24,37 @@
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
 /**
- * An object that can be updated with a {@linkplain DeliveryChannel}. The object should take a {@link DeliveryChannel}
- * as part of its instantiation and call {@link DeliveryChannel#register(Updatable)} with itself.
+ * An object that can be updated with a {@linkplain DeliveryChannel}. The object should take a
+ * {@link DeliveryChannel} as part of its instantiation and call
+ * {@link DeliveryChannel#register(Updatable)} with itself.
  *
- * {@linkplain Updatable} objects can be updated by an {@link UpdateMessage}. The type of the {@link UpdateMessage} for
- * the {@linkplain Updatable} can be specified with generics allowing for the use of an {@link UpdateMessage}
- * appropriate for the object.
+ * {@linkplain Updatable} objects can be updated by an {@link UpdateMessage}. The type of the
+ * {@link UpdateMessage} for the {@linkplain Updatable} can be specified with generics allowing for
+ * the use of an {@link UpdateMessage} appropriate for the object.
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <U> the type of updates sent via the delivery channel.
  */
 public interface Updatable<K, U extends UpdateMessage<K>> {
 
-    /**
-     * Gets the identifier for this object. This is a globally unique identifier for the instance of the updatable
-     * across the network.
-     *
-     * For new objects, this is provided by the {@link DeliveryChannel} when calling
-     * {@link DeliveryChannel#register(Updatable)} and should return {@code null} until registered.
-     *
-     * @return the identifier of the {@linkplain Updatable} object or {@code null} if it has not been registered with
-     * its {@link DeliveryChannel} yet.
-     */
-    K getIdentifier();
+  /**
+   * Gets the identifier for this object. This is a globally unique identifier for the instance of
+   * the updatable across the network.
+   *
+   * For new objects, this is provided by the {@link DeliveryChannel} when calling
+   * {@link DeliveryChannel#register(Updatable)} and should return {@code null} until registered.
+   *
+   * @return the identifier of the {@linkplain Updatable} object or {@code null} if it has not been
+   * registered with its {@link DeliveryChannel} yet.
+   */
+  K getIdentifier();
 
-    /**
-     * Update the object with the provided message. The contents contained within the message will be applied to the
-     * locally updatable object.
-     *
-     * @param message the message containing the update to be performed.
-     * @throws DeliveryUpdateException if the update could not be applied.
-     */
-    void update(U message) throws DeliveryUpdateException;
+  /**
+   * Update the object with the provided message. The contents contained within the message will be
+   * applied to the locally updatable object.
+   *
+   * @param message the message containing the update to be performed.
+   * @throws DeliveryUpdateException if the update could not be applied.
+   */
+  void update(U message) throws DeliveryUpdateException;
 }

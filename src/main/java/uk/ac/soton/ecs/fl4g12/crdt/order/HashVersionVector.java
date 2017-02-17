@@ -27,62 +27,64 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- * {@linkplain VersionVector} backed by a {@linkplain HashMap}. Flexible implementation of a {@link VersionVector}
- * allowing the type of identifier and timestamp to be configured. Unlike an {@link ArrayVersionVector}, this
- * implementation works well with non-integer identifiers and sparse integer identifiers.
+ * {@linkplain VersionVector} backed by a {@linkplain HashMap}. Flexible implementation of a
+ * {@link VersionVector} allowing the type of identifier and timestamp to be configured. Unlike an
+ * {@link ArrayVersionVector}, this implementation works well with non-integer identifiers and
+ * sparse integer identifiers.
  *
  * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
  */
 public class HashVersionVector<K, T extends Comparable<T>> extends AbstractVersionVector<K, T> {
 
-    private final LogicalVersion<T> zero;
+  private final LogicalVersion<T> zero;
 
-    private final HashMap<K, LogicalVersion<T>> vector;
+  private final HashMap<K, LogicalVersion<T>> vector;
 
-    /**
-     * Construct a {@linkplain HashVersionVector}. The {@link LogicalVersion} provided as {@code zero} will be cloned
-     * when initialising a new identifier.
-     *
-     * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the timestamps.
-     * @param dotted whether or not this is a dotted {@link VersionVector}.
-     */
-    public HashVersionVector(LogicalVersion<T> zero, boolean dotted) {
-        super(zero.get(), dotted);
-        this.zero = zero.copy();
-        this.vector = new HashMap<>();
+  /**
+   * Construct a {@linkplain HashVersionVector}. The {@link LogicalVersion} provided as {@code zero}
+   * will be cloned when initialising a new identifier.
+   *
+   * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
+   * timestamps.
+   * @param dotted whether or not this is a dotted {@link VersionVector}.
+   */
+  public HashVersionVector(LogicalVersion<T> zero, boolean dotted) {
+    super(zero.get(), dotted);
+    this.zero = zero.copy();
+    this.vector = new HashMap<>();
+  }
+
+  @Override
+  protected LogicalVersion<T> getInternal(K id) {
+    return vector.get(id);
+  }
+
+  @Override
+  public Set<K> getIdentifiers() {
+    return vector.keySet();
+  }
+
+  @Override
+  public synchronized void init(K id) {
+    if (vector.containsKey(id)) {
+      return;
     }
+    vector.put(id, zero.copy());
+  }
 
-    @Override
-    protected LogicalVersion<T> getInternal(K id) {
-        return vector.get(id);
+  @Override
+  public void sync(K id, T value) {
+    if (!vector.containsKey(id)) {
+      init(id);
     }
+    getInternal(id).sync(value);
+  }
 
-    @Override
-    public Set<K> getIdentifiers() {
-        return vector.keySet();
-    }
-
-    @Override
-    public synchronized void init(K id) {
-        if (vector.containsKey(id)) {
-            return;
-        }
-        vector.put(id, zero.copy());
-    }
-
-    @Override
-    public void sync(K id, T value) {
-        if (!vector.containsKey(id)) {
-            init(id);
-        }
-        getInternal(id).sync(value);
-    }
-
-    @Override
-    public HashVersionVector<K, T> copy() {
-        HashVersionVector<K, T> copy = new HashVersionVector<>(zero, isDotted());
-        copy.sync(this);
-        return copy;
-    }
+  @Override
+  public HashVersionVector<K, T> copy() {
+    HashVersionVector<K, T> copy = new HashVersionVector<>(zero, isDotted());
+    copy.sync(this);
+    return copy;
+  }
 }
