@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 import java.util.HashMap;
@@ -85,10 +86,10 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public boolean happenedBefore(Version<Map<K, T>> o) {
+  public boolean happenedBefore(Version<Map<K, T>> version) {
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
-    Map<K, T> other = o.get();
+    Map<K, T> other = version.get();
 
     // Iterate through all ids known locally. Any id that might exist in
     // other that does not exist locally will be greater than or equal to
@@ -119,10 +120,10 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     return true;
   }
 
-  private Integer compareToInternal(Version<Map<K, T>> o) {
+  private Integer compareToInternal(Version<Map<K, T>> version) {
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
-    Map<K, T> other = o.get();
+    Map<K, T> other = version.get();
     // TODO: Implement support for dotted vectors
 
     // Merge all identifiers together
@@ -166,14 +167,14 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public boolean concurrentWith(VersionVector<K, T> other) {
-    return compareToInternal(other) == null;
+  public boolean concurrentWith(VersionVector<K, T> version) {
+    return compareToInternal(version) == null;
   }
 
   @Override
-  public int compareTo(Version<Map<K, T>> o) {
+  public int compareTo(Version<Map<K, T>> version) {
     // Null gets cast to zero
-    return compareToInternal(o);
+    return compareToInternal(version);
   }
 
   @Override

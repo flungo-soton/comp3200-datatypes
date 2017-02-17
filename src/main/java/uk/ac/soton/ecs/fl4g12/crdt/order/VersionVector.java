@@ -18,6 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 import java.util.Map;
@@ -48,19 +49,19 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   Map<K, T> get();
 
   /**
-   * Gets a set of identifiers contained within this vector.
-   *
-   * @return the set of identifiers which this vector contains.
-   */
-  Set<K> getIdentifiers();
-
-  /**
    * Gets the current timestamp of the vector for a given identifier.
    *
    * @param id the identifier which the timestamp should be returned for.
    * @return the timestamp from the vector for the specified identifier.
    */
   T get(K id);
+
+  /**
+   * Gets a set of identifiers contained within this vector.
+   *
+   * @return the set of identifiers which this vector contains.
+   */
+  Set<K> getIdentifiers();
 
   /**
    * Initialise the given ID in the vector. Adds the identifier to the vector initialising with a 0
