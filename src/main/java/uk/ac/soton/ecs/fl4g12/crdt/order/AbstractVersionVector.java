@@ -37,7 +37,7 @@ import java.util.Set;
  * @param <T> the type of the version.
  */
 public abstract class AbstractVersionVector<K, T extends Comparable<T>>
-        extends AbstractVersion<Map<K, T>> implements VersionVector<K, T> {
+    extends AbstractVersion<Map<K, T>> implements VersionVector<K, T> {
 
   private final T zero;
   private final boolean dotted;
@@ -74,7 +74,9 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   @Override
   public void increment(K id) {
     if (!getIdentifiers().contains(id)) {
-      throw new IllegalArgumentException("Provided ID has not been initialised as part of the vector.");
+      throw new IllegalArgumentException(
+          "Provided ID has not been initialised as part of the vector."
+      );
     }
     getInternal(id).increment();
   }

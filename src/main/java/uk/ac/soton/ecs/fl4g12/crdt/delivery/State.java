@@ -35,7 +35,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp within the {@link VersionVector}
  * @param <S> the type of snapshot made from this state.
  */
-public interface State<K, T extends Comparable<T>, S extends StateSnapshot<K, T>> extends VersionedUpdatable<K, T, S> {
+public interface State<K, T extends Comparable<T>, S extends StateSnapshot<K, T>>
+    extends VersionedUpdatable<K, T, S> {
 
   /**
    * Creates a snapshot of the state which can be used as an {@linkplain UpdateMessage}. The

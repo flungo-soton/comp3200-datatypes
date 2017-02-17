@@ -76,12 +76,10 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
 
   @Override
   public void sync(Integer id, T value) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
-  public boolean isDotted() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (!identifiers.contains(id)) {
+      init(id);
+    }
+    getInternal(id).sync(value);
   }
 
   @Override
