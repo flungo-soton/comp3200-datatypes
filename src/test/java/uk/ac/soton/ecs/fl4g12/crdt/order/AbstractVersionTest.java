@@ -3,23 +3,20 @@
  *
  * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
@@ -39,8 +36,7 @@ public class AbstractVersionTest {
 
   private static final Logger LOGGER = Logger.getLogger(AbstractVersionTest.class.getName());
 
-  public AbstractVersionTest() {
-  }
+  public AbstractVersionTest() {}
 
   private static final Integer INITIAL_VERSION_VALUE = 50;
   private static final Integer INCREMENTED_VERSION_VALUE = INITIAL_VERSION_VALUE + 1;
@@ -51,12 +47,10 @@ public class AbstractVersionTest {
   private LongVersion longVersion2;
 
   @BeforeClass
-  public static void setUpClass() {
-  }
+  public static void setUpClass() {}
 
   @AfterClass
-  public static void tearDownClass() {
-  }
+  public static void tearDownClass() {}
 
   @Before
   public void setUp() {
@@ -73,26 +67,28 @@ public class AbstractVersionTest {
   }
 
   @After
-  public void tearDown() {
-  }
+  public void tearDown() {}
 
   @Test
   public void testHappenedBefore_Integer_True() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_Integer_True: Test happenedBefore for integerVersion1 < integerVersion2");
+    LOGGER.log(Level.INFO,
+        "testHappenedBefore_Integer_True: Test happenedBefore for integerVersion1 < integerVersion2");
     boolean result = integerVersion1.happenedBefore(integerVersion2);
     assertEquals("integerVersion1 should have happenedBefore integerVersion2", true, result);
   }
 
   @Test
   public void testHappenedBefore_Integer_False() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_Integer_False: Test happenedBefore for integerVersion1 > integerVersion2");
+    LOGGER.log(Level.INFO,
+        "testHappenedBefore_Integer_False: Test happenedBefore for integerVersion1 > integerVersion2");
     boolean result = integerVersion2.happenedBefore(integerVersion1);
     assertEquals("integerVersion2 shouldn't have happenedBefore integerVersion1", false, result);
   }
 
   @Test
   public void testHappenedBefore_Integer_Equal() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_Integer_Equal: Test happenedBefore for integerVersion1 = integerVersion2");
+    LOGGER.log(Level.INFO,
+        "testHappenedBefore_Integer_Equal: Test happenedBefore for integerVersion1 = integerVersion2");
     boolean result = integerVersion1.happenedBefore(integerVersion1);
     assertEquals("integerVersion1 shouldn't happenedBefore itself", false, result);
     result = integerVersion2.happenedBefore(integerVersion2);
@@ -101,21 +97,24 @@ public class AbstractVersionTest {
 
   @Test
   public void testHappenedBefore_Long_True() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_Long_True: Test happenedBefore for longVersion1 < longVersion2");
+    LOGGER.log(Level.INFO,
+        "testHappenedBefore_Long_True: Test happenedBefore for longVersion1 < longVersion2");
     boolean result = longVersion1.happenedBefore(longVersion2);
     assertEquals("longVersion1 should have happenedBefore longVersion2", true, result);
   }
 
   @Test
   public void testHappenedBefore_Long_False() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_Long_False: Test happenedBefore for longVersion1 > longVersion2");
+    LOGGER.log(Level.INFO,
+        "testHappenedBefore_Long_False: Test happenedBefore for longVersion1 > longVersion2");
     boolean result = longVersion2.happenedBefore(longVersion1);
     assertEquals("longVersion2 shouldn't have happenedBefore longVersion1", false, result);
   }
 
   @Test
   public void testHappenedBefore_Long_Equal() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_Long_Equal: Test happenedBefore for longVersion1 = longVersion2");
+    LOGGER.log(Level.INFO,
+        "testHappenedBefore_Long_Equal: Test happenedBefore for longVersion1 = longVersion2");
     boolean result = longVersion1.happenedBefore(longVersion1);
     assertEquals("longVersion1 shouldn't happenedBefore itself", false, result);
     result = longVersion2.happenedBefore(longVersion2);
@@ -126,24 +125,32 @@ public class AbstractVersionTest {
   public void testSync_Self() {
     LOGGER.log(Level.INFO, "testSync_Remain: Test sync where the value should remain");
     integerVersion1.sync(integerVersion1);
-    assertEquals("integerVersion1 value should not have changed", INITIAL_VERSION_VALUE, integerVersion1.get());
+    assertEquals("integerVersion1 value should not have changed", INITIAL_VERSION_VALUE,
+        integerVersion1.get());
     integerVersion2.sync(integerVersion2);
-    assertEquals("integerVersion2 value should not have changed", INCREMENTED_VERSION_VALUE, integerVersion2.get());
+    assertEquals("integerVersion2 value should not have changed", INCREMENTED_VERSION_VALUE,
+        integerVersion2.get());
     longVersion1.sync(longVersion1);
-    assertEquals("longVersion1 value should not have changed", (Long) (long) INITIAL_VERSION_VALUE, longVersion1.get());
+    assertEquals("longVersion1 value should not have changed", (Long) (long) INITIAL_VERSION_VALUE,
+        longVersion1.get());
     longVersion2.sync(longVersion2);
-    assertEquals("longVersion2 value should not have changed", (Long) (long) INCREMENTED_VERSION_VALUE, longVersion2.get());
+    assertEquals("longVersion2 value should not have changed",
+        (Long) (long) INCREMENTED_VERSION_VALUE, longVersion2.get());
   }
 
   @Test
   public void testSync_Remain() {
     LOGGER.log(Level.INFO, "testSync_Remain: Test sync where the value should remain");
     integerVersion2.sync(integerVersion1);
-    assertEquals("integerVersion1 value should not have changed", INITIAL_VERSION_VALUE, integerVersion1.get());
-    assertEquals("integerVersion2 value should not have changed", INCREMENTED_VERSION_VALUE, integerVersion2.get());
+    assertEquals("integerVersion1 value should not have changed", INITIAL_VERSION_VALUE,
+        integerVersion1.get());
+    assertEquals("integerVersion2 value should not have changed", INCREMENTED_VERSION_VALUE,
+        integerVersion2.get());
     longVersion2.sync(longVersion1);
-    assertEquals("longVersion1 value should not have changed", (Long) (long) INITIAL_VERSION_VALUE, longVersion1.get());
-    assertEquals("longVersion2 value should not have changed", (Long) (long) INCREMENTED_VERSION_VALUE, longVersion2.get());
+    assertEquals("longVersion1 value should not have changed", (Long) (long) INITIAL_VERSION_VALUE,
+        longVersion1.get());
+    assertEquals("longVersion2 value should not have changed",
+        (Long) (long) INCREMENTED_VERSION_VALUE, longVersion2.get());
 
   }
 
@@ -151,29 +158,37 @@ public class AbstractVersionTest {
   public void testSync_Incremented() {
     LOGGER.log(Level.INFO, "testSync_Increase: Test sync where the value should increase");
     integerVersion1.sync(integerVersion2);
-    assertEquals("integerVersion1 value should have been incremented", INCREMENTED_VERSION_VALUE, integerVersion1.get());
-    assertEquals("integerVersion2 value should not have changed", INCREMENTED_VERSION_VALUE, integerVersion2.get());
+    assertEquals("integerVersion1 value should have been incremented", INCREMENTED_VERSION_VALUE,
+        integerVersion1.get());
+    assertEquals("integerVersion2 value should not have changed", INCREMENTED_VERSION_VALUE,
+        integerVersion2.get());
     longVersion1.sync(longVersion2);
-    assertEquals("longVersion1 value should have been incremented", (Long) (long) INCREMENTED_VERSION_VALUE, longVersion1.get());
-    assertEquals("longVersion2 value should not have changed", (Long) (long) INCREMENTED_VERSION_VALUE, longVersion2.get());
+    assertEquals("longVersion1 value should have been incremented",
+        (Long) (long) INCREMENTED_VERSION_VALUE, longVersion1.get());
+    assertEquals("longVersion2 value should not have changed",
+        (Long) (long) INCREMENTED_VERSION_VALUE, longVersion2.get());
   }
 
   @Test
   public void testHashCode_Integer() {
     LOGGER.log(Level.INFO, "testHashCode_Integer: Test hashCode for IntegerVersions");
     int result = integerVersion1.hashCode();
-    assertEquals("integerVersion1 should have the same hashCode as its value", integerVersion1.get().hashCode(), result);
+    assertEquals("integerVersion1 should have the same hashCode as its value",
+        integerVersion1.get().hashCode(), result);
     result = integerVersion2.hashCode();
-    assertEquals("integerVersion2 should have the same hashCode as its value", integerVersion2.get().hashCode(), result);
+    assertEquals("integerVersion2 should have the same hashCode as its value",
+        integerVersion2.get().hashCode(), result);
   }
 
   @Test
   public void testHashCode_Long() {
     LOGGER.log(Level.INFO, "testHashCode_Long: Test hashCode for IntegerVersions");
     int result = longVersion1.hashCode();
-    assertEquals("integerVersion1 should have the same hashCode as its value", longVersion1.get().hashCode(), result);
+    assertEquals("integerVersion1 should have the same hashCode as its value",
+        longVersion1.get().hashCode(), result);
     result = longVersion2.hashCode();
-    assertEquals("longVersion2 should have the same hashCode as its value", longVersion2.get().hashCode(), result);
+    assertEquals("longVersion2 should have the same hashCode as its value",
+        longVersion2.get().hashCode(), result);
   }
 
   @Test
