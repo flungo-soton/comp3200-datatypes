@@ -68,7 +68,12 @@ public class AbstractVersionTest {
   }
 
   @After
-  public void tearDown() {}
+  public void tearDown() {
+    integerVersion1 = null;
+    integerVersion2 = null;
+    longVersion1 = null;
+    longVersion1 = null;
+  }
 
   @Test
   public void testHappenedBefore_Integer_True() {
