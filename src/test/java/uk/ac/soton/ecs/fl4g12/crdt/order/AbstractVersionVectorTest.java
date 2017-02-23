@@ -116,7 +116,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test of increment method, of class AbstractVersionVector.
+   * Test increment for an uninitialised id in the vector.
    */
   @Test
   public void testIncrement_Uninitialised() {
@@ -134,11 +134,11 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test of increment method, of class AbstractVersionVector.
+   * Test increment of a valid id in the vector.
    */
   @Test
   public void testIncrement() {
-    LOGGER.log(Level.INFO, "testIncrement_Uninitialised: Test increment of an id in the vector");
+    LOGGER.log(Level.INFO, "testIncrement: Test increment of a valid id in the vector");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -171,11 +171,12 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test of sync method, of class AbstractVersionVector.
+   * Test sync with a given vector. All components of the vector should be synced with the local
+   * vector.
    */
   @Test
   public void testSync() {
-    LOGGER.log(Level.INFO, "testIncrement_Uninitialised: Test sync with a given vector.");
+    LOGGER.log(Level.INFO, "testSync: Test sync with a given vector.");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -208,11 +209,11 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test of happenedBefore method, of class AbstractVersionVector.
+   * Test happenedBefore with equal vectors.
    */
   @Test
   public void testHappenedBefore_Equal() {
-    LOGGER.log(Level.INFO, "testCompareTo_Equal: Test compareTo with a equal vectors.");
+    LOGGER.log(Level.INFO, "testHappenedBefore_Equal: Test happenedBefore with equal vectors");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -246,11 +247,11 @@ public class AbstractVersionVectorTest {
 
   // TODO: More comparisons for happensBefore
   /**
-   * Test of concurrentWith method, of class AbstractVersionVector.
+   * Test concurrentWith for equal vectors.
    */
   @Test
-  public void testConcurrentWith() {
-    LOGGER.log(Level.INFO, "testCompareTo_Equal: Test compareTo with a equal vectors.");
+  public void testConcurrentWith_Equal() {
+    LOGGER.log(Level.INFO, "testConcurrentWith_Equal: Test concurrentWith for equal vectors");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -284,11 +285,11 @@ public class AbstractVersionVectorTest {
 
   // TODO: More comparisons for concurrentWith
   /**
-   * Test of compareTo method, of class AbstractVersionVector.
+   * Test compareTo with equal vectors.
    */
   @Test
   public void testCompareTo_Equal() {
-    LOGGER.log(Level.INFO, "testCompareTo_Equal: Test compareTo with a equal vectors.");
+    LOGGER.log(Level.INFO, "testCompareTo_Equal: Test compareTo with equal vectors");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -299,16 +300,20 @@ public class AbstractVersionVectorTest {
     final Integer value3 = 3;
 
     // Setup the expected response
-    Map vector = new HashMap(3);
-    vector.put(id1, value1);
-    vector.put(id2, value2);
-    vector.put(id3, value3);
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, value1);
+    vector1.put(id2, value2);
+    vector1.put(id3, value3);
+    Map vector2 = new HashMap(3);
+    vector2.put(id1, value1);
+    vector2.put(id2, value2);
+    vector2.put(id3, value3);
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector, 0, false);
+        new ImmutableMapVersionVector<>(vector1, 0, false);
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector, 0, false);
+        new ImmutableMapVersionVector<>(vector2, 0, false);
 
     // Compare
     int expResult = 0;
@@ -320,7 +325,291 @@ public class AbstractVersionVectorTest {
     assertEquals(-expResult, result2);
   }
 
-  // TODO: More comparisons for compareTo
+  /**
+   * Test compareTo with a sequential vector.
+   */
+  @Test
+  public void testCompareTo_SequentialSingle() {
+    LOGGER.log(Level.INFO,
+        "testCompareTo_SequentialSingle: Test compareTo with a sequential vector");
+
+    // Constants for the test
+    final Object id1 = new Object();
+    final Object id2 = new Object();
+    final Object id3 = new Object();
+    final Integer value1 = 1;
+    final Integer value2 = 2;
+    final Integer value3 = 3;
+
+    // Setup the expected response
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, value1);
+    vector1.put(id2, value2);
+    vector1.put(id3, value3);
+    Map vector2 = new HashMap(3);
+    vector2.put(id1, value1);
+    vector2.put(id2, value2 + 1);
+    vector2.put(id3, value3);
+
+    // Setup the Vectors
+    AbstractVersionVector<Object, Integer> abstractVersionVector1 =
+        new ImmutableMapVersionVector<>(vector1, 0, false);
+    AbstractVersionVector<Object, Integer> abstractVersionVector2 =
+        new ImmutableMapVersionVector<>(vector2, 0, false);
+
+    // Compare
+    int expResult = -1;
+    int result1 = abstractVersionVector1.compareTo(abstractVersionVector2);
+    int result2 = abstractVersionVector2.compareTo(abstractVersionVector1);
+
+    // Make assertions
+    assertEquals(expResult, result1);
+    assertEquals(-expResult, result2);
+  }
+
+  /**
+   * Test compareTo with concurrent vectors.
+   */
+  @Test
+  public void testCompareTo_Concurrent() {
+    LOGGER.log(Level.INFO, "testCompareTo_Concurrent: Test compareTo with concurrent vectors");
+
+    // Constants for the test
+    final Object id1 = new Object();
+    final Object id2 = new Object();
+    final Object id3 = new Object();
+    final Integer value1 = 1;
+    final Integer value2 = 2;
+    final Integer value3 = 3;
+
+    // Setup the expected response
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, value1);
+    vector1.put(id2, value2);
+    vector1.put(id3, value3 + 1);
+    Map vector2 = new HashMap(3);
+    vector2.put(id1, value1 + 1);
+    vector2.put(id2, value2);
+    vector2.put(id3, value3);
+
+    // Setup the Vectors
+    AbstractVersionVector<Object, Integer> abstractVersionVector1 =
+        new ImmutableMapVersionVector<>(vector1, 0, false);
+    AbstractVersionVector<Object, Integer> abstractVersionVector2 =
+        new ImmutableMapVersionVector<>(vector2, 0, false);
+
+    // Compare
+    int expResult = 0;
+    int result1 = abstractVersionVector1.compareTo(abstractVersionVector2);
+    int result2 = abstractVersionVector2.compareTo(abstractVersionVector1);
+
+    // Make assertions
+    assertEquals(expResult, result1);
+    assertEquals(-expResult, result2);
+  }
+
+  /**
+   * Test compareTo with a sequential vector that's been incremented twice.
+   */
+  @Test
+  public void testCompareTo_SequentialDouble() {
+    LOGGER.log(Level.INFO, "testCompareTo_SequentialDouble: "
+        + "Test compareTo with a sequential vector that's been incremented twice");
+
+    // Constants for the test
+    final Object id1 = new Object();
+    final Object id2 = new Object();
+    final Object id3 = new Object();
+    final Integer value1 = 1;
+    final Integer value2 = 2;
+    final Integer value3 = 3;
+
+    // Setup the expected response
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, value1);
+    vector1.put(id2, value2);
+    vector1.put(id3, value3);
+    Map vector2 = new HashMap(3);
+    vector2.put(id1, value1 + 1);
+    vector2.put(id2, value2);
+    vector2.put(id3, value3 + 1);
+
+    // Setup the Vectors
+    AbstractVersionVector<Object, Integer> abstractVersionVector1 =
+        new ImmutableMapVersionVector<>(vector1, 0, false);
+    AbstractVersionVector<Object, Integer> abstractVersionVector2 =
+        new ImmutableMapVersionVector<>(vector2, 0, false);
+
+    // Compare
+    int expResult = -2;
+    int result1 = abstractVersionVector1.compareTo(abstractVersionVector2);
+    int result2 = abstractVersionVector2.compareTo(abstractVersionVector1);
+
+    // Make assertions
+    assertEquals(expResult, result1);
+    assertEquals(-expResult, result2);
+  }
+
+  /**
+   * Test compareTo with a sequential vector that's been incremented thrice.
+   */
+  @Test
+  public void testCompareTo_SequentialTripple() {
+    LOGGER.log(Level.INFO, "testCompareTo_SequentialTripple: "
+        + "Test compareTo with a sequential vector that's been incremented thrice");
+
+    // Constants for the test
+    final Object id1 = new Object();
+    final Object id2 = new Object();
+    final Object id3 = new Object();
+    final Integer value1 = 1;
+    final Integer value2 = 2;
+    final Integer value3 = 3;
+
+    // Setup the expected response
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, value1);
+    vector1.put(id2, value2);
+    vector1.put(id3, value3);
+    Map vector2 = new HashMap(3);
+    vector2.put(id1, value1 + 1);
+    vector2.put(id2, value2 + 1);
+    vector2.put(id3, value3 + 1);
+
+    // Setup the Vectors
+    AbstractVersionVector<Object, Integer> abstractVersionVector1 =
+        new ImmutableMapVersionVector<>(vector1, 0, false);
+    AbstractVersionVector<Object, Integer> abstractVersionVector2 =
+        new ImmutableMapVersionVector<>(vector2, 0, false);
+
+    // Compare
+    int expResult = -3;
+    int result1 = abstractVersionVector1.compareTo(abstractVersionVector2);
+    int result2 = abstractVersionVector2.compareTo(abstractVersionVector1);
+
+    // Make assertions
+    assertEquals(expResult, result1);
+    assertEquals(-expResult, result2);
+  }
+
+  /**
+   * Test of compareTo method, of class AbstractVersionVector.
+   */
+  @Test
+  public void testCompareTo_LargeIncrement() {
+    LOGGER.log(Level.INFO, "testCompareTo_LargeIncrement: "
+        + "Test compareTo with a sequential vector that's been incremented a lot");
+
+    // Constants for the test
+    final Object id1 = new Object();
+    final Object id2 = new Object();
+    final Object id3 = new Object();
+    final Integer value1 = 1;
+    final Integer value2 = 2;
+    final Integer value3 = 3;
+
+    // Setup the expected response
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, value1);
+    vector1.put(id2, value2);
+    vector1.put(id3, value3);
+    Map vector2 = new HashMap(3);
+    vector2.put(id1, value1 + 7);
+    vector2.put(id2, value2 + 5);
+    vector2.put(id3, value3 + 3);
+
+    // Setup the Vectors
+    AbstractVersionVector<Object, Integer> abstractVersionVector1 =
+        new ImmutableMapVersionVector<>(vector1, 0, false);
+    AbstractVersionVector<Object, Integer> abstractVersionVector2 =
+        new ImmutableMapVersionVector<>(vector2, 0, false);
+
+    // Compare
+    int expResult = -3;
+    int result1 = abstractVersionVector1.compareTo(abstractVersionVector2);
+    int result2 = abstractVersionVector2.compareTo(abstractVersionVector1);
+
+    // Make assertions
+    assertEquals(expResult, result1);
+    assertEquals(-expResult, result2);
+  }
+
+  /**
+   * Test compareTo with a equal vectors (one with an implicit zero value).
+   */
+  @Test
+  public void testCompareTo_ImplicitZeroEqual() {
+    LOGGER.log(Level.INFO, "testCompareTo_ImplicitZeroEqual: "
+        + "Test compareTo with a equal vectors (one with an implicit zero value)");
+
+    // Constants for the test
+    final Object id1 = new Object();
+    final Object id2 = new Object();
+    final Object id3 = new Object();
+
+    // Setup the expected response
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, 0);
+    vector1.put(id2, 1);
+    vector1.put(id3, 2);
+    Map vector2 = new HashMap(3);
+    vector2.put(id2, 1);
+    vector2.put(id3, 2);
+
+    // Setup the Vectors
+    AbstractVersionVector<Object, Integer> abstractVersionVector1 =
+        new ImmutableMapVersionVector<>(vector1, 0, false);
+    AbstractVersionVector<Object, Integer> abstractVersionVector2 =
+        new ImmutableMapVersionVector<>(vector2, 0, false);
+
+    // Compare
+    int expResult = 0;
+    int result1 = abstractVersionVector1.compareTo(abstractVersionVector2);
+    int result2 = abstractVersionVector2.compareTo(abstractVersionVector1);
+
+    // Make assertions
+    assertEquals(expResult, result1);
+    assertEquals(-expResult, result2);
+  }
+
+  /**
+   * Test compareTo with a sequential vector (with an implicit zero value).
+   */
+  @Test
+  public void testCompareTo_ImplicitZeroSequential() {
+    LOGGER.log(Level.INFO, "testCompareTo_ImplicitZeroEqual: "
+        + "Test compareTo with a sequential vector (with an implicit zero value)");
+
+    // Constants for the test
+    final Object id1 = new Object();
+    final Object id2 = new Object();
+    final Object id3 = new Object();
+
+    // Setup the expected response
+    Map vector1 = new HashMap(3);
+    vector1.put(id1, 1);
+    vector1.put(id2, 2);
+    vector1.put(id3, 3);
+    Map vector2 = new HashMap(3);
+    vector2.put(id2, 2);
+    vector2.put(id3, 3);
+
+    // Setup the Vectors
+    AbstractVersionVector<Object, Integer> abstractVersionVector1 =
+        new ImmutableMapVersionVector<>(vector1, 0, false);
+    AbstractVersionVector<Object, Integer> abstractVersionVector2 =
+        new ImmutableMapVersionVector<>(vector2, 0, false);
+
+    // Compare
+    int expResult = 1;
+    int result1 = abstractVersionVector1.compareTo(abstractVersionVector2);
+    int result2 = abstractVersionVector2.compareTo(abstractVersionVector1);
+
+    // Make assertions
+    assertEquals(expResult, result1);
+    assertEquals(-expResult, result2);
+  }
+
   /**
    * Test if a vector constructed as dotted, is dotted.
    */
