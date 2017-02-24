@@ -50,6 +50,127 @@ public class AbstractVersionVectorTest {
   public ExpectedException thrown = ExpectedException.none();
 
   /**
+   * Create example vectors based on the WikiPedia example for vector clocks.
+   * 
+   * https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Vector_Clock.svg/500px-Vector_Clock.svg.png
+   * 
+   * @return a map of vector clocks.
+   */
+  private Map<String, AbstractVersionVector<String, Integer>> createExamples() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = new HashMap<>();
+
+    // Vector a0
+    Map a0 = new HashMap(3);
+    a0.put("a", 0);
+    examples.put("a0", new ImmutableMapVersionVector<>(a0, 0, false));
+
+    // Vector a1
+    Map a1 = new HashMap(3);
+    a1.put("a", 1);
+    a1.put("b", 2);
+    a1.put("c", 1);
+    examples.put("a1", new ImmutableMapVersionVector<>(a1, 0, false));
+
+    // Vector a2
+    Map a2 = new HashMap(3);
+    a2.put("a", 2);
+    a2.put("b", 2);
+    a2.put("c", 1);
+    examples.put("a2", new ImmutableMapVersionVector<>(a2, 0, false));
+
+    // Vector a3
+    Map a3 = new HashMap(3);
+    a3.put("a", 3);
+    a3.put("b", 3);
+    a3.put("c", 3);
+    examples.put("a3", new ImmutableMapVersionVector<>(a3, 0, false));
+
+    // Vector a4
+    Map a4 = new HashMap(3);
+    a4.put("a", 4);
+    a4.put("b", 5);
+    a4.put("c", 5);
+    examples.put("a4", new ImmutableMapVersionVector<>(a4, 0, false));
+
+    // Vector b0
+    Map b0 = new HashMap(3);
+    b0.put("b", 0);
+    examples.put("b0", new ImmutableMapVersionVector<>(b0, 0, false));
+
+    // Vector b1
+    Map b1 = new HashMap(3);
+    b1.put("b", 1);
+    b1.put("c", 1);
+    examples.put("b1", new ImmutableMapVersionVector<>(b1, 0, false));
+
+    // Vector b2
+    Map b2 = new HashMap(3);
+    b2.put("b", 2);
+    b2.put("c", 1);
+    examples.put("b2", new ImmutableMapVersionVector<>(b2, 0, false));
+
+    // Vector b3
+    Map b3 = new HashMap(3);
+    b3.put("b", 3);
+    b3.put("c", 1);
+    examples.put("b3", new ImmutableMapVersionVector<>(b3, 0, false));
+
+    // Vector b4
+    Map b4 = new HashMap(3);
+    b4.put("a", 2);
+    b4.put("b", 4);
+    b4.put("c", 1);
+    examples.put("b4", new ImmutableMapVersionVector<>(b4, 0, false));
+
+
+    // Vector b5
+    Map b5 = new HashMap(3);
+    b5.put("a", 2);
+    b5.put("b", 5);
+    b5.put("c", 1);
+    examples.put("b5", new ImmutableMapVersionVector<>(b5, 0, false));
+
+    // Vector c0
+    Map c0 = new HashMap(3);
+    c0.put("c", 0);
+    examples.put("c0", new ImmutableMapVersionVector<>(c0, 0, false));
+
+    // Vector c1
+    Map c1 = new HashMap(3);
+    c1.put("c", 1);
+    examples.put("c1", new ImmutableMapVersionVector<>(c1, 0, false));
+
+    // Vector c2
+    Map c2 = new HashMap(3);
+    c2.put("b", 3);
+    c2.put("c", 2);
+    examples.put("c2", new ImmutableMapVersionVector<>(c2, 0, false));
+
+    // Vector c3
+    Map c3 = new HashMap(3);
+    c3.put("b", 3);
+    c3.put("c", 3);
+    examples.put("c3", new ImmutableMapVersionVector<>(c3, 0, false));
+
+    // Vector c4
+    Map c4 = new HashMap(3);
+    c4.put("a", 2);
+    c4.put("b", 5);
+    c4.put("c", 4);
+    examples.put("c4", new ImmutableMapVersionVector<>(c4, 0, false));
+
+    // Vector c5
+    Map c5 = new HashMap(3);
+    c5.put("a", 2);
+    c5.put("b", 5);
+    c5.put("c", 5);
+    examples.put("c5", new ImmutableMapVersionVector<>(c5, 0, false));
+
+    // return the examples
+    return examples;
+  }
+
+  /**
    * Test that get uses the getInternal method.
    */
   @Test
@@ -531,6 +652,482 @@ public class AbstractVersionVectorTest {
     // Make assertions
     assertEquals(expResult, result1);
     assertEquals(!expResult, result2);
+  }
+
+  /**
+   * Test happenedBefore against a example vector a0.
+   */
+  @Test
+  public void testHappenedBefore_examples_a0() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a0");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(true, instance.happenedBefore(examples.get("a1")));
+    assertEquals(true, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector a1.
+   */
+  @Test
+  public void testHappenedBefore_examples_a1() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a1");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(true, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector a2.
+   */
+  @Test
+  public void testHappenedBefore_examples_a2() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a2");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector a3.
+   */
+  @Test
+  public void testHappenedBefore_examples_a3() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a3");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(false, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(false, instance.happenedBefore(examples.get("c4")));
+    assertEquals(false, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector a4.
+   */
+  @Test
+  public void testHappenedBefore_examples_a4() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a4");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(false, instance.happenedBefore(examples.get("a3")));
+    assertEquals(false, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(false, instance.happenedBefore(examples.get("c4")));
+    assertEquals(false, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector b0.
+   */
+  @Test
+  public void testHappenedBefore_examples_b0() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b0");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(true, instance.happenedBefore(examples.get("a1")));
+    assertEquals(true, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(true, instance.happenedBefore(examples.get("b1")));
+    assertEquals(true, instance.happenedBefore(examples.get("b2")));
+    assertEquals(true, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector b1.
+   */
+  @Test
+  public void testHappenedBefore_examples_b1() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b1");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(true, instance.happenedBefore(examples.get("a1")));
+    assertEquals(true, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(true, instance.happenedBefore(examples.get("b2")));
+    assertEquals(true, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector b2.
+   */
+  @Test
+  public void testHappenedBefore_examples_b2() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b2");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(true, instance.happenedBefore(examples.get("a1")));
+    assertEquals(true, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(true, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector b3.
+   */
+  @Test
+  public void testHappenedBefore_examples_b3() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b3");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector b4.
+   */
+  @Test
+  public void testHappenedBefore_examples_b4() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b4");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(false, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector b5.
+   */
+  @Test
+  public void testHappenedBefore_examples_b5() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b5");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(false, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector c0.
+   */
+  @Test
+  public void testHappenedBefore_examples_c0() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c0");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(true, instance.happenedBefore(examples.get("a1")));
+    assertEquals(true, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(true, instance.happenedBefore(examples.get("b1")));
+    assertEquals(true, instance.happenedBefore(examples.get("b2")));
+    assertEquals(true, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(true, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector c1.
+   */
+  @Test
+  public void testHappenedBefore_examples_c1() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c1");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(true, instance.happenedBefore(examples.get("a1")));
+    assertEquals(true, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(true, instance.happenedBefore(examples.get("b1")));
+    assertEquals(true, instance.happenedBefore(examples.get("b2")));
+    assertEquals(true, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b4")));
+    assertEquals(true, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector c2.
+   */
+  @Test
+  public void testHappenedBefore_examples_c2() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c2");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector c3.
+   */
+  @Test
+  public void testHappenedBefore_examples_c3() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c3");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(true, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector c4.
+   */
+  @Test
+  public void testHappenedBefore_examples_c4() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c4");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(false, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(false, instance.happenedBefore(examples.get("c4")));
+    assertEquals(true, instance.happenedBefore(examples.get("c5")));
+  }
+
+  /**
+   * Test happenedBefore against a example vector c5.
+   */
+  @Test
+  public void testHappenedBefore_examples_c5() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c5");
+
+    assertEquals(false, instance.happenedBefore(examples.get("a0")));
+    assertEquals(false, instance.happenedBefore(examples.get("a1")));
+    assertEquals(false, instance.happenedBefore(examples.get("a2")));
+    assertEquals(false, instance.happenedBefore(examples.get("a3")));
+    assertEquals(true, instance.happenedBefore(examples.get("a4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b0")));
+    assertEquals(false, instance.happenedBefore(examples.get("b1")));
+    assertEquals(false, instance.happenedBefore(examples.get("b2")));
+    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(false, instance.happenedBefore(examples.get("b4")));
+    assertEquals(false, instance.happenedBefore(examples.get("b5")));
+    assertEquals(false, instance.happenedBefore(examples.get("c0")));
+    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(false, instance.happenedBefore(examples.get("c2")));
+    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(false, instance.happenedBefore(examples.get("c4")));
+    assertEquals(false, instance.happenedBefore(examples.get("c5")));
   }
 
   /**
