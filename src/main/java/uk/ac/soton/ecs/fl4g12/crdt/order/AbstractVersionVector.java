@@ -98,11 +98,8 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
       // Get the ID
       K id = entry.getKey();
       // Get the local and other value for the current ID.
-      T localValue = local.get(id);
-      if (localValue == null) {
-        // If the node has not been seen locally, then its value is zero.
-        localValue = zero;
-      }
+      T localValue = entry.getValue();
+
       T otherValue = other.get(id);
       if (otherValue == null) {
         // If the node has not been seen by the other, then its value is zero.
@@ -113,11 +110,13 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
       int comparison = localValue.compareTo(otherValue);
 
       // Determine if there is a partial ordering.
-      if (comparison < 0) {
+      if (comparison > 0) {
         return false;
       }
     }
-    return true;
+
+    // TODO: Replace with !this.indentical(version)
+    return !this.equals(version);
   }
 
   private Integer compareToInternal(Version<Map<K, T>> version) {
@@ -173,8 +172,8 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
   @Override
   public int compareTo(Version<Map<K, T>> version) {
-    // Null gets cast to zero
-    return compareToInternal(version);
+    Integer comparison = compareToInternal(version);
+    return comparison == null ? 0 : compareToInternal(version);
   }
 
   @Override
