@@ -369,7 +369,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with concurrent vectors.
+   * Test happenedBefore with concurrent vectors.
    */
   @Test
   public void testHappenedBefore_Concurrent() {
@@ -411,7 +411,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector.
+   * Test happenedBefore with a sequential vector.
    */
   @Test
   public void testHappenedBefore_SequentialSingle() {
@@ -453,7 +453,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector that's been incremented twice.
+   * Test happenedBefore with a sequential vector that's been incremented twice.
    */
   @Test
   public void testHappenedBefore_SequentialDouble() {
@@ -495,7 +495,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector that's been incremented thrice.
+   * Test happenedBefore with a sequential vector that's been incremented thrice.
    */
   @Test
   public void testHappenedBefore_SequentialTripple() {
@@ -537,7 +537,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test of compareTo method, of class AbstractVersionVector.
+   * Test of happenedBefore method, of class AbstractVersionVector.
    */
   @Test
   public void testHappenedBefore_LargeIncrement() {
@@ -579,7 +579,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a equal vectors (one with an implicit zero value).
+   * Test happenedBefore with a equal vectors (one with an implicit zero value).
    */
   @Test
   public void testHappenedBefore_ImplicitZeroEqual() {
@@ -617,7 +617,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector (with an implicit zero value).
+   * Test happenedBefore with a sequential vector (with an implicit zero value).
    */
   @Test
   public void testHappenedBefore_ImplicitZeroSequential() {
@@ -1172,7 +1172,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with concurrent vectors.
+   * Test concurrentWith with concurrent vectors.
    */
   @Test
   public void testConcurrentWith_Concurrent() {
@@ -1214,7 +1214,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector.
+   * Test concurrentWith with a sequential vector.
    */
   @Test
   public void testConcurrentWith_SequentialSingle() {
@@ -1256,7 +1256,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector that's been incremented twice.
+   * Test concurrentWith with a sequential vector that's been incremented twice.
    */
   @Test
   public void testConcurrentWith_SequentialDouble() {
@@ -1298,7 +1298,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector that's been incremented thrice.
+   * Test concurrentWith with a sequential vector that's been incremented thrice.
    */
   @Test
   public void testConcurrentWith_SequentialTripple() {
@@ -1340,7 +1340,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test of compareTo method, of class AbstractVersionVector.
+   * Test of concurrentWith method, of class AbstractVersionVector.
    */
   @Test
   public void testConcurrentWith_LargeIncrement() {
@@ -1382,7 +1382,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a equal vectors (one with an implicit zero value).
+   * Test concurrentWith with a equal vectors (one with an implicit zero value).
    */
   @Test
   public void testConcurrentWith_ImplicitZeroEqual() {
@@ -1420,7 +1420,7 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a sequential vector (with an implicit zero value).
+   * Test concurrentWith with a sequential vector (with an implicit zero value).
    */
   @Test
   public void testConcurrentWith_ImplicitZeroSequential() {
