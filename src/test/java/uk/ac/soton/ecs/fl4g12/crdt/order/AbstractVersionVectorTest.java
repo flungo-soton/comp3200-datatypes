@@ -2260,6 +2260,482 @@ public class AbstractVersionVectorTest {
   }
 
   /**
+   * Test compareTo against a example vector a0.
+   */
+  @Test
+  public void testCompareTo_examples_a0() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a0");
+
+    assertEquals(0, instance.compareTo(examples.get("a0")));
+    assertEquals(-3, instance.compareTo(examples.get("a1")));
+    assertEquals(-3, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(0, instance.compareTo(examples.get("b0")));
+    assertEquals(-2, instance.compareTo(examples.get("b1")));
+    assertEquals(-2, instance.compareTo(examples.get("b2")));
+    assertEquals(-2, instance.compareTo(examples.get("b3")));
+    assertEquals(-3, instance.compareTo(examples.get("b4")));
+    assertEquals(-3, instance.compareTo(examples.get("b5")));
+    assertEquals(-0, instance.compareTo(examples.get("c0")));
+    assertEquals(-1, instance.compareTo(examples.get("c1")));
+    assertEquals(-2, instance.compareTo(examples.get("c2")));
+    assertEquals(-2, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector a1.
+   */
+  @Test
+  public void testCompareTo_examples_a1() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a1");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(0, instance.compareTo(examples.get("a1")));
+    assertEquals(-1, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(2, instance.compareTo(examples.get("b1")));
+    assertEquals(1, instance.compareTo(examples.get("b2")));
+    assertEquals(0, instance.compareTo(examples.get("b3")));
+    assertEquals(-2, instance.compareTo(examples.get("b4")));
+    assertEquals(-2, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(2, instance.compareTo(examples.get("c1")));
+    assertEquals(0, instance.compareTo(examples.get("c2")));
+    assertEquals(0, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector a2.
+   */
+  @Test
+  public void testCompareTo_examples_a2() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a2");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(1, instance.compareTo(examples.get("a1")));
+    assertEquals(0, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(2, instance.compareTo(examples.get("b1")));
+    assertEquals(1, instance.compareTo(examples.get("b2")));
+    assertEquals(0, instance.compareTo(examples.get("b3")));
+    assertEquals(-1, instance.compareTo(examples.get("b4")));
+    assertEquals(-1, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(2, instance.compareTo(examples.get("c1")));
+    assertEquals(0, instance.compareTo(examples.get("c2")));
+    assertEquals(0, instance.compareTo(examples.get("c3")));
+    assertEquals(-2, instance.compareTo(examples.get("c4")));
+    assertEquals(-2, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector a3.
+   */
+  @Test
+  public void testCompareTo_examples_a3() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a3");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(3, instance.compareTo(examples.get("a1")));
+    assertEquals(3, instance.compareTo(examples.get("a2")));
+    assertEquals(0, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(3, instance.compareTo(examples.get("b1")));
+    assertEquals(3, instance.compareTo(examples.get("b2")));
+    assertEquals(2, instance.compareTo(examples.get("b3")));
+    assertEquals(0, instance.compareTo(examples.get("b4")));
+    assertEquals(0, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(3, instance.compareTo(examples.get("c1")));
+    assertEquals(2, instance.compareTo(examples.get("c2")));
+    assertEquals(1, instance.compareTo(examples.get("c3")));
+    assertEquals(0, instance.compareTo(examples.get("c4")));
+    assertEquals(0, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector a4.
+   */
+  @Test
+  public void testCompareTo_examples_a4() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("a4");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(3, instance.compareTo(examples.get("a1")));
+    assertEquals(3, instance.compareTo(examples.get("a2")));
+    assertEquals(3, instance.compareTo(examples.get("a3")));
+    assertEquals(0, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(3, instance.compareTo(examples.get("b1")));
+    assertEquals(3, instance.compareTo(examples.get("b2")));
+    assertEquals(3, instance.compareTo(examples.get("b3")));
+    assertEquals(3, instance.compareTo(examples.get("b4")));
+    assertEquals(2, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(3, instance.compareTo(examples.get("c1")));
+    assertEquals(3, instance.compareTo(examples.get("c2")));
+    assertEquals(3, instance.compareTo(examples.get("c3")));
+    assertEquals(2, instance.compareTo(examples.get("c4")));
+    assertEquals(1, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector b0.
+   */
+  @Test
+  public void testCompareTo_examples_b0() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b0");
+
+    assertEquals(0, instance.compareTo(examples.get("a0")));
+    assertEquals(-3, instance.compareTo(examples.get("a1")));
+    assertEquals(-3, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(0, instance.compareTo(examples.get("b0")));
+    assertEquals(-2, instance.compareTo(examples.get("b1")));
+    assertEquals(-2, instance.compareTo(examples.get("b2")));
+    assertEquals(-2, instance.compareTo(examples.get("b3")));
+    assertEquals(-3, instance.compareTo(examples.get("b4")));
+    assertEquals(-3, instance.compareTo(examples.get("b5")));
+    assertEquals(0, instance.compareTo(examples.get("c0")));
+    assertEquals(-1, instance.compareTo(examples.get("c1")));
+    assertEquals(-2, instance.compareTo(examples.get("c2")));
+    assertEquals(-2, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector b1.
+   */
+  @Test
+  public void testCompareTo_examples_b1() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b1");
+
+    assertEquals(2, instance.compareTo(examples.get("a0")));
+    assertEquals(-2, instance.compareTo(examples.get("a1")));
+    assertEquals(-2, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(2, instance.compareTo(examples.get("b0")));
+    assertEquals(0, instance.compareTo(examples.get("b1")));
+    assertEquals(-1, instance.compareTo(examples.get("b2")));
+    assertEquals(-1, instance.compareTo(examples.get("b3")));
+    assertEquals(-2, instance.compareTo(examples.get("b4")));
+    assertEquals(-2, instance.compareTo(examples.get("b5")));
+    assertEquals(2, instance.compareTo(examples.get("c0")));
+    assertEquals(1, instance.compareTo(examples.get("c1")));
+    assertEquals(-2, instance.compareTo(examples.get("c2")));
+    assertEquals(-2, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector b2.
+   */
+  @Test
+  public void testCompareTo_examples_b2() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b2");
+
+    assertEquals(2, instance.compareTo(examples.get("a0")));
+    assertEquals(-1, instance.compareTo(examples.get("a1")));
+    assertEquals(-1, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(2, instance.compareTo(examples.get("b0")));
+    assertEquals(1, instance.compareTo(examples.get("b1")));
+    assertEquals(0, instance.compareTo(examples.get("b2")));
+    assertEquals(-1, instance.compareTo(examples.get("b3")));
+    assertEquals(-2, instance.compareTo(examples.get("b4")));
+    assertEquals(-2, instance.compareTo(examples.get("b5")));
+    assertEquals(2, instance.compareTo(examples.get("c0")));
+    assertEquals(1, instance.compareTo(examples.get("c1")));
+    assertEquals(-2, instance.compareTo(examples.get("c2")));
+    assertEquals(-2, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector b3.
+   */
+  @Test
+  public void testCompareTo_examples_b3() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b3");
+
+    assertEquals(2, instance.compareTo(examples.get("a0")));
+    assertEquals(0, instance.compareTo(examples.get("a1")));
+    assertEquals(0, instance.compareTo(examples.get("a2")));
+    assertEquals(-2, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(2, instance.compareTo(examples.get("b0")));
+    assertEquals(1, instance.compareTo(examples.get("b1")));
+    assertEquals(1, instance.compareTo(examples.get("b2")));
+    assertEquals(0, instance.compareTo(examples.get("b3")));
+    assertEquals(-2, instance.compareTo(examples.get("b4")));
+    assertEquals(-2, instance.compareTo(examples.get("b5")));
+    assertEquals(2, instance.compareTo(examples.get("c0")));
+    assertEquals(1, instance.compareTo(examples.get("c1")));
+    assertEquals(-1, instance.compareTo(examples.get("c2")));
+    assertEquals(-1, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector b4.
+   */
+  @Test
+  public void testCompareTo_examples_b4() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b4");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(2, instance.compareTo(examples.get("a1")));
+    assertEquals(1, instance.compareTo(examples.get("a2")));
+    assertEquals(0, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(2, instance.compareTo(examples.get("b1")));
+    assertEquals(2, instance.compareTo(examples.get("b2")));
+    assertEquals(2, instance.compareTo(examples.get("b3")));
+    assertEquals(0, instance.compareTo(examples.get("b4")));
+    assertEquals(-1, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(2, instance.compareTo(examples.get("c1")));
+    assertEquals(0, instance.compareTo(examples.get("c2")));
+    assertEquals(0, instance.compareTo(examples.get("c3")));
+    assertEquals(-2, instance.compareTo(examples.get("c4")));
+    assertEquals(-2, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector b5.
+   */
+  @Test
+  public void testCompareTo_examples_b5() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("b5");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(2, instance.compareTo(examples.get("a1")));
+    assertEquals(1, instance.compareTo(examples.get("a2")));
+    assertEquals(0, instance.compareTo(examples.get("a3")));
+    assertEquals(-2, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(2, instance.compareTo(examples.get("b1")));
+    assertEquals(2, instance.compareTo(examples.get("b2")));
+    assertEquals(2, instance.compareTo(examples.get("b3")));
+    assertEquals(1, instance.compareTo(examples.get("b4")));
+    assertEquals(0, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(2, instance.compareTo(examples.get("c1")));
+    assertEquals(0, instance.compareTo(examples.get("c2")));
+    assertEquals(0, instance.compareTo(examples.get("c3")));
+    assertEquals(-1, instance.compareTo(examples.get("c4")));
+    assertEquals(-1, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector c0.
+   */
+  @Test
+  public void testCompareTo_examples_c0() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c0");
+
+    assertEquals(0, instance.compareTo(examples.get("a0")));
+    assertEquals(-3, instance.compareTo(examples.get("a1")));
+    assertEquals(-3, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(0, instance.compareTo(examples.get("b0")));
+    assertEquals(-2, instance.compareTo(examples.get("b1")));
+    assertEquals(-2, instance.compareTo(examples.get("b2")));
+    assertEquals(-2, instance.compareTo(examples.get("b3")));
+    assertEquals(-3, instance.compareTo(examples.get("b4")));
+    assertEquals(-3, instance.compareTo(examples.get("b5")));
+    assertEquals(0, instance.compareTo(examples.get("c0")));
+    assertEquals(-1, instance.compareTo(examples.get("c1")));
+    assertEquals(-2, instance.compareTo(examples.get("c2")));
+    assertEquals(-2, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector c1.
+   */
+  @Test
+  public void testCompareTo_examples_c1() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c1");
+
+    assertEquals(1, instance.compareTo(examples.get("a0")));
+    assertEquals(-2, instance.compareTo(examples.get("a1")));
+    assertEquals(-2, instance.compareTo(examples.get("a2")));
+    assertEquals(-3, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(1, instance.compareTo(examples.get("b0")));
+    assertEquals(-1, instance.compareTo(examples.get("b1")));
+    assertEquals(-1, instance.compareTo(examples.get("b2")));
+    assertEquals(-1, instance.compareTo(examples.get("b3")));
+    assertEquals(-2, instance.compareTo(examples.get("b4")));
+    assertEquals(-2, instance.compareTo(examples.get("b5")));
+    assertEquals(1, instance.compareTo(examples.get("c0")));
+    assertEquals(0, instance.compareTo(examples.get("c1")));
+    assertEquals(-2, instance.compareTo(examples.get("c2")));
+    assertEquals(-2, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector c2.
+   */
+  @Test
+  public void testCompareTo_examples_c2() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c2");
+
+    assertEquals(2, instance.compareTo(examples.get("a0")));
+    assertEquals(0, instance.compareTo(examples.get("a1")));
+    assertEquals(0, instance.compareTo(examples.get("a2")));
+    assertEquals(-2, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(2, instance.compareTo(examples.get("b0")));
+    assertEquals(2, instance.compareTo(examples.get("b1")));
+    assertEquals(2, instance.compareTo(examples.get("b2")));
+    assertEquals(1, instance.compareTo(examples.get("b3")));
+    assertEquals(0, instance.compareTo(examples.get("b4")));
+    assertEquals(0, instance.compareTo(examples.get("b5")));
+    assertEquals(2, instance.compareTo(examples.get("c0")));
+    assertEquals(2, instance.compareTo(examples.get("c1")));
+    assertEquals(0, instance.compareTo(examples.get("c2")));
+    assertEquals(-1, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector c3.
+   */
+  @Test
+  public void testCompareTo_examples_c3() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c3");
+
+    assertEquals(2, instance.compareTo(examples.get("a0")));
+    assertEquals(0, instance.compareTo(examples.get("a1")));
+    assertEquals(0, instance.compareTo(examples.get("a2")));
+    assertEquals(-1, instance.compareTo(examples.get("a3")));
+    assertEquals(-3, instance.compareTo(examples.get("a4")));
+    assertEquals(2, instance.compareTo(examples.get("b0")));
+    assertEquals(2, instance.compareTo(examples.get("b1")));
+    assertEquals(2, instance.compareTo(examples.get("b2")));
+    assertEquals(1, instance.compareTo(examples.get("b3")));
+    assertEquals(0, instance.compareTo(examples.get("b4")));
+    assertEquals(0, instance.compareTo(examples.get("b5")));
+    assertEquals(2, instance.compareTo(examples.get("c0")));
+    assertEquals(2, instance.compareTo(examples.get("c1")));
+    assertEquals(1, instance.compareTo(examples.get("c2")));
+    assertEquals(0, instance.compareTo(examples.get("c3")));
+    assertEquals(-3, instance.compareTo(examples.get("c4")));
+    assertEquals(-3, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector c4.
+   */
+  @Test
+  public void testCompareTo_examples_c4() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c4");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(3, instance.compareTo(examples.get("a1")));
+    assertEquals(2, instance.compareTo(examples.get("a2")));
+    assertEquals(0, instance.compareTo(examples.get("a3")));
+    assertEquals(-2, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(3, instance.compareTo(examples.get("b1")));
+    assertEquals(3, instance.compareTo(examples.get("b2")));
+    assertEquals(3, instance.compareTo(examples.get("b3")));
+    assertEquals(2, instance.compareTo(examples.get("b4")));
+    assertEquals(1, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(3, instance.compareTo(examples.get("c1")));
+    assertEquals(3, instance.compareTo(examples.get("c2")));
+    assertEquals(3, instance.compareTo(examples.get("c3")));
+    assertEquals(0, instance.compareTo(examples.get("c4")));
+    assertEquals(-1, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
+   * Test compareTo against a example vector c5.
+   */
+  @Test
+  public void testCompareTo_examples_c5() {
+    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
+
+    AbstractVersionVector<String, Integer> instance = examples.get("c5");
+
+    assertEquals(3, instance.compareTo(examples.get("a0")));
+    assertEquals(3, instance.compareTo(examples.get("a1")));
+    assertEquals(2, instance.compareTo(examples.get("a2")));
+    assertEquals(0, instance.compareTo(examples.get("a3")));
+    assertEquals(-1, instance.compareTo(examples.get("a4")));
+    assertEquals(3, instance.compareTo(examples.get("b0")));
+    assertEquals(3, instance.compareTo(examples.get("b1")));
+    assertEquals(3, instance.compareTo(examples.get("b2")));
+    assertEquals(3, instance.compareTo(examples.get("b3")));
+    assertEquals(2, instance.compareTo(examples.get("b4")));
+    assertEquals(1, instance.compareTo(examples.get("b5")));
+    assertEquals(3, instance.compareTo(examples.get("c0")));
+    assertEquals(3, instance.compareTo(examples.get("c1")));
+    assertEquals(3, instance.compareTo(examples.get("c2")));
+    assertEquals(3, instance.compareTo(examples.get("c3")));
+    assertEquals(1, instance.compareTo(examples.get("c4")));
+    assertEquals(0, instance.compareTo(examples.get("c5")));
+  }
+
+  /**
    * Test if a vector constructed as dotted, is dotted.
    */
   @Test
