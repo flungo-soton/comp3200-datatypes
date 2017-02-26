@@ -102,7 +102,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
       T otherValue = other.get(id);
       if (otherValue == null) {
-        // If the node has not been seen by the other, then its value is zero.
+        // If the node has not been seen by the other, then its value is implicitly zero.
         otherValue = zero;
       }
 
@@ -115,8 +115,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
       }
     }
 
-    // TODO: Replace with !this.indentical(version)
-    return !this.equals(version);
+    return !this.identical(version);
   }
 
   private Integer compareToInternal(Version<Map<K, T>> version) {
@@ -135,12 +134,12 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
       // Get the local and other value for the current ID.
       T localValue = local.get(id);
       if (localValue == null) {
-        // If the node has not been seen locally, then its value is zero.
+        // If the node has not been seen locally, then its value is implicitly zero.
         localValue = zero;
       }
       T otherValue = other.get(id);
       if (otherValue == null) {
-        // If the node has not been seen by the other, then its value is zero.
+        // If the node has not been seen by the other, then its value is implicitly zero.
         otherValue = zero;
       }
 
@@ -179,6 +178,37 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   @Override
   public boolean isDotted() {
     return dotted;
+  }
+
+  @Override
+  public boolean identical(Version<Map<K, T>> version) {
+    // Get snapshot of each vector to work with
+    Map<K, T> local = get();
+    Map<K, T> other = version.get();
+    // TODO: Implement support for dotted vectors
+
+    // Merge all identifiers together
+    Set<K> identifiers = new HashSet(local.keySet());
+    identifiers.addAll(other.keySet());
+    for (K id : identifiers) {
+      // Get the local and other value for the current ID.
+      T localValue = local.get(id);
+      if (localValue == null) {
+        // If the node has not been seen locally, then its value is implicitly zero.
+        localValue = zero;
+      }
+      T otherValue = other.get(id);
+      if (otherValue == null) {
+        // If the node has not been seen by the other, then its value is implicitly zero.
+        otherValue = zero;
+      }
+
+      // If any values are not equal then the versions are not identical.
+      if (!localValue.equals(otherValue)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override

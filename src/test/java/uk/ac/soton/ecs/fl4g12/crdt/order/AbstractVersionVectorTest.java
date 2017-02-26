@@ -51,9 +51,9 @@ public class AbstractVersionVectorTest {
 
   /**
    * Create example vectors based on the WikiPedia example for vector clocks.
-   * 
+   *
    * https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Vector_Clock.svg/500px-Vector_Clock.svg.png
-   * 
+   *
    * @return a map of vector clocks.
    */
   private Map<String, AbstractVersionVector<String, Integer>> createExamples() {
@@ -669,15 +669,15 @@ public class AbstractVersionVectorTest {
     assertEquals(true, instance.happenedBefore(examples.get("a3")));
     assertEquals(true, instance.happenedBefore(examples.get("a4")));
     assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
+    assertEquals(true, instance.happenedBefore(examples.get("b1")));
+    assertEquals(true, instance.happenedBefore(examples.get("b2")));
+    assertEquals(true, instance.happenedBefore(examples.get("b3")));
     assertEquals(true, instance.happenedBefore(examples.get("b4")));
     assertEquals(true, instance.happenedBefore(examples.get("b5")));
     assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
+    assertEquals(true, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c2")));
+    assertEquals(true, instance.happenedBefore(examples.get("c3")));
     assertEquals(true, instance.happenedBefore(examples.get("c4")));
     assertEquals(true, instance.happenedBefore(examples.get("c5")));
   }
@@ -815,7 +815,7 @@ public class AbstractVersionVectorTest {
     assertEquals(true, instance.happenedBefore(examples.get("b4")));
     assertEquals(true, instance.happenedBefore(examples.get("b5")));
     assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
+    assertEquals(true, instance.happenedBefore(examples.get("c1")));
     assertEquals(true, instance.happenedBefore(examples.get("c2")));
     assertEquals(true, instance.happenedBefore(examples.get("c3")));
     assertEquals(true, instance.happenedBefore(examples.get("c4")));

@@ -40,6 +40,11 @@ public abstract class AbstractVersion<T> implements Version<T> {
   }
 
   @Override
+  public boolean identical(Version<T> version) {
+    return this.get().equals(version.get());
+  }
+
+  @Override
   public int hashCode() {
     return get().hashCode();
   }
@@ -52,7 +57,7 @@ public abstract class AbstractVersion<T> implements Version<T> {
     if (obj == null) {
       return false;
     }
-    if (!(obj instanceof Version)) {
+    if (this.getClass() != obj.getClass()) {
       return false;
     }
     final Version other = (Version) obj;

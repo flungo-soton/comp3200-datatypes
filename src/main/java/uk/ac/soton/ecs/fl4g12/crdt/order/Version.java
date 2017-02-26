@@ -72,7 +72,26 @@ public interface Version<T> extends Comparable<Version<T>> {
   void sync(T timestamp);
 
   /**
-   * Checks if the {@linkplain Version} is equal to the provided version.
+   * Checks if two versions are identical. This method compares the state of the two versions and
+   * will allow implicitly identical versions and versions of different implementations (unlike the
+   * {@link #equals(java.lang.Object)} method).
+   *
+   * Due to the allowance of implicitly identical versions, this method may not be symmetric if the
+   * two versions do not implement the same implicit semantics.
+   *
+   * @param version the version to compare with.
+   * @return whether the provided version is identical to this version.
+   */
+  boolean identical(Version<T> version);
+
+  /**
+   * Checks if the {@linkplain Version} is strictly identical and of the same type to the provided
+   * version.
+   *
+   * Strictly identical means that implicit values will not be considered and so not all
+   * {@link #identical(uk.ac.soton.ecs.fl4g12.crdt.order.Version)} objects of the same type will be
+   * {@linkplain #equals(java.lang.Object)}. This behaviour is to ensure the fulfilment of the
+   * {@link Object#Object()} and {@link Object#hashCode()} contracts.
    *
    * @param obj the object to evaluate equality with.
    * @return {@code true} if this {@linkplain Version} and the {@code other} {@linkplain Version}
