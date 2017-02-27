@@ -35,11 +35,21 @@ import org.junit.rules.ExpectedException;
 /**
  * Tests for the {@linkplain IntegerVersion} class.
  */
-public class IntegerVersionTest {
+public class IntegerVersionTest extends VersionAbstractTest<Integer, IntegerVersion> {
 
   private static final Logger LOGGER = Logger.getLogger(IntegerVersionTest.class.getName());
 
   private static final Integer MAX_ITTERATIONS = 100;
+
+  @Override
+  public IntegerVersion getVersion(int order) {
+    return new IntegerVersion(getTimestamp(order));
+  }
+
+  @Override
+  public Integer getTimestamp(int order) {
+    return order == 0 ? 0 : 1 << (order - 1);
+  }
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();

@@ -35,11 +35,21 @@ import org.junit.rules.ExpectedException;
 /**
  * Tests for the {@link LongVersion} class.
  */
-public class LongVersionTest {
+public class LongVersionTest extends VersionAbstractTest<Long, LongVersion> {
 
   private static final Logger LOGGER = Logger.getLogger(LongVersionTest.class.getName());
 
   private static final Long MAX_ITTERATIONS = 100l;
+
+  @Override
+  public LongVersion getVersion(int order) {
+    return new LongVersion(getTimestamp(order));
+  }
+
+  @Override
+  public Long getTimestamp(int order) {
+    return order == 0 ? 0 : 1l << (order - 1);
+  }
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
