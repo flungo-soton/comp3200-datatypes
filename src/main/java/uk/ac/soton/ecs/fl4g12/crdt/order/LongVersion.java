@@ -21,16 +21,32 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an
- * {@link AtomicInteger} to ensure the thread safety of the version.
+ * {@link AtomicLong} to ensure the thread safety of the version.
  */
 public class LongVersion extends AbstractLogicalVersion<Long> {
 
-  private AtomicLong timestamp = new AtomicLong();
+  private final AtomicLong timestamp;
+
+  /**
+   * Construct a zero-initialised {@linkplain LongVersion}.
+   */
+  public LongVersion() {
+    timestamp = new AtomicLong();
+  }
+
+  /**
+   * Construct an {@linkplain LongVersion} with a given initial timestamp. This is designed only to
+   * be used for testing and cloning.
+   *
+   * @param timestamp the initial value of the {@linkplain LongVersion}.
+   */
+  LongVersion(long timestamp) {
+    this.timestamp = new AtomicLong(timestamp);
+  }
 
   @Override
   public Long get() {
@@ -60,9 +76,7 @@ public class LongVersion extends AbstractLogicalVersion<Long> {
 
   @Override
   public LongVersion copy() {
-    LongVersion copy = new LongVersion();
-    copy.timestamp = new AtomicLong(get());
-    return copy;
+    return new LongVersion(get());
   }
 
 }

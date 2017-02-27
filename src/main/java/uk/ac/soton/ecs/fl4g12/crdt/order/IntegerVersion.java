@@ -29,7 +29,24 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class IntegerVersion extends AbstractLogicalVersion<Integer> {
 
-  private AtomicInteger timestamp = new AtomicInteger();
+  private final AtomicInteger timestamp;
+
+  /**
+   * Construct a zero-initialised {@linkplain IntegerVersion}.
+   */
+  public IntegerVersion() {
+    timestamp = new AtomicInteger();
+  }
+
+  /**
+   * Construct an {@linkplain IntegerVersion} with a given initial timestamp. This is designed only
+   * to be used for testing and cloning.
+   *
+   * @param timestamp the initial value of the {@linkplain IntegerVersion}.
+   */
+  IntegerVersion(int timestamp) {
+    this.timestamp = new AtomicInteger(timestamp);
+  }
 
   @Override
   public Integer get() {
@@ -59,9 +76,7 @@ public class IntegerVersion extends AbstractLogicalVersion<Integer> {
 
   @Override
   public IntegerVersion copy() {
-    IntegerVersion copy = new IntegerVersion();
-    copy.timestamp = new AtomicInteger(get());
-    return copy;
+    return new IntegerVersion(get());
   }
 
 }
