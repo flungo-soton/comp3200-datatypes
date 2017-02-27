@@ -348,11 +348,12 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test happenedBefore with equal vectors.
+   * Test happenedBefore with identical vectors.
    */
   @Test
-  public void testHappenedBefore_Equal() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_Equal: Test happenedBefore with equal vectors");
+  public void testHappenedBefore_Identical() {
+    LOGGER.log(Level.INFO,
+        "testHappenedBefore_Identical: Test happenedBefore with identical vectors");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -599,12 +600,12 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test happenedBefore with a equal vectors (one with an implicit zero value).
+   * Test happenedBefore with a identical vectors (one with an implicit zero value).
    */
   @Test
-  public void testHappenedBefore_ImplicitZeroEqual() {
-    LOGGER.log(Level.INFO, "testHappenedBefore_ImplicitZeroEqual: "
-        + "Test happenedBefore with a equal vectors (one with an implicit zero value)");
+  public void testHappenedBefore_ImplicitZeroIdentical() {
+    LOGGER.log(Level.INFO, "testHappenedBefore_ImplicitZeroIdentical: "
+        + "Test happenedBefore with a identical vectors (one with an implicit zero value)");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -1151,11 +1152,12 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test concurrentWith for equal vectors.
+   * Test concurrentWith for identical vectors.
    */
   @Test
-  public void testConcurrentWith_Equal() {
-    LOGGER.log(Level.INFO, "testConcurrentWith_Equal: Test concurrentWith for equal vectors");
+  public void testConcurrentWith_Identical() {
+    LOGGER.log(Level.INFO,
+        "testConcurrentWith_Identical: Test concurrentWith for identical vectors");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -1402,12 +1404,12 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test concurrentWith with a equal vectors (one with an implicit zero value).
+   * Test concurrentWith with a identical vectors (one with an implicit zero value).
    */
   @Test
-  public void testConcurrentWith_ImplicitZeroEqual() {
-    LOGGER.log(Level.INFO, "testConcurrentWith_ImplicitZeroEqual: "
-        + "Test concurrentWith with a equal vectors (one with an implicit zero value)");
+  public void testConcurrentWith_ImplicitZeroIdentical() {
+    LOGGER.log(Level.INFO, "testConcurrentWith_ImplicitZeroIdentical: "
+        + "Test concurrentWith with a identical vectors (one with an implicit zero value)");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -1954,11 +1956,11 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with equal vectors.
+   * Test compareTo with identical vectors.
    */
   @Test
-  public void testCompareTo_Equal() {
-    LOGGER.log(Level.INFO, "testCompareTo_Equal: Test compareTo with equal vectors");
+  public void testCompareTo_Identical() {
+    LOGGER.log(Level.INFO, "testCompareTo_Identical: Test compareTo with identical vectors");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -2204,12 +2206,12 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo with a equal vectors (one with an implicit zero value).
+   * Test compareTo with a identical vectors (one with an implicit zero value).
    */
   @Test
-  public void testCompareTo_ImplicitZeroEqual() {
-    LOGGER.log(Level.INFO, "testCompareTo_ImplicitZeroEqual: "
-        + "Test compareTo with a equal vectors (one with an implicit zero value)");
+  public void testCompareTo_ImplicitZeroIdentical() {
+    LOGGER.log(Level.INFO, "testCompareTo_ImplicitZeroIdentical: "
+        + "Test compareTo with a identical vectors (one with an implicit zero value)");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -2246,7 +2248,7 @@ public class AbstractVersionVectorTest {
    */
   @Test
   public void testCompareTo_ImplicitZeroSequential() {
-    LOGGER.log(Level.INFO, "testCompareTo_ImplicitZeroEqual: "
+    LOGGER.log(Level.INFO, "testCompareTo_ImplicitZeroIdentical: "
         + "Test compareTo with a sequential vector (with an implicit zero value)");
 
     // Constants for the test
