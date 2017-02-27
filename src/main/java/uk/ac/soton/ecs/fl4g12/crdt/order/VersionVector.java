@@ -49,7 +49,8 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   Map<K, T> get();
 
   /**
-   * Gets the current timestamp of the vector for a given identifier.
+   * Gets the current timestamp of the vector for a given identifier. If the {@code id} is not
+   * initialised, then its value will implicitly be {@code zero}.
    *
    * @param id the identifier which the timestamp should be returned for.
    * @return the timestamp from the vector for the specified identifier.
@@ -57,7 +58,7 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   T get(K id);
 
   /**
-   * Gets a set of identifiers contained within this vector.
+   * Gets a set of initialised identifiers contained within this vector.
    *
    * @return the set of identifiers which this vector contains.
    */
@@ -72,7 +73,8 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   void init(K id);
 
   /**
-   * Increments the timestamp for the node represented by the given identifier.
+   * Increments the timestamp for the node represented by the given identifier. Only the local id
+   * should be incremented.
    *
    * @param id the id of the node who's timestamp is to be incremented.
    */

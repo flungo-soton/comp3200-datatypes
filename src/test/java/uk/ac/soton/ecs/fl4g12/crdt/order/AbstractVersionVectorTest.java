@@ -174,8 +174,8 @@ public class AbstractVersionVectorTest {
    * Test that get uses the getInternal method.
    */
   @Test
-  public void testGet_GenericType() {
-    LOGGER.log(Level.INFO, "testGet_GenericType: Test that get uses the getInternal method.");
+  public void testGet_Initialised() {
+    LOGGER.log(Level.INFO, "testGet_Initialised: Test that get uses the getInternal method");
 
     // Constants for the test
     final Object id = new Object();
@@ -195,12 +195,33 @@ public class AbstractVersionVectorTest {
   }
 
   /**
+   * Test that get returns zero when uninitialised.
+   */
+  @Test
+  public void testGet_Uninitialised() {
+    LOGGER.log(Level.INFO, "testGet_Uninitialised: Test that get returns zero when uninitialised");
+
+    // Constants for the test
+    final Object id = new Object();
+    final Integer value = 0;
+
+    // Setup the mock
+    AbstractVersionVector instance = Mockito.spy(new TestVersionVector());
+    Mockito.doReturn(null).when(instance).getInternal(Mockito.any());
+
+    // Test the get method
+    Object result = instance.get(id);
+    Mockito.verify(instance).getInternal(id);
+    assertEquals("The value returned should be the expected value.", value, result);
+  }
+
+  /**
    * Test that get with no-args returns a constructed map.
    */
   @Test
   public void testGet_0args() {
     LOGGER.log(Level.INFO,
-        "testGet_GenericType: Test that get with no-args returns a constructed map.");
+        "testGet_GenericType: Test that get with no-args returns a constructed map");
 
     // Constants for the test
     final Object id1 = new Object();
@@ -242,13 +263,17 @@ public class AbstractVersionVectorTest {
     LOGGER.log(Level.INFO,
         "testIncrement_Uninitialised: Test increment for an uninitialised id in the vector");
 
+    // Constants for the test
+    final Object id = new Object();
+
     // Setup the mock
     AbstractVersionVector instance = Mockito.spy(new TestVersionVector());
     Mockito.doReturn(new HashSet(0)).when(instance).getIdentifiers();
+    Mockito.doReturn(null).when(instance).getInternal(id);
 
     // Test the method
     thrown.expect(IllegalArgumentException.class);
-    instance.increment(1);
+    instance.increment(id);
   }
 
   /**
