@@ -53,11 +53,18 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     this.dotted = dotted;
   }
 
+  /**
+   * Get the {@linkplain LogicalVersion} being used to track the version of the given id.
+   *
+   * @param id the identifier which the timestamp should be returned for.
+   * @return the {@link LogicalVersion} being used internally, or null if not initialised.
+   */
   protected abstract LogicalVersion<T> getInternal(K id);
 
   @Override
   public T get(K id) {
-    return getInternal(id).get();
+    LogicalVersion<T> internalVersion = getInternal(id);
+    return internalVersion == null ? zero : internalVersion.get();
   }
 
   @Override
@@ -71,11 +78,12 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
   @Override
   public void increment(K id) {
-    if (!getIdentifiers().contains(id)) {
+    LogicalVersion<T> internalVersion = getInternal(id);
+    if (internalVersion == null) {
       throw new IllegalArgumentException(
           "Provided ID has not been initialised as part of the vector.");
     }
-    getInternal(id).increment();
+    internalVersion.increment();
   }
 
   @Override
