@@ -182,8 +182,7 @@ public class AbstractVersionVectorTest {
     final Integer value = 1;
 
     // Setup the mock
-    AbstractVersionVector instance =
-        Mockito.mock(TestVersionVector.class, Mockito.CALLS_REAL_METHODS);
+    AbstractVersionVector instance = Mockito.spy(new TestVersionVector());
     LogicalVersion logicalVersion = Mockito.mock(LogicalVersion.class);
     Mockito.doReturn(logicalVersion).when(instance).getInternal(id);
     Mockito.doReturn(value).when(logicalVersion).get();
@@ -218,8 +217,7 @@ public class AbstractVersionVectorTest {
     expResult.put(id3, value3);
 
     // Setup the mock
-    AbstractVersionVector instance =
-        Mockito.mock(TestVersionVector.class, Mockito.CALLS_REAL_METHODS);
+    AbstractVersionVector instance = Mockito.spy(new TestVersionVector());
     LogicalVersion logicalVersion1 = Mockito.mock(LogicalVersion.class);
     LogicalVersion logicalVersion2 = Mockito.mock(LogicalVersion.class);
     LogicalVersion logicalVersion3 = Mockito.mock(LogicalVersion.class);
@@ -245,8 +243,7 @@ public class AbstractVersionVectorTest {
         "testIncrement_Uninitialised: Test increment for an uninitialised id in the vector");
 
     // Setup the mock
-    AbstractVersionVector instance =
-        Mockito.mock(TestVersionVector.class, Mockito.CALLS_REAL_METHODS);
+    AbstractVersionVector instance = Mockito.spy(new TestVersionVector());
     Mockito.doReturn(new HashSet(0)).when(instance).getIdentifiers();
 
     // Test the method
@@ -268,8 +265,7 @@ public class AbstractVersionVectorTest {
     final Integer value2 = 2;
 
     // Setup the mock
-    AbstractVersionVector instance =
-        Mockito.mock(TestVersionVector.class, Mockito.CALLS_REAL_METHODS);
+    AbstractVersionVector instance = Mockito.spy(new TestVersionVector());
     LogicalVersion logicalVersion1 = Mockito.mock(LogicalVersion.class);
     LogicalVersion logicalVersion2 = Mockito.mock(LogicalVersion.class);
     LogicalVersion logicalVersion3 = Mockito.mock(LogicalVersion.class);
@@ -312,8 +308,7 @@ public class AbstractVersionVectorTest {
     expResult.put(id3, value3);
 
     // Setup the mock
-    AbstractVersionVector instance =
-        Mockito.mock(TestVersionVector.class, Mockito.CALLS_REAL_METHODS);
+    AbstractVersionVector instance = Mockito.spy(new TestVersionVector());
     Mockito.doNothing().when(instance).sync(Mockito.any(), Mockito.any(Integer.class));
 
     // Do the sync
