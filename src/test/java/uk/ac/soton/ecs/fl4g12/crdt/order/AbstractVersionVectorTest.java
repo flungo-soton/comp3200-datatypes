@@ -1422,6 +1422,9 @@ public class AbstractVersionVectorTest
 
     @Override
     protected LogicalVersion<T> getInternal(final K id) {
+      if (!vector.containsKey(id)) {
+        return null;
+      }
       return new AbstractLogicalVersion<T>() {
         @Override
         public AbstractLogicalVersion<T> copy() {
@@ -1431,8 +1434,7 @@ public class AbstractVersionVectorTest
 
         @Override
         public T get() {
-          T value = vector.get(id);
-          return value == null ? zero : value;
+          return vector.get(id);
         }
 
         @Override
