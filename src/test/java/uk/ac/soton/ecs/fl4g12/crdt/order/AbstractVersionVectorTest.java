@@ -1412,10 +1412,12 @@ public class AbstractVersionVectorTest
       extends AbstractVersionVector<K, T> {
 
     private final Map<K, T> vector;
+    private final T zero;
 
     public ImmutableMapVersionVector(Map<K, T> vector, T zero, boolean dotted) {
       super(zero, dotted);
       this.vector = new HashMap<>(vector);
+      this.zero = zero;
     }
 
     @Override
@@ -1429,7 +1431,8 @@ public class AbstractVersionVectorTest
 
         @Override
         public T get() {
-          return vector.get(id);
+          T value = vector.get(id);
+          return value == null ? zero : value;
         }
 
         @Override
