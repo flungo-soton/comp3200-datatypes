@@ -22,6 +22,7 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.SafeAtomicInteger;
 
 /**
  * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an
@@ -29,13 +30,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class IntegerVersion extends AbstractLogicalVersion<Integer> {
 
-  private final AtomicInteger timestamp;
+  private final SafeAtomicInteger timestamp;
 
   /**
    * Construct a zero-initialised {@linkplain IntegerVersion}.
    */
   public IntegerVersion() {
-    timestamp = new AtomicInteger();
+    timestamp = new SafeAtomicInteger();
   }
 
   /**
@@ -45,7 +46,7 @@ public class IntegerVersion extends AbstractLogicalVersion<Integer> {
    * @param timestamp the initial value of the {@linkplain IntegerVersion}.
    */
   IntegerVersion(int timestamp) {
-    this.timestamp = new AtomicInteger(timestamp);
+    this.timestamp = new SafeAtomicInteger(timestamp);
   }
 
   @Override
@@ -55,7 +56,7 @@ public class IntegerVersion extends AbstractLogicalVersion<Integer> {
 
   @Override
   public void increment() {
-    timestamp.incrementAndGet();
+    timestamp.safeIncrementAndGet();
   }
 
   @Override

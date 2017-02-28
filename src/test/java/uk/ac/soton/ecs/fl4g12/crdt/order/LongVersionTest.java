@@ -102,7 +102,8 @@ public class LongVersionTest extends VersionAbstractTest<Long, LongVersion> {
     LOGGER.log(Level.INFO,
         "testIncrement_MAX_VALUE: Testing incrementing the version beyond the MAX_VALUE");
     instance.sync(Long.MAX_VALUE);
-    thrown.expect(VersionOverflowException.class);
+    thrown.expect(ArithmeticException.class);
+    thrown.expectMessage("overflow");
     instance.increment();
   }
 

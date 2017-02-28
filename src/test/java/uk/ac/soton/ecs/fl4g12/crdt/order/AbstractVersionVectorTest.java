@@ -2848,7 +2848,7 @@ public class AbstractVersionVectorTest {
         }
 
         @Override
-        public void increment() throws VersionOverflowException {
+        public void increment() {
           throw new UnsupportedOperationException("Cannot be mutated.");
         }
       };
