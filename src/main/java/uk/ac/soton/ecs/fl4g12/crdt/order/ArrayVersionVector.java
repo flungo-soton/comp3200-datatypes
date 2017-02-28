@@ -23,6 +23,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * {@linkplain VersionVector} backed by an {@linkplain ArrayList}. This is particularly useful where
@@ -35,8 +37,8 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
 
   private final LogicalVersion<T> zero;
 
-  private final ArrayList<LogicalVersion<T>> vector;
-  private final HashSet<Integer> identifiers;
+  private final List<LogicalVersion<T>> vector;
+  private final Set<Integer> identifiers;
 
   /**
    * Construct an {@linkplain ArrayVersionVector}. The {@link LogicalVersion} provided as
@@ -47,10 +49,15 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
    * @param dotted whether or not this is a dotted {@link VersionVector}.
    */
   public ArrayVersionVector(LogicalVersion<T> zero, boolean dotted) {
+    this(zero, dotted, new ArrayList<LogicalVersion<T>>(), new HashSet<Integer>());
+  }
+
+  ArrayVersionVector(LogicalVersion<T> zero, boolean dotted, List<LogicalVersion<T>> vector,
+      Set<Integer> identifiers) {
     super(zero.get(), dotted);
     this.zero = zero.copy();
-    this.vector = new ArrayList<>();
-    this.identifiers = new HashSet<>();
+    this.vector = vector;
+    this.identifiers = identifiers;
   }
 
   @Override

@@ -48,9 +48,13 @@ public class HashVersionVector<K, T extends Comparable<T>> extends AbstractVersi
    * @param dotted whether or not this is a dotted {@link VersionVector}.
    */
   public HashVersionVector(LogicalVersion<T> zero, boolean dotted) {
+    this(zero, dotted, new HashMap<K, LogicalVersion<T>>());
+  }
+
+  HashVersionVector(LogicalVersion<T> zero, boolean dotted, HashMap<K, LogicalVersion<T>> vector) {
     super(zero.get(), dotted);
     this.zero = zero.copy();
-    this.vector = new HashMap<>();
+    this.vector = vector;
   }
 
   @Override

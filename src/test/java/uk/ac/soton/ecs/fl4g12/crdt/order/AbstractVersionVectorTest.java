@@ -35,13 +35,31 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 /**
- *
+ * Tests for {@linkplain AbstractVersionTest}.
  */
-public class AbstractVersionVectorTest {
+public class AbstractVersionVectorTest
+    extends VersionVectorAbstractTest<Integer, VersionVector<Integer, Integer>> {
 
   private static final Logger LOGGER = Logger.getLogger(AbstractVersionTest.class.getName());
 
   public AbstractVersionVectorTest() {}
+
+  @Override
+  protected VersionVector<Integer, Integer> getVersion(String id) {
+    return new ImmutableMapVersionVector<>(getTimestamp(id), 0, false);
+  }
+
+  @Override
+  public VersionVector<Integer, Integer> getVersion(int order) {
+    return new ImmutableMapVersionVector<>(getTimestamp(order), 0, false);
+  }
+
+  @Override
+  protected Integer getKey(int index) {
+    return index;
+  }
+
+
 
   private HashVersionVector<Integer, Long> hashVersionVector;
   private ArrayVersionVector<Long> arrayVersionVector;
@@ -676,482 +694,6 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test happenedBefore against a example vector a0.
-   */
-  @Test
-  public void testHappenedBefore_examples_a0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a0");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(true, instance.happenedBefore(examples.get("a1")));
-    assertEquals(true, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(true, instance.happenedBefore(examples.get("b1")));
-    assertEquals(true, instance.happenedBefore(examples.get("b2")));
-    assertEquals(true, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(true, instance.happenedBefore(examples.get("c1")));
-    assertEquals(true, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector a1.
-   */
-  @Test
-  public void testHappenedBefore_examples_a1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a1");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(true, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector a2.
-   */
-  @Test
-  public void testHappenedBefore_examples_a2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a2");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector a3.
-   */
-  @Test
-  public void testHappenedBefore_examples_a3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a3");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(false, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(false, instance.happenedBefore(examples.get("c4")));
-    assertEquals(false, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector a4.
-   */
-  @Test
-  public void testHappenedBefore_examples_a4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a4");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(false, instance.happenedBefore(examples.get("a3")));
-    assertEquals(false, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(false, instance.happenedBefore(examples.get("c4")));
-    assertEquals(false, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector b0.
-   */
-  @Test
-  public void testHappenedBefore_examples_b0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b0");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(true, instance.happenedBefore(examples.get("a1")));
-    assertEquals(true, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(true, instance.happenedBefore(examples.get("b1")));
-    assertEquals(true, instance.happenedBefore(examples.get("b2")));
-    assertEquals(true, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(true, instance.happenedBefore(examples.get("c1")));
-    assertEquals(true, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector b1.
-   */
-  @Test
-  public void testHappenedBefore_examples_b1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b1");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(true, instance.happenedBefore(examples.get("a1")));
-    assertEquals(true, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(true, instance.happenedBefore(examples.get("b2")));
-    assertEquals(true, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(true, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector b2.
-   */
-  @Test
-  public void testHappenedBefore_examples_b2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b2");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(true, instance.happenedBefore(examples.get("a1")));
-    assertEquals(true, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(true, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(true, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector b3.
-   */
-  @Test
-  public void testHappenedBefore_examples_b3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b3");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(true, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector b4.
-   */
-  @Test
-  public void testHappenedBefore_examples_b4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b4");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(false, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector b5.
-   */
-  @Test
-  public void testHappenedBefore_examples_b5() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b5");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(false, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector c0.
-   */
-  @Test
-  public void testHappenedBefore_examples_c0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c0");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(true, instance.happenedBefore(examples.get("a1")));
-    assertEquals(true, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(true, instance.happenedBefore(examples.get("b1")));
-    assertEquals(true, instance.happenedBefore(examples.get("b2")));
-    assertEquals(true, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(true, instance.happenedBefore(examples.get("c1")));
-    assertEquals(true, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector c1.
-   */
-  @Test
-  public void testHappenedBefore_examples_c1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c1");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(true, instance.happenedBefore(examples.get("a1")));
-    assertEquals(true, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(true, instance.happenedBefore(examples.get("b1")));
-    assertEquals(true, instance.happenedBefore(examples.get("b2")));
-    assertEquals(true, instance.happenedBefore(examples.get("b3")));
-    assertEquals(true, instance.happenedBefore(examples.get("b4")));
-    assertEquals(true, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(true, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector c2.
-   */
-  @Test
-  public void testHappenedBefore_examples_c2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c2");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(true, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector c3.
-   */
-  @Test
-  public void testHappenedBefore_examples_c3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c3");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(true, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(true, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector c4.
-   */
-  @Test
-  public void testHappenedBefore_examples_c4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c4");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(false, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(false, instance.happenedBefore(examples.get("c4")));
-    assertEquals(true, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
-   * Test happenedBefore against a example vector c5.
-   */
-  @Test
-  public void testHappenedBefore_examples_c5() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c5");
-
-    assertEquals(false, instance.happenedBefore(examples.get("a0")));
-    assertEquals(false, instance.happenedBefore(examples.get("a1")));
-    assertEquals(false, instance.happenedBefore(examples.get("a2")));
-    assertEquals(false, instance.happenedBefore(examples.get("a3")));
-    assertEquals(true, instance.happenedBefore(examples.get("a4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b0")));
-    assertEquals(false, instance.happenedBefore(examples.get("b1")));
-    assertEquals(false, instance.happenedBefore(examples.get("b2")));
-    assertEquals(false, instance.happenedBefore(examples.get("b3")));
-    assertEquals(false, instance.happenedBefore(examples.get("b4")));
-    assertEquals(false, instance.happenedBefore(examples.get("b5")));
-    assertEquals(false, instance.happenedBefore(examples.get("c0")));
-    assertEquals(false, instance.happenedBefore(examples.get("c1")));
-    assertEquals(false, instance.happenedBefore(examples.get("c2")));
-    assertEquals(false, instance.happenedBefore(examples.get("c3")));
-    assertEquals(false, instance.happenedBefore(examples.get("c4")));
-    assertEquals(false, instance.happenedBefore(examples.get("c5")));
-  }
-
-  /**
    * Test concurrentWith for identical vectors.
    */
   @Test
@@ -1477,482 +1019,6 @@ public class AbstractVersionVectorTest {
     // Make assertions
     assertEquals(expResult, result1);
     assertEquals(expResult, result2);
-  }
-
-  /**
-   * Test concurrentWith against a example vector a0.
-   */
-  @Test
-  public void testConcurrentWith_examples_a0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a0");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector a1.
-   */
-  @Test
-  public void testConcurrentWith_examples_a1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a1");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(true, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(true, instance.concurrentWith(examples.get("c2")));
-    assertEquals(true, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector a2.
-   */
-  @Test
-  public void testConcurrentWith_examples_a2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a2");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(true, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(true, instance.concurrentWith(examples.get("c2")));
-    assertEquals(true, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector a3.
-   */
-  @Test
-  public void testConcurrentWith_examples_a3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a3");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(true, instance.concurrentWith(examples.get("b4")));
-    assertEquals(true, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(true, instance.concurrentWith(examples.get("c4")));
-    assertEquals(true, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector a4.
-   */
-  @Test
-  public void testConcurrentWith_examples_a4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a4");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector b0.
-   */
-  @Test
-  public void testConcurrentWith_examples_b0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b0");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector b1.
-   */
-  @Test
-  public void testConcurrentWith_examples_b1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b1");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector b2.
-   */
-  @Test
-  public void testConcurrentWith_examples_b2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b2");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector b3.
-   */
-  @Test
-  public void testConcurrentWith_examples_b3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b3");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(true, instance.concurrentWith(examples.get("a1")));
-    assertEquals(true, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector b4.
-   */
-  @Test
-  public void testConcurrentWith_examples_b4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b4");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(true, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(true, instance.concurrentWith(examples.get("c2")));
-    assertEquals(true, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector b5.
-   */
-  @Test
-  public void testConcurrentWith_examples_b5() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b5");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(true, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(true, instance.concurrentWith(examples.get("c2")));
-    assertEquals(true, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector c0.
-   */
-  @Test
-  public void testConcurrentWith_examples_c0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c0");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector c1.
-   */
-  @Test
-  public void testConcurrentWith_examples_c1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c1");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector c2.
-   */
-  @Test
-  public void testConcurrentWith_examples_c2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c2");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(true, instance.concurrentWith(examples.get("a1")));
-    assertEquals(true, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(true, instance.concurrentWith(examples.get("b4")));
-    assertEquals(true, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector c3.
-   */
-  @Test
-  public void testConcurrentWith_examples_c3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c3");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(true, instance.concurrentWith(examples.get("a1")));
-    assertEquals(true, instance.concurrentWith(examples.get("a2")));
-    assertEquals(false, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(true, instance.concurrentWith(examples.get("b4")));
-    assertEquals(true, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector c4.
-   */
-  @Test
-  public void testConcurrentWith_examples_c4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c4");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(true, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
-  }
-
-  /**
-   * Test concurrentWith against a example vector c5.
-   */
-  @Test
-  public void testConcurrentWith_examples_c5() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c5");
-
-    assertEquals(false, instance.concurrentWith(examples.get("a0")));
-    assertEquals(false, instance.concurrentWith(examples.get("a1")));
-    assertEquals(false, instance.concurrentWith(examples.get("a2")));
-    assertEquals(true, instance.concurrentWith(examples.get("a3")));
-    assertEquals(false, instance.concurrentWith(examples.get("a4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b0")));
-    assertEquals(false, instance.concurrentWith(examples.get("b1")));
-    assertEquals(false, instance.concurrentWith(examples.get("b2")));
-    assertEquals(false, instance.concurrentWith(examples.get("b3")));
-    assertEquals(false, instance.concurrentWith(examples.get("b4")));
-    assertEquals(false, instance.concurrentWith(examples.get("b5")));
-    assertEquals(false, instance.concurrentWith(examples.get("c0")));
-    assertEquals(false, instance.concurrentWith(examples.get("c1")));
-    assertEquals(false, instance.concurrentWith(examples.get("c2")));
-    assertEquals(false, instance.concurrentWith(examples.get("c3")));
-    assertEquals(false, instance.concurrentWith(examples.get("c4")));
-    assertEquals(false, instance.concurrentWith(examples.get("c5")));
   }
 
   /**
@@ -2282,482 +1348,6 @@ public class AbstractVersionVectorTest {
   }
 
   /**
-   * Test compareTo against a example vector a0.
-   */
-  @Test
-  public void testCompareTo_examples_a0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a0");
-
-    assertEquals(0, instance.compareTo(examples.get("a0")));
-    assertEquals(-3, instance.compareTo(examples.get("a1")));
-    assertEquals(-3, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(0, instance.compareTo(examples.get("b0")));
-    assertEquals(-2, instance.compareTo(examples.get("b1")));
-    assertEquals(-2, instance.compareTo(examples.get("b2")));
-    assertEquals(-2, instance.compareTo(examples.get("b3")));
-    assertEquals(-3, instance.compareTo(examples.get("b4")));
-    assertEquals(-3, instance.compareTo(examples.get("b5")));
-    assertEquals(-0, instance.compareTo(examples.get("c0")));
-    assertEquals(-1, instance.compareTo(examples.get("c1")));
-    assertEquals(-2, instance.compareTo(examples.get("c2")));
-    assertEquals(-2, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector a1.
-   */
-  @Test
-  public void testCompareTo_examples_a1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a1");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(0, instance.compareTo(examples.get("a1")));
-    assertEquals(-1, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(2, instance.compareTo(examples.get("b1")));
-    assertEquals(1, instance.compareTo(examples.get("b2")));
-    assertEquals(0, instance.compareTo(examples.get("b3")));
-    assertEquals(-2, instance.compareTo(examples.get("b4")));
-    assertEquals(-2, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(2, instance.compareTo(examples.get("c1")));
-    assertEquals(0, instance.compareTo(examples.get("c2")));
-    assertEquals(0, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector a2.
-   */
-  @Test
-  public void testCompareTo_examples_a2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a2");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(1, instance.compareTo(examples.get("a1")));
-    assertEquals(0, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(2, instance.compareTo(examples.get("b1")));
-    assertEquals(1, instance.compareTo(examples.get("b2")));
-    assertEquals(0, instance.compareTo(examples.get("b3")));
-    assertEquals(-1, instance.compareTo(examples.get("b4")));
-    assertEquals(-1, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(2, instance.compareTo(examples.get("c1")));
-    assertEquals(0, instance.compareTo(examples.get("c2")));
-    assertEquals(0, instance.compareTo(examples.get("c3")));
-    assertEquals(-2, instance.compareTo(examples.get("c4")));
-    assertEquals(-2, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector a3.
-   */
-  @Test
-  public void testCompareTo_examples_a3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a3");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(3, instance.compareTo(examples.get("a1")));
-    assertEquals(3, instance.compareTo(examples.get("a2")));
-    assertEquals(0, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(3, instance.compareTo(examples.get("b1")));
-    assertEquals(3, instance.compareTo(examples.get("b2")));
-    assertEquals(2, instance.compareTo(examples.get("b3")));
-    assertEquals(0, instance.compareTo(examples.get("b4")));
-    assertEquals(0, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(3, instance.compareTo(examples.get("c1")));
-    assertEquals(2, instance.compareTo(examples.get("c2")));
-    assertEquals(1, instance.compareTo(examples.get("c3")));
-    assertEquals(0, instance.compareTo(examples.get("c4")));
-    assertEquals(0, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector a4.
-   */
-  @Test
-  public void testCompareTo_examples_a4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("a4");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(3, instance.compareTo(examples.get("a1")));
-    assertEquals(3, instance.compareTo(examples.get("a2")));
-    assertEquals(3, instance.compareTo(examples.get("a3")));
-    assertEquals(0, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(3, instance.compareTo(examples.get("b1")));
-    assertEquals(3, instance.compareTo(examples.get("b2")));
-    assertEquals(3, instance.compareTo(examples.get("b3")));
-    assertEquals(3, instance.compareTo(examples.get("b4")));
-    assertEquals(2, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(3, instance.compareTo(examples.get("c1")));
-    assertEquals(3, instance.compareTo(examples.get("c2")));
-    assertEquals(3, instance.compareTo(examples.get("c3")));
-    assertEquals(2, instance.compareTo(examples.get("c4")));
-    assertEquals(1, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector b0.
-   */
-  @Test
-  public void testCompareTo_examples_b0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b0");
-
-    assertEquals(0, instance.compareTo(examples.get("a0")));
-    assertEquals(-3, instance.compareTo(examples.get("a1")));
-    assertEquals(-3, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(0, instance.compareTo(examples.get("b0")));
-    assertEquals(-2, instance.compareTo(examples.get("b1")));
-    assertEquals(-2, instance.compareTo(examples.get("b2")));
-    assertEquals(-2, instance.compareTo(examples.get("b3")));
-    assertEquals(-3, instance.compareTo(examples.get("b4")));
-    assertEquals(-3, instance.compareTo(examples.get("b5")));
-    assertEquals(0, instance.compareTo(examples.get("c0")));
-    assertEquals(-1, instance.compareTo(examples.get("c1")));
-    assertEquals(-2, instance.compareTo(examples.get("c2")));
-    assertEquals(-2, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector b1.
-   */
-  @Test
-  public void testCompareTo_examples_b1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b1");
-
-    assertEquals(2, instance.compareTo(examples.get("a0")));
-    assertEquals(-2, instance.compareTo(examples.get("a1")));
-    assertEquals(-2, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(2, instance.compareTo(examples.get("b0")));
-    assertEquals(0, instance.compareTo(examples.get("b1")));
-    assertEquals(-1, instance.compareTo(examples.get("b2")));
-    assertEquals(-1, instance.compareTo(examples.get("b3")));
-    assertEquals(-2, instance.compareTo(examples.get("b4")));
-    assertEquals(-2, instance.compareTo(examples.get("b5")));
-    assertEquals(2, instance.compareTo(examples.get("c0")));
-    assertEquals(1, instance.compareTo(examples.get("c1")));
-    assertEquals(-2, instance.compareTo(examples.get("c2")));
-    assertEquals(-2, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector b2.
-   */
-  @Test
-  public void testCompareTo_examples_b2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b2");
-
-    assertEquals(2, instance.compareTo(examples.get("a0")));
-    assertEquals(-1, instance.compareTo(examples.get("a1")));
-    assertEquals(-1, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(2, instance.compareTo(examples.get("b0")));
-    assertEquals(1, instance.compareTo(examples.get("b1")));
-    assertEquals(0, instance.compareTo(examples.get("b2")));
-    assertEquals(-1, instance.compareTo(examples.get("b3")));
-    assertEquals(-2, instance.compareTo(examples.get("b4")));
-    assertEquals(-2, instance.compareTo(examples.get("b5")));
-    assertEquals(2, instance.compareTo(examples.get("c0")));
-    assertEquals(1, instance.compareTo(examples.get("c1")));
-    assertEquals(-2, instance.compareTo(examples.get("c2")));
-    assertEquals(-2, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector b3.
-   */
-  @Test
-  public void testCompareTo_examples_b3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b3");
-
-    assertEquals(2, instance.compareTo(examples.get("a0")));
-    assertEquals(0, instance.compareTo(examples.get("a1")));
-    assertEquals(0, instance.compareTo(examples.get("a2")));
-    assertEquals(-2, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(2, instance.compareTo(examples.get("b0")));
-    assertEquals(1, instance.compareTo(examples.get("b1")));
-    assertEquals(1, instance.compareTo(examples.get("b2")));
-    assertEquals(0, instance.compareTo(examples.get("b3")));
-    assertEquals(-2, instance.compareTo(examples.get("b4")));
-    assertEquals(-2, instance.compareTo(examples.get("b5")));
-    assertEquals(2, instance.compareTo(examples.get("c0")));
-    assertEquals(1, instance.compareTo(examples.get("c1")));
-    assertEquals(-1, instance.compareTo(examples.get("c2")));
-    assertEquals(-1, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector b4.
-   */
-  @Test
-  public void testCompareTo_examples_b4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b4");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(2, instance.compareTo(examples.get("a1")));
-    assertEquals(1, instance.compareTo(examples.get("a2")));
-    assertEquals(0, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(2, instance.compareTo(examples.get("b1")));
-    assertEquals(2, instance.compareTo(examples.get("b2")));
-    assertEquals(2, instance.compareTo(examples.get("b3")));
-    assertEquals(0, instance.compareTo(examples.get("b4")));
-    assertEquals(-1, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(2, instance.compareTo(examples.get("c1")));
-    assertEquals(0, instance.compareTo(examples.get("c2")));
-    assertEquals(0, instance.compareTo(examples.get("c3")));
-    assertEquals(-2, instance.compareTo(examples.get("c4")));
-    assertEquals(-2, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector b5.
-   */
-  @Test
-  public void testCompareTo_examples_b5() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("b5");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(2, instance.compareTo(examples.get("a1")));
-    assertEquals(1, instance.compareTo(examples.get("a2")));
-    assertEquals(0, instance.compareTo(examples.get("a3")));
-    assertEquals(-2, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(2, instance.compareTo(examples.get("b1")));
-    assertEquals(2, instance.compareTo(examples.get("b2")));
-    assertEquals(2, instance.compareTo(examples.get("b3")));
-    assertEquals(1, instance.compareTo(examples.get("b4")));
-    assertEquals(0, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(2, instance.compareTo(examples.get("c1")));
-    assertEquals(0, instance.compareTo(examples.get("c2")));
-    assertEquals(0, instance.compareTo(examples.get("c3")));
-    assertEquals(-1, instance.compareTo(examples.get("c4")));
-    assertEquals(-1, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector c0.
-   */
-  @Test
-  public void testCompareTo_examples_c0() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c0");
-
-    assertEquals(0, instance.compareTo(examples.get("a0")));
-    assertEquals(-3, instance.compareTo(examples.get("a1")));
-    assertEquals(-3, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(0, instance.compareTo(examples.get("b0")));
-    assertEquals(-2, instance.compareTo(examples.get("b1")));
-    assertEquals(-2, instance.compareTo(examples.get("b2")));
-    assertEquals(-2, instance.compareTo(examples.get("b3")));
-    assertEquals(-3, instance.compareTo(examples.get("b4")));
-    assertEquals(-3, instance.compareTo(examples.get("b5")));
-    assertEquals(0, instance.compareTo(examples.get("c0")));
-    assertEquals(-1, instance.compareTo(examples.get("c1")));
-    assertEquals(-2, instance.compareTo(examples.get("c2")));
-    assertEquals(-2, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector c1.
-   */
-  @Test
-  public void testCompareTo_examples_c1() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c1");
-
-    assertEquals(1, instance.compareTo(examples.get("a0")));
-    assertEquals(-2, instance.compareTo(examples.get("a1")));
-    assertEquals(-2, instance.compareTo(examples.get("a2")));
-    assertEquals(-3, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(1, instance.compareTo(examples.get("b0")));
-    assertEquals(-1, instance.compareTo(examples.get("b1")));
-    assertEquals(-1, instance.compareTo(examples.get("b2")));
-    assertEquals(-1, instance.compareTo(examples.get("b3")));
-    assertEquals(-2, instance.compareTo(examples.get("b4")));
-    assertEquals(-2, instance.compareTo(examples.get("b5")));
-    assertEquals(1, instance.compareTo(examples.get("c0")));
-    assertEquals(0, instance.compareTo(examples.get("c1")));
-    assertEquals(-2, instance.compareTo(examples.get("c2")));
-    assertEquals(-2, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector c2.
-   */
-  @Test
-  public void testCompareTo_examples_c2() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c2");
-
-    assertEquals(2, instance.compareTo(examples.get("a0")));
-    assertEquals(0, instance.compareTo(examples.get("a1")));
-    assertEquals(0, instance.compareTo(examples.get("a2")));
-    assertEquals(-2, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(2, instance.compareTo(examples.get("b0")));
-    assertEquals(2, instance.compareTo(examples.get("b1")));
-    assertEquals(2, instance.compareTo(examples.get("b2")));
-    assertEquals(1, instance.compareTo(examples.get("b3")));
-    assertEquals(0, instance.compareTo(examples.get("b4")));
-    assertEquals(0, instance.compareTo(examples.get("b5")));
-    assertEquals(2, instance.compareTo(examples.get("c0")));
-    assertEquals(2, instance.compareTo(examples.get("c1")));
-    assertEquals(0, instance.compareTo(examples.get("c2")));
-    assertEquals(-1, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector c3.
-   */
-  @Test
-  public void testCompareTo_examples_c3() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c3");
-
-    assertEquals(2, instance.compareTo(examples.get("a0")));
-    assertEquals(0, instance.compareTo(examples.get("a1")));
-    assertEquals(0, instance.compareTo(examples.get("a2")));
-    assertEquals(-1, instance.compareTo(examples.get("a3")));
-    assertEquals(-3, instance.compareTo(examples.get("a4")));
-    assertEquals(2, instance.compareTo(examples.get("b0")));
-    assertEquals(2, instance.compareTo(examples.get("b1")));
-    assertEquals(2, instance.compareTo(examples.get("b2")));
-    assertEquals(1, instance.compareTo(examples.get("b3")));
-    assertEquals(0, instance.compareTo(examples.get("b4")));
-    assertEquals(0, instance.compareTo(examples.get("b5")));
-    assertEquals(2, instance.compareTo(examples.get("c0")));
-    assertEquals(2, instance.compareTo(examples.get("c1")));
-    assertEquals(1, instance.compareTo(examples.get("c2")));
-    assertEquals(0, instance.compareTo(examples.get("c3")));
-    assertEquals(-3, instance.compareTo(examples.get("c4")));
-    assertEquals(-3, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector c4.
-   */
-  @Test
-  public void testCompareTo_examples_c4() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c4");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(3, instance.compareTo(examples.get("a1")));
-    assertEquals(2, instance.compareTo(examples.get("a2")));
-    assertEquals(0, instance.compareTo(examples.get("a3")));
-    assertEquals(-2, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(3, instance.compareTo(examples.get("b1")));
-    assertEquals(3, instance.compareTo(examples.get("b2")));
-    assertEquals(3, instance.compareTo(examples.get("b3")));
-    assertEquals(2, instance.compareTo(examples.get("b4")));
-    assertEquals(1, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(3, instance.compareTo(examples.get("c1")));
-    assertEquals(3, instance.compareTo(examples.get("c2")));
-    assertEquals(3, instance.compareTo(examples.get("c3")));
-    assertEquals(0, instance.compareTo(examples.get("c4")));
-    assertEquals(-1, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
-   * Test compareTo against a example vector c5.
-   */
-  @Test
-  public void testCompareTo_examples_c5() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = createExamples();
-
-    AbstractVersionVector<String, Integer> instance = examples.get("c5");
-
-    assertEquals(3, instance.compareTo(examples.get("a0")));
-    assertEquals(3, instance.compareTo(examples.get("a1")));
-    assertEquals(2, instance.compareTo(examples.get("a2")));
-    assertEquals(0, instance.compareTo(examples.get("a3")));
-    assertEquals(-1, instance.compareTo(examples.get("a4")));
-    assertEquals(3, instance.compareTo(examples.get("b0")));
-    assertEquals(3, instance.compareTo(examples.get("b1")));
-    assertEquals(3, instance.compareTo(examples.get("b2")));
-    assertEquals(3, instance.compareTo(examples.get("b3")));
-    assertEquals(2, instance.compareTo(examples.get("b4")));
-    assertEquals(1, instance.compareTo(examples.get("b5")));
-    assertEquals(3, instance.compareTo(examples.get("c0")));
-    assertEquals(3, instance.compareTo(examples.get("c1")));
-    assertEquals(3, instance.compareTo(examples.get("c2")));
-    assertEquals(3, instance.compareTo(examples.get("c3")));
-    assertEquals(1, instance.compareTo(examples.get("c4")));
-    assertEquals(0, instance.compareTo(examples.get("c5")));
-  }
-
-  /**
    * Test if a vector constructed as dotted, is dotted.
    */
   @Test
@@ -2874,7 +1464,160 @@ public class AbstractVersionVectorTest {
     public void sync(K id, T value) {
       throw new UnsupportedOperationException("Cannot be mutated.");
     }
-
   }
+
+  /*
+   * Disable the out of scope tests that have been inherited.
+   */
+
+  @Override
+  public void testSync_Version_0() {}
+
+  @Override
+  public void testSync_Version_1() {}
+
+  @Override
+  public void testSync_Version_2() {}
+
+  @Override
+  public void testSync_Version_3() {}
+
+  @Override
+  public void testSync_Version_4() {}
+
+  @Override
+  public void testSync_Version_5() {}
+
+  @Override
+  public void testSync_Version_6() {}
+
+  @Override
+  public void testSync_Version_7() {}
+
+  @Override
+  public void testSync_Version_8() {}
+
+  @Override
+  public void testSync_Version_9() {}
+
+  @Override
+  public void testSync_Timestamp_0() {}
+
+  @Override
+  public void testSync_Timestamp_1() {}
+
+  @Override
+  public void testSync_Timestamp_2() {}
+
+  @Override
+  public void testSync_Timestamp_3() {}
+
+  @Override
+  public void testSync_Timestamp_4() {}
+
+  @Override
+  public void testSync_Timestamp_5() {}
+
+  @Override
+  public void testSync_Timestamp_6() {}
+
+  @Override
+  public void testSync_Timestamp_7() {}
+
+  @Override
+  public void testSync_Timestamp_8() {}
+
+  @Override
+  public void testSync_Timestamp_9() {}
+
+  @Override
+  public void testCopy_0() {}
+
+  @Override
+  public void testCopy_1() {}
+
+  @Override
+  public void testCopy_2() {}
+
+  @Override
+  public void testCopy_3() {}
+
+  @Override
+  public void testCopy_4() {}
+
+  @Override
+  public void testCopy_5() {}
+
+  @Override
+  public void testCopy_6() {}
+
+  @Override
+  public void testCopy_7() {}
+
+  @Override
+  public void testCopy_8() {}
+
+  @Override
+  public void testCopy_9() {}
+
+  @Override
+  public void testInit_0() {}
+
+  @Override
+  public void testInit_1() {}
+
+  @Override
+  public void testInit_2() {}
+
+  @Override
+  public void testInit_3() {}
+
+  @Override
+  public void testInit_4() {}
+
+  @Override
+  public void testInit_5() {}
+
+  @Override
+  public void testInit_6() {}
+
+  @Override
+  public void testInit_7() {}
+
+  @Override
+  public void testInit_8() {}
+
+  @Override
+  public void testInit_9() {}
+
+  @Override
+  public void testIncrement_0() {}
+
+  @Override
+  public void testIncrement_1() {}
+
+  @Override
+  public void testIncrement_2() {}
+
+  @Override
+  public void testIncrement_3() {}
+
+  @Override
+  public void testIncrement_4() {}
+
+  @Override
+  public void testIncrement_5() {}
+
+  @Override
+  public void testIncrement_6() {}
+
+  @Override
+  public void testIncrement_7() {}
+
+  @Override
+  public void testIncrement_8() {}
+
+  @Override
+  public void testIncrement_9() {}
 
 }
