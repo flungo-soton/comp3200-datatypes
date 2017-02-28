@@ -40,6 +40,8 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
   private final List<LogicalVersion<T>> vector;
   private final Set<Integer> identifiers;
 
+  private int size;
+
   /**
    * Construct an {@linkplain ArrayVersionVector}. The {@link LogicalVersion} provided as
    * {@code zero} will be cloned when initialising a new identifier.
@@ -58,11 +60,16 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
     this.zero = zero.copy();
     this.vector = vector;
     this.identifiers = identifiers;
+    this.size = vector.size();
   }
 
   @Override
   protected LogicalVersion<T> getInternal(Integer id) {
-    return vector.get(id);
+    try {
+      return vector.get(id);
+    } catch (IndexOutOfBoundsException ex) {
+      return null;
+    }
   }
 
   @Override
@@ -75,7 +82,15 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
     if (identifiers.contains(id)) {
       return;
     }
-    vector.set(id, zero.copy());
+    if (id > size - 1) {
+      for (int i = size; i < id; i++) {
+        vector.add(i, null);
+      }
+      vector.add(id, zero.copy());
+      size = id + 1;
+    } else {
+      vector.set(id, zero.copy());
+    }
     identifiers.add(id);
   }
 
