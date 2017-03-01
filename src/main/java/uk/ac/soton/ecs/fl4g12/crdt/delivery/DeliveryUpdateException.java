@@ -26,13 +26,36 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  */
 public class DeliveryUpdateException extends Exception {
 
+  private final Updatable updatable;
+  private final UpdateMessage updateMessage;
+
   /**
    * Constructs an instance of <code>DeliveryUpdateException</code> with the specified detail
    * message.
    *
    * @param msg the detail message.
    */
-  public DeliveryUpdateException(String msg) {
-    super(msg);
+  public DeliveryUpdateException(Updatable updatable, UpdateMessage updateMessage, String msg) {
+    super(updateMessage + " could not be delivered to " + updatable + ": " + msg);
+    this.updatable = updatable;
+    this.updateMessage = updateMessage;
+  }
+
+  /**
+   * Get the {@linkplain Updatable} that could not be updated.
+   *
+   * @return the {@link Updatable} that could not be updated.
+   */
+  public Updatable getUpdatable() {
+    return updatable;
+  }
+
+  /**
+   * Get the {@linkplain UpdateMessage} that could not be applied.
+   * 
+   * @return the {@link UpdateMessage} that could not be applied.
+   */
+  public UpdateMessage getUpdateMessage() {
+    return updateMessage;
   }
 }
