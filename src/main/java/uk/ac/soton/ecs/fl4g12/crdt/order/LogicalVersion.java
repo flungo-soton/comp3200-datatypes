@@ -28,7 +28,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
  *
  * @param <T> the type of the timestamp.
  */
-public interface LogicalVersion<T extends Comparable<T>> extends Version<T> {
+public interface LogicalVersion<T> extends Version<T> {
 
   /**
    * Increment the {@linkplain Version}'s timestamp. Typically increments should be of the same
