@@ -32,14 +32,6 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 public interface DeliveryChannel<K, U extends UpdateMessage<K>> {
 
   /**
-   * Publish messages via the delivery channel. The messages will be delivered reliably to all other
-   * nodes.
-   *
-   * @param messages the messages to send via the {@linkplain DeliveryChannel}.
-   */
-  void publish(U... messages);
-
-  /**
    * Register the {@link Updatable} to deliver messages to as part of the channel. Only one object
    * can be registered per {@link DeliveryChannel} and calling when already registered will cause an
    * {@link IllegalStateException}. Typically an {@link Updatable} object is provided a delivery
@@ -54,4 +46,12 @@ public interface DeliveryChannel<K, U extends UpdateMessage<K>> {
    * @throws IllegalStateException if the channel has already been registered to another object.
    */
   K register(Updatable<K, U> updatable) throws IllegalStateException;
+
+  /**
+   * Publish messages via the delivery channel. The messages will be delivered reliably to all other
+   * nodes.
+   *
+   * @param messages the messages to send via the {@linkplain DeliveryChannel}.
+   */
+  void publish(U... messages);
 }
