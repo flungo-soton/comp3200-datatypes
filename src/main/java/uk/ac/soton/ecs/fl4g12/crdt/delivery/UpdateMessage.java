@@ -36,7 +36,8 @@ import java.io.Serializable;
  *
  * @param <K> the type of identifier used to identify nodes.
  */
-public interface UpdateMessage<K> extends Serializable {
+public interface UpdateMessage<K, U extends UpdateMessage<K, U>>
+    extends Comparable<U>, Serializable {
 
   /**
    * Gets the identifier of the node that generated the message.

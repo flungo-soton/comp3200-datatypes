@@ -27,36 +27,33 @@ import org.junit.After;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannelAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannelAbstractTest.TestUpdateMessage;
 
 /**
  * Tests for {@link LocalDeliveryChannel}.
  */
 public final class LocalDeliveryChannelTest extends
-    DeliveryChannelAbstractTest<Integer, UpdateMessage<Integer>, DeliveryChannel<Integer, UpdateMessage<Integer>>> {
+    DeliveryChannelAbstractTest<Integer, TestUpdateMessage<Integer>, DeliveryChannel<Integer, TestUpdateMessage<Integer>>> {
 
   @Override
   public Integer getIdentifier(int i) {
     return (Integer) i;
   }
 
-  @Override
-  public UpdateMessage<Integer> getUpdateMessage(Integer id, int order) {
-    UpdateMessage<Integer> updateMessage = Mockito.mock(UpdateMessage.class);
-    Mockito.doReturn(id).when(updateMessage).getIdentifier();
-    return updateMessage;
+  public TestUpdateMessage<Integer> getUpdateMessage(final Integer id, final int order) {
+    return Mockito.spy(new TestUpdateMessage(id, order));
   }
 
-  private final Map<Channel, DeliveryChannel<Integer, UpdateMessage<Integer>>> channels =
+  private final Map<Channel, DeliveryChannel<Integer, TestUpdateMessage<Integer>>> channels =
       new EnumMap<>(Channel.class);
 
   @Override
-  public synchronized DeliveryChannel<Integer, UpdateMessage<Integer>> getDeliveryChannel(
+  public synchronized DeliveryChannel<Integer, TestUpdateMessage<Integer>> getDeliveryChannel(
       Channel channel, int i) {
     if (channels.containsKey(channel)) {
       return channels.get(channel);
     }
-    DeliveryChannel<Integer, UpdateMessage<Integer>> deliveryChannel =
+    DeliveryChannel<Integer, TestUpdateMessage<Integer>> deliveryChannel =
         new LocalDeliveryChannel<>(new TestIdentifierFactory());
     channels.put(channel, deliveryChannel);
     return deliveryChannel;

@@ -29,7 +29,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
  * @param <U> The type of updates sent via the delivery channel.
  */
-public interface DeliveryChannel<K, U extends UpdateMessage<K>> {
+public interface DeliveryChannel<K, U extends UpdateMessage<K, ?>> {
 
   /**
    * Register the {@link Updatable} to deliver messages to as part of the channel. Only one object

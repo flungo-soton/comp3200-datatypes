@@ -33,7 +33,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  * @param <K> the type of identifier used to identify nodes.
  * @param <U> the type of updates sent via the delivery channel.
  */
-public interface Updatable<K, U extends UpdateMessage<K>> {
+public interface Updatable<K, U extends UpdateMessage<K, ?>> {
 
   /**
    * Gets the identifier for this object. This is a globally unique identifier for the instance of

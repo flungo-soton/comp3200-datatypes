@@ -36,6 +36,6 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
  * @see CvRDT for the interface to be used with Convergent Replicated Data Types.
  * @see CmRDT for the interface to be used with Commutative Replicated Data Types.
  */
-public interface CRDT<K, U extends UpdateMessage<K>> extends Updatable<K, U> {
+public interface CRDT<K, U extends UpdateMessage<K, ?>> extends Updatable<K, U> {
 
 }

@@ -31,7 +31,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp within the {@link VersionVector}
  */
 public interface VersionedUpdateMessage<K, T extends Comparable<T>>
-    extends UpdateMessage<K>, Comparable<VersionedUpdateMessage<K, T>> {
+    extends UpdateMessage<K, VersionedUpdateMessage<K, T>> {
 
   /**
    * Get the version of the {@linkplain Updatable} at the time this {@linkplain UpdateMessage} was

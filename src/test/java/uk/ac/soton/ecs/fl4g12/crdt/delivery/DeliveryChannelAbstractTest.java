@@ -32,7 +32,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
 /**
  * Abstract tests for {@linkplain DeliveryChannel} implementations.
  */
-public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K>, C extends DeliveryChannel<K, U>> {
+public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, ?>, C extends DeliveryChannel<K, U>> {
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -376,7 +376,7 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K>,
   // TODO: Test redelivery and causal ordering.
 
   /**
-   * TestIdentifierFactory that can be used as part of tests.
+   * {@linkplain IdentifierFactory} that can be used as part of tests.
    */
   public class TestIdentifierFactory implements IdentifierFactory<K> {
 
@@ -393,6 +393,31 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K>,
 
     public void setNext(int next) {
       this.next = next;
+    }
+
+  }
+
+  /**
+   * {@linkplain UpdateMessage} that can be used as part of tests.
+   */
+  public static class TestUpdateMessage<K> implements UpdateMessage<K, TestUpdateMessage<K>> {
+
+    private final K identifier;
+    private final Integer order;
+
+    public TestUpdateMessage(K identifier, Integer order) {
+      this.identifier = identifier;
+      this.order = order;
+    }
+
+    @Override
+    public K getIdentifier() {
+      return identifier;
+    }
+
+    @Override
+    public int compareTo(TestUpdateMessage o) {
+      return order.compareTo(o.order);
     }
 
   }

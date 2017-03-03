@@ -32,7 +32,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp within the {@link VersionVector}
  * @param <U> the type of updates sent via the delivery channel.
  */
-public interface VersionedUpdatable<K, T extends Comparable<T>, U extends UpdateMessage<K>>
+public interface VersionedUpdatable<K, T extends Comparable<T>, U extends UpdateMessage<K, ?>>
     extends Updatable<K, U> {
 
   /**

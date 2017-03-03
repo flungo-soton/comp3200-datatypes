@@ -36,7 +36,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
  * production and is primarily designed for testing. Delivery will be performed between
  * {@link Updatable} instances which are instantiated with this {@link DeliveryChannel}.
  */
-public class LocalDeliveryChannel<K, U extends UpdateMessage<K>> implements DeliveryChannel<K, U> {
+public class LocalDeliveryChannel<K, U extends UpdateMessage<K, ?>>
+    implements DeliveryChannel<K, U> {
 
   private static final Logger LOGGER = Logger.getLogger(LocalDeliveryChannel.class.getName());
 
