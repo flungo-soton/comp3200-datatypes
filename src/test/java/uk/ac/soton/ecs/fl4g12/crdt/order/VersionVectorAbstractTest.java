@@ -38,6 +38,13 @@ import org.junit.Test;
 public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, Integer>>
     extends VersionAbstractTest<Map<K, Integer>, V> {
 
+  /**
+   * Get the {@linkplain VersionVector} from a set of examples.
+   *
+   * @param id the id of the version vector to get.
+   * @return the {@link VersionVector} of the specified example.
+   * @see #getTimestamp(java.lang.String) for details about the examples and id.
+   */
   protected abstract V getVersion(String id);
 
   /**
@@ -50,7 +57,8 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    * the value of the timestamp for its timeline. For example, the node {@code {A:2, B:4, C:1}} on
    * timeline {@code b} would have an {@code id}, {@code "b4"}.
    *
-   * @return the timestamp of the specified version.
+   * @param id the id of the timestamp to get.
+   * @return the timestamp of the specified example.
    */
   protected HashMap<K, Integer> getTimestamp(String id) {
     HashMap<K, Integer> timestamp = new HashMap(3);

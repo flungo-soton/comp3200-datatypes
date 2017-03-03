@@ -26,7 +26,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InOrder;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
 
@@ -52,8 +51,8 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K>,
    * The value of {@code order} determines the ordering of the messages relative to other messages
    * from the same {@link Updatable}.
    *
-   * The update message returned should be a {@link Mock} or a {@link Spy} to allow verifications on
-   * method calls.
+   * The update message returned should be a Mockito Mock or Spy to allow verifications on method
+   * calls.
    *
    * @param id the identifier of the {@link Updatable} that produced the message.
    * @param order the order of the {@link UpdateMessage} relative to others from the same
@@ -64,14 +63,14 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K>,
 
   /**
    * Get a {@linkplain DeliveryChannel} that can be used for testing. {@link DeliveryChannel}s with
-   * the same {@link Channel} are used with replicas of the same {@link Updatable} and {@link i}
+   * the same {@link Channel} are used with replicas of the same {@link Updatable} and {@code i}
    * uniquely identifies the instances with the same {@link Channel}.
    *
    * Between tests, the {@link DeliveryChannel}s should be cleared by utilising an
    * {@link org.junit.After} handler.
    *
    * @param channel the channel which the
-   * @param i
+   * @param i a unique identifier for the instance of the {@link Updatable}
    * @return the {@link DeliveryChannel} for the given {@link Channel}.
    */
   public abstract C getDeliveryChannel(Channel channel, int i);
