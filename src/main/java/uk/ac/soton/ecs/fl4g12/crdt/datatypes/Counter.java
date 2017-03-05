@@ -21,6 +21,7 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import javax.naming.OperationNotSupportedException;
 
@@ -52,8 +53,8 @@ public interface Counter<E> {
    */
   E value();
 
-  public static class CounterValueComparator<T extends Comparable<T>>
-      implements Comparator<Counter<T>> {
+  static class CounterValueComparator<T extends Comparable<T>>
+      implements Comparator<Counter<T>>, Serializable {
 
     @Override
     public int compare(Counter<T> o1, Counter<T> o2) {
