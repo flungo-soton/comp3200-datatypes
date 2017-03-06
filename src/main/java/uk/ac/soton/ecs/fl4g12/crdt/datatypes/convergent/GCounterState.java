@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,47 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
-import java.io.Serializable;
-import java.util.Comparator;
-import javax.naming.OperationNotSupportedException;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * An interface for simple counters. Counters can be incremented and decremented.
+ * Representation of the state for a {@linkplain GCounter}.
  *
- * An increment-only counter can be created by throwing an {@link OperationNotSupportedException}
- * when attempting to {@link #decrement()}. decrement-only counters should not be implemented as the
- * value of an increment only counter can be
- *
- * @param <E> the type of the countable element.
+ * @param <E> the type of the counter value.
+ * @param <K> the type of identifier used to identify nodes.
  */
-public interface Counter<E> {
+public final class GCounterState<E extends Comparable<E>, K>
+    extends AbstractVersionedUpdateMessage<K, E> implements StateSnapshot<K, E> {
 
   /**
-   * Increment the counter by one unit.
-   */
-  void increment();
-
-  /**
-   * Decrement the counter by one unit.
-   */
-  void decrement();
-
-  /**
-   * Get the current value of the counter.
+   * Instantiate a new {@linkplain GCounterState}.
    *
-   * @return the current value of the counter.
+   * @param identifier the identifier of the instance that was updated.
+   * @param versionVector the version as a result of the update.
    */
-  E value();
-
-  class CounterValueComparator<T extends Comparable<T>>
-      implements Comparator<Counter<T>>, Serializable {
-
-    @Override
-    public int compare(Counter<T> o1, Counter<T> o2) {
-      return o1.value().compareTo(o2.value());
-    }
+  GCounterState(K identifier, VersionVector<K, E> versionVector) {
+    super(identifier, versionVector);
   }
 
 }
