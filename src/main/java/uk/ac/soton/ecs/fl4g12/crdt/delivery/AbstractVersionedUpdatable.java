@@ -29,6 +29,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * the required functionality for versioning. Registers the {@link Updatable} with a
  * {@link DeliveryChannel} through the {@link AbstractUpdatable} and uses the provided identifier to
  * create a {@link LocalVersionVector}.
+ *
+ * @param <K> the type of identifier used to identify nodes.
+ * @param <T> the type of the timestamp within the {@link VersionVector}.
+ * @param <U> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
  */
 public abstract class AbstractVersionedUpdatable<K, T extends Comparable<T>, U extends UpdateMessage<K, ?>>
     extends AbstractUpdatable<K, U> implements VersionedUpdatable<K, T, U> {

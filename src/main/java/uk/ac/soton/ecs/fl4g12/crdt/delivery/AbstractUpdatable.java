@@ -24,6 +24,9 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 /**
  * Abstract {@linkplain Updatable} providing initialisation with a {@link DeliveryChannel}.
  * Registers the {@link Updatable} with a {@link DeliveryChannel}.
+ *
+ * @param <K> the type of identifier used to identify nodes.
+ * @param <U> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
  */
 public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
     implements Updatable<K, U> {
