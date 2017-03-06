@@ -56,6 +56,16 @@ public class LocalVersionVectorTest {
   }
 
   /**
+   * Test the instantiation of the {@link LocalVersionVector}.
+   */
+  @Test
+  public void testInstantiate() {
+    LOGGER.log(Level.INFO, "testInstantiate");
+    Mockito.verify(version).init(identifier);
+    Mockito.verifyNoMoreInteractions(version);
+  }
+
+  /**
    * Test of getVersionVector method, of class LocalVersionVector.
    */
   @Test

@@ -37,7 +37,8 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   private final K identifier;
 
   /**
-   * Wrap a given {@link VersionVector} as a {@link LocalVersionVector}.
+   * Wrap a given {@link VersionVector} as a {@link LocalVersionVector}. If the provided id is not
+   * already initialised within the vector provided, this will be done automatically.
    *
    * @param versionVector the {@link VersionVector} to wrap.
    * @param identifier the identifier to increment in the {@link VersionVector} when
@@ -46,6 +47,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   public LocalVersionVector(VersionVector<K, T> versionVector, K identifier) {
     this.versionVector = versionVector;
     this.identifier = identifier;
+    versionVector.init(identifier);
   }
 
   /**
