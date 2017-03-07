@@ -42,7 +42,8 @@ public class AbstractVersionVectorTest
 
   private static final Logger LOGGER = Logger.getLogger(AbstractVersionTest.class.getName());
 
-  public AbstractVersionVectorTest() {}
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @Override
   protected VersionVector<Integer, Integer> getVersion(String id) {
@@ -57,135 +58,6 @@ public class AbstractVersionVectorTest
   @Override
   protected Integer getKey(int index) {
     return index;
-  }
-
-
-
-  private HashVersionVector<Integer, Long> hashVersionVector;
-  private ArrayVersionVector<Long> arrayVersionVector;
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
-  /**
-   * Create example vectors based on the WikiPedia example for vector clocks.
-   *
-   * https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Vector_Clock.svg/500px-Vector_Clock.svg.png
-   *
-   * @return a map of vector clocks.
-   */
-  private Map<String, AbstractVersionVector<String, Integer>> createExamples() {
-    Map<String, AbstractVersionVector<String, Integer>> examples = new HashMap<>();
-
-    // Vector a0
-    Map a0 = new HashMap(3);
-    a0.put("a", 0);
-    examples.put("a0", new ImmutableMapVersionVector<>(a0, 0, false));
-
-    // Vector a1
-    Map a1 = new HashMap(3);
-    a1.put("a", 1);
-    a1.put("b", 2);
-    a1.put("c", 1);
-    examples.put("a1", new ImmutableMapVersionVector<>(a1, 0, false));
-
-    // Vector a2
-    Map a2 = new HashMap(3);
-    a2.put("a", 2);
-    a2.put("b", 2);
-    a2.put("c", 1);
-    examples.put("a2", new ImmutableMapVersionVector<>(a2, 0, false));
-
-    // Vector a3
-    Map a3 = new HashMap(3);
-    a3.put("a", 3);
-    a3.put("b", 3);
-    a3.put("c", 3);
-    examples.put("a3", new ImmutableMapVersionVector<>(a3, 0, false));
-
-    // Vector a4
-    Map a4 = new HashMap(3);
-    a4.put("a", 4);
-    a4.put("b", 5);
-    a4.put("c", 5);
-    examples.put("a4", new ImmutableMapVersionVector<>(a4, 0, false));
-
-    // Vector b0
-    Map b0 = new HashMap(3);
-    b0.put("b", 0);
-    examples.put("b0", new ImmutableMapVersionVector<>(b0, 0, false));
-
-    // Vector b1
-    Map b1 = new HashMap(3);
-    b1.put("b", 1);
-    b1.put("c", 1);
-    examples.put("b1", new ImmutableMapVersionVector<>(b1, 0, false));
-
-    // Vector b2
-    Map b2 = new HashMap(3);
-    b2.put("b", 2);
-    b2.put("c", 1);
-    examples.put("b2", new ImmutableMapVersionVector<>(b2, 0, false));
-
-    // Vector b3
-    Map b3 = new HashMap(3);
-    b3.put("b", 3);
-    b3.put("c", 1);
-    examples.put("b3", new ImmutableMapVersionVector<>(b3, 0, false));
-
-    // Vector b4
-    Map b4 = new HashMap(3);
-    b4.put("a", 2);
-    b4.put("b", 4);
-    b4.put("c", 1);
-    examples.put("b4", new ImmutableMapVersionVector<>(b4, 0, false));
-
-
-    // Vector b5
-    Map b5 = new HashMap(3);
-    b5.put("a", 2);
-    b5.put("b", 5);
-    b5.put("c", 1);
-    examples.put("b5", new ImmutableMapVersionVector<>(b5, 0, false));
-
-    // Vector c0
-    Map c0 = new HashMap(3);
-    c0.put("c", 0);
-    examples.put("c0", new ImmutableMapVersionVector<>(c0, 0, false));
-
-    // Vector c1
-    Map c1 = new HashMap(3);
-    c1.put("c", 1);
-    examples.put("c1", new ImmutableMapVersionVector<>(c1, 0, false));
-
-    // Vector c2
-    Map c2 = new HashMap(3);
-    c2.put("b", 3);
-    c2.put("c", 2);
-    examples.put("c2", new ImmutableMapVersionVector<>(c2, 0, false));
-
-    // Vector c3
-    Map c3 = new HashMap(3);
-    c3.put("b", 3);
-    c3.put("c", 3);
-    examples.put("c3", new ImmutableMapVersionVector<>(c3, 0, false));
-
-    // Vector c4
-    Map c4 = new HashMap(3);
-    c4.put("a", 2);
-    c4.put("b", 5);
-    c4.put("c", 4);
-    examples.put("c4", new ImmutableMapVersionVector<>(c4, 0, false));
-
-    // Vector c5
-    Map c5 = new HashMap(3);
-    c5.put("a", 2);
-    c5.put("b", 5);
-    c5.put("c", 5);
-    examples.put("c5", new ImmutableMapVersionVector<>(c5, 0, false));
-
-    // return the examples
-    return examples;
   }
 
   /**
