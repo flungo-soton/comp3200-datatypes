@@ -71,6 +71,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testGetVersionVector() {
     LOGGER.log(Level.INFO, "getVersionVector");
+    Mockito.reset(version);
     assertSame(version, instance.getVersionVector());
   }
 
@@ -80,6 +81,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testGetIdentifier() {
     LOGGER.log(Level.INFO, "getIdentifier");
+    Mockito.reset(version);
     assertSame(identifier, instance.getIdentifier());
   }
 
@@ -89,6 +91,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testGet_0args() {
     LOGGER.log(Level.INFO, "get_0args");
+    Mockito.reset(version);
     instance.get();
     Mockito.verify(version).get();
     Mockito.verifyNoMoreInteractions(version);
@@ -100,6 +103,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testGet_GenericType() {
     LOGGER.log(Level.INFO, "get_GenericType");
+    Mockito.reset(version);
     Object id = new Object();
     instance.get(id);
     Mockito.verify(version).get(id);
@@ -112,6 +116,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testGetIdentifiers() {
     LOGGER.log(Level.INFO, "getIdentifiers");
+    Mockito.reset(version);
     instance.getIdentifiers();
     Mockito.verify(version).getIdentifiers();
     Mockito.verifyNoMoreInteractions(version);
@@ -123,6 +128,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testInit() {
     LOGGER.log(Level.INFO, "init");
+    Mockito.reset(version);
     Object id = new Object();
     instance.init(id);
     Mockito.verify(version).init(id);
@@ -135,6 +141,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testIncrement_GenericType() {
     LOGGER.log(Level.INFO, "increment_GenericType");
+    Mockito.reset(version);
     Object id = new Object();
     instance.increment(id);
     Mockito.verify(version).increment(id);
@@ -147,6 +154,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testSync_GenericType_GenericType() {
     LOGGER.log(Level.INFO, "sync_GenericType_GenericType");
+    Mockito.reset(version);
     Object id = new Object();
     Comparable value = Mockito.mock(Comparable.class);
     instance.sync(id, value);
@@ -160,6 +168,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testSync_Version() {
     LOGGER.log(Level.INFO, "sync_Version");
+    Mockito.reset(version);
     Version syncVersion = Mockito.mock(Version.class);
     instance.sync(syncVersion);
     Mockito.verify(version).sync(syncVersion);
@@ -172,6 +181,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testSync_Map() {
     LOGGER.log(Level.INFO, "sync_Map");
+    Mockito.reset(version);
     Map map = Mockito.mock(Map.class);
     instance.sync(map);
     Mockito.verify(version).sync(map);
@@ -184,6 +194,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testConcurrentWith() {
     LOGGER.log(Level.INFO, "concurrentWith");
+    Mockito.reset(version);
     VersionVector vector = Mockito.mock(VersionVector.class);
     instance.concurrentWith(vector);
     Mockito.verify(version).concurrentWith(vector);
@@ -196,6 +207,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testHappenedBefore() {
     LOGGER.log(Level.INFO, "happenedBefore");
+    Mockito.reset(version);
     VersionVector vector = Mockito.mock(VersionVector.class);
     instance.happenedBefore(vector);
     Mockito.verify(version).happenedBefore(vector);
@@ -208,6 +220,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testCompareTo() {
     LOGGER.log(Level.INFO, "compareTo");
+    Mockito.reset(version);
     VersionVector vector = Mockito.mock(VersionVector.class);
     instance.compareTo(vector);
     Mockito.verify(version).compareTo(vector);
@@ -220,6 +233,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testIsDotted() {
     LOGGER.log(Level.INFO, "isDotted");
+    Mockito.reset(version);
     instance.isDotted();
     Mockito.verify(version).isDotted();
     Mockito.verifyNoMoreInteractions(version);
@@ -231,6 +245,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testIdentical() {
     LOGGER.log(Level.INFO, "identical");
+    Mockito.reset(version);
     Version vector = Mockito.mock(Version.class);
     instance.identical(vector);
     Mockito.verify(version).identical(vector);
@@ -243,6 +258,7 @@ public class LocalVersionVectorTest {
   @Test
   public void testIncrement_0args() {
     LOGGER.log(Level.INFO, "increment");
+    Mockito.reset(version);
     instance.increment();
     Mockito.verify(version).increment(identifier);
     Mockito.verifyNoMoreInteractions(version);
@@ -253,6 +269,9 @@ public class LocalVersionVectorTest {
    */
   @Test
   public void testCopy() {
+    LOGGER.log(Level.INFO, "copy");
+    Mockito.reset(version);
+
     // Setup the mock version
     VersionVector versionCopy = Mockito.mock(VersionVector.class, Mockito.CALLS_REAL_METHODS);
     Mockito.doReturn(versionCopy).when(version).copy();
@@ -263,7 +282,8 @@ public class LocalVersionVectorTest {
     // Make assertions
     Mockito.verify(version).copy();
     Mockito.verifyNoMoreInteractions(version);
-    Mockito.verifyZeroInteractions(versionCopy);
+    Mockito.verify(versionCopy).init(identifier);
+    Mockito.verifyNoMoreInteractions(versionCopy);
     assertSame("Copies should have the same identifier", instance.getIdentifier(),
         copy.getIdentifier());
     assertSame("The copied version vector should be the versionCopy", versionCopy,
