@@ -33,9 +33,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LongVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
-import uk.ac.soton.ecs.fl4g12.crdt.util.IntegerSummingAccumulator;
-import uk.ac.soton.ecs.fl4g12.crdt.util.LongSummingAccumulator;
-import uk.ac.soton.ecs.fl4g12.crdt.util.SummingAccumulator;
+import uk.ac.soton.ecs.fl4g12.crdt.util.Arithmetic;
+import uk.ac.soton.ecs.fl4g12.crdt.util.IntegerArithmetic;
+import uk.ac.soton.ecs.fl4g12.crdt.util.LongArithmetic;
 
 /**
  * Grow only {@linkplain CRDT} {@linkplain Counter}. Uses the version vector as the counter.
@@ -52,12 +52,12 @@ public final class GCounter<E extends Comparable<E>, K>
     extends AbstractVersionedUpdatable<K, E, GCounterState<E, K>>
     implements CvRDT<K, E, GCounterState<E, K>>, Counter<E> {
 
-  private final SummingAccumulator<E> accumulator;
+  private final Arithmetic<E> arithmetic;
 
   /**
    * Construct a grow only counter that uses its {@linkplain VersionVector} as the state.
    *
-   * @param accumulator a {@link SummingAccumulator} which can add values of the same type as the
+   * @param arithmetic an {@link Arithmetic} instance which can add values of the same type as the
    *        counter.
    * @param initialVersion the initial {@link VersionVector} value to use. This should be a zero
    *        version for a new counter as the sum of the timestamps is used as the value of the
@@ -67,10 +67,10 @@ public final class GCounter<E extends Comparable<E>, K>
    * @param deliveryChannel the {@link DeliveryChannel} which this object should communicate changes
    *        over.
    */
-  public GCounter(SummingAccumulator<E> accumulator, VersionVector<K, E> initialVersion,
-      K identifier, DeliveryChannel<K, GCounterState<E, K>> deliveryChannel) {
+  public GCounter(Arithmetic<E> arithmetic, VersionVector<K, E> initialVersion, K identifier,
+      DeliveryChannel<K, GCounterState<E, K>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
-    this.accumulator = accumulator;
+    this.arithmetic = arithmetic;
   }
 
   @Override
@@ -86,7 +86,7 @@ public final class GCounter<E extends Comparable<E>, K>
 
   @Override
   public E value() {
-    return accumulator.sum(version.get().values());
+    return arithmetic.add((E[]) version.get().values().toArray());
   }
 
   @Override
@@ -96,7 +96,7 @@ public final class GCounter<E extends Comparable<E>, K>
 
   @Override
   public synchronized GCounterState<E, K> snapshot() {
-    return new GCounterState<>(getIdentifier(), getVersion());
+    return new GCounterState<>(getIdentifier(), version);
   }
 
   /**
@@ -109,7 +109,7 @@ public final class GCounter<E extends Comparable<E>, K>
    */
   public static <K> GCounter<Integer, K> newIntegerGCounter(
       DeliveryChannel<K, GCounterState<Integer, K>> deliveryChannel) {
-    return new GCounter<>(new IntegerSummingAccumulator(),
+    return new GCounter<>(IntegerArithmetic.getInstance(),
         new HashVersionVector<K, Integer>(new IntegerVersion(), false), null, deliveryChannel);
   }
 
@@ -123,7 +123,7 @@ public final class GCounter<E extends Comparable<E>, K>
    */
   public static <K> GCounter<Long, K> newLongGCounter(
       DeliveryChannel<K, GCounterState<Long, K>> deliveryChannel) {
-    return new GCounter<>(new LongSummingAccumulator(),
+    return new GCounter<>(LongArithmetic.getInstance(),
         new HashVersionVector<K, Long>(new LongVersion(), false), null, deliveryChannel);
   }
 }

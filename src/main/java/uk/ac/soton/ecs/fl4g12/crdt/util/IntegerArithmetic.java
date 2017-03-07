@@ -21,20 +21,36 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.util;
 
-import java.util.Collection;
-
 /**
- * Accumulator that returns the sum of a {@linkplain Collection} of {@link Long}s.
+ * {@linkplain Arithmetic} implementation for {@linkplain Integer} objects.
  */
-public class LongSummingAccumulator implements SummingAccumulator<Long> {
+public final class IntegerArithmetic implements Arithmetic<Integer> {
+
+  private IntegerArithmetic() {}
 
   @Override
-  public Long sum(Collection<Long> collection) {
-    long accumulator = 0;
-    for (Long i : collection) {
+  public Integer add(Integer... elements) {
+    int accumulator = 0;
+    for (Integer i : elements) {
       accumulator += i;
     }
     return accumulator;
   }
 
+  @Override
+  public Integer sub(Integer value, Integer... elements) {
+    int accumulator = value;
+    for (Integer i : elements) {
+      accumulator -= i;
+    }
+    return accumulator;
+  }
+
+  public static IntegerArithmetic getInstance() {
+    return IntegerArithmeticHolder.INSTANCE;
+  }
+
+  private static class IntegerArithmeticHolder {
+    private static final IntegerArithmetic INSTANCE = new IntegerArithmetic();
+  }
 }

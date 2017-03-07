@@ -21,13 +21,28 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.util;
 
-import java.util.Collection;
-
 /**
- * Accumulator that returns the sum of values in a collection.
+ * Interface for performing arithmetic on objects of the given type.
+ *
+ * @param <T> the type which this object provides arithmetic operations on.
  */
-public interface SummingAccumulator<T> {
+public interface Arithmetic<T> {
 
-  T sum(Collection<T> collection);
+  /**
+   * Add the given elements.
+   *
+   * @param elements the elements to add.
+   * @return the sum of all the provided elements.
+   */
+  T add(T... elements);
+
+  /**
+   * Subtract the given elements from the given value.
+   *
+   * @param value the value to subtract the elements from.
+   * @param elements the elements to subtract.
+   * @return the value with all the elements subtracted from it.
+   */
+  T sub(T value, T... elements);
 
 }
