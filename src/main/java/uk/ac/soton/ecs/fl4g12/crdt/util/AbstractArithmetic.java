@@ -22,35 +22,19 @@
 package uk.ac.soton.ecs.fl4g12.crdt.util;
 
 /**
- * {@linkplain Arithmetic} implementation for {@linkplain Long} objects.
+ * Interface for performing arithmetic on objects of the given type.
+ *
+ * @param <T> the type which this object provides arithmetic operations on.
  */
-public final class LongArithmetic extends AbstractArithmetic<Long> {
-
-  private LongArithmetic() {}
+public abstract class AbstractArithmetic<T> implements Arithmetic<T> {
 
   @Override
-  public Long add(Iterable<Long> elements) {
-    long accumulator = 0;
-    for (Long i : elements) {
-      accumulator += i;
-    }
-    return accumulator;
+  public final T add(T... elements) {
+    return add(elements);
   }
 
   @Override
-  public Long sub(Long value, Iterable<Long> elements) {
-    long accumulator = value;
-    for (Long i : elements) {
-      accumulator -= i;
-    }
-    return accumulator;
-  }
-
-  public static LongArithmetic getInstance() {
-    return LongArithmeticHolder.INSTANCE;
-  }
-
-  private static class LongArithmeticHolder {
-    private static final LongArithmetic INSTANCE = new LongArithmetic();
+  public final T sub(T value, T... elements) {
+    return sub(value, elements);
   }
 }

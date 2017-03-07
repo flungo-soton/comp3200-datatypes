@@ -86,7 +86,7 @@ public final class GCounter<E extends Comparable<E>, K>
 
   @Override
   public E value() {
-    return arithmetic.add((E[]) version.get().values().toArray());
+    return arithmetic.add(version.get().values());
   }
 
   @Override
@@ -100,7 +100,8 @@ public final class GCounter<E extends Comparable<E>, K>
   }
 
   /**
-   * Construct a new {@linkplain Integer} value {@linkplain GCounter}.
+   * Construct a new {@linkplain Integer} value {@linkplain GCounter}. It is expected that the
+   * {@link DeliveryChannel} provided will assign the instance its identifier.
    *
    * @param <K> the type of the identifiers used for instances.
    * @param deliveryChannel the {@link DeliveryChannel} which can be used to deliver
@@ -114,7 +115,8 @@ public final class GCounter<E extends Comparable<E>, K>
   }
 
   /**
-   * Construct a new {@linkplain Long} value {@linkplain GCounter}.
+   * Construct a new {@linkplain Long} value {@linkplain GCounter}. It is expected that the
+   * {@link DeliveryChannel} provided will assign the instance its identifier.
    *
    * @param <K> the type of the identifiers used for instances.
    * @param deliveryChannel the {@link DeliveryChannel} which can be used to deliver

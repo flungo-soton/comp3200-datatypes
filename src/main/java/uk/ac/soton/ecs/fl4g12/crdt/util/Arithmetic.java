@@ -37,6 +37,14 @@ public interface Arithmetic<T> {
   T add(T... elements);
 
   /**
+   * Add the given elements.
+   *
+   * @param elements the elements to add.
+   * @return the sum of all the provided elements.
+   */
+  T add(Iterable<T> elements);
+
+  /**
    * Subtract the given elements from the given value.
    *
    * @param value the value to subtract the elements from.
@@ -44,5 +52,14 @@ public interface Arithmetic<T> {
    * @return the value with all the elements subtracted from it.
    */
   T sub(T value, T... elements);
+
+  /**
+   * Subtract the given elements from the given value.
+   *
+   * @param value the value to subtract the elements from.
+   * @param elements the elements to subtract.
+   * @return the value with all the elements subtracted from it.
+   */
+  T sub(T value, Iterable<T> elements);
 
 }

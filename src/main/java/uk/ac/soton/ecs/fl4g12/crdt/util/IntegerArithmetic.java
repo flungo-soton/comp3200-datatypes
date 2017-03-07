@@ -24,12 +24,12 @@ package uk.ac.soton.ecs.fl4g12.crdt.util;
 /**
  * {@linkplain Arithmetic} implementation for {@linkplain Integer} objects.
  */
-public final class IntegerArithmetic implements Arithmetic<Integer> {
+public final class IntegerArithmetic extends AbstractArithmetic<Integer> {
 
   private IntegerArithmetic() {}
 
   @Override
-  public Integer add(Integer... elements) {
+  public Integer add(Iterable<Integer> elements) {
     int accumulator = 0;
     for (Integer i : elements) {
       accumulator += i;
@@ -38,7 +38,7 @@ public final class IntegerArithmetic implements Arithmetic<Integer> {
   }
 
   @Override
-  public Integer sub(Integer value, Integer... elements) {
+  public Integer sub(Integer value, Iterable<Integer> elements) {
     int accumulator = value;
     for (Integer i : elements) {
       accumulator -= i;
