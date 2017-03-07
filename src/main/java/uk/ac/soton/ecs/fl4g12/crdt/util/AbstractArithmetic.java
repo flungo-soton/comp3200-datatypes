@@ -21,6 +21,8 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.util;
 
+import java.util.Arrays;
+
 /**
  * Interface for performing arithmetic on objects of the given type.
  *
@@ -30,11 +32,11 @@ public abstract class AbstractArithmetic<T> implements Arithmetic<T> {
 
   @Override
   public final T add(T... elements) {
-    return add(elements);
+    return add(Arrays.asList(elements));
   }
 
   @Override
   public final T sub(T value, T... elements) {
-    return sub(value, elements);
+    return sub(value, Arrays.asList(elements));
   }
 }
