@@ -58,7 +58,7 @@ public abstract class ArithmeticAbstractTest<T, A extends Arithmetic<T>> {
    *
    * @param testCase the test case to get the result of.
    * @param dataset the dataset that was used during the test.
-   * @return the expected result for the given {@link TestCase} and {@linkp Dataset}
+   * @return the expected result for the given {@link TestCase} and {@linkplain Dataset}
    */
   protected abstract T getResult(TestCase testCase, Dataset dataset);
 
