@@ -36,7 +36,7 @@ public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>> 
   private static final Logger LOGGER =
       Logger.getLogger(IncrementableCounterAbstractTest.class.getName());
 
-  public static final int MAX_INCREMENT = 1000;
+  public static final int MAX_OPERATIONS = 1000;
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -61,10 +61,10 @@ public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>> 
   @Test
   public void testIncrement() {
     LOGGER.log(Level.INFO, "testIncrement: Test that the counter increments as expected.");
-    Counter<E> instance = getCounter();
+    C instance = getCounter();
     assertEquals(getValue(0), instance.value());
 
-    for (int i = 1; i < MAX_INCREMENT; i++) {
+    for (int i = 1; i <= MAX_OPERATIONS; i++) {
       instance.increment();
       assertEquals(getValue(i), instance.value());
     }
@@ -76,7 +76,7 @@ public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>> 
   @Test
   public void testDecrement() {
     LOGGER.log(Level.INFO, "testDecrement: Test that the counter can only be incremented.");
-    Counter<E> instance = getCounter();
+    C instance = getCounter();
 
     thrown.expect(UnsupportedOperationException.class);
     instance.decrement();
@@ -88,7 +88,7 @@ public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>> 
   @Test
   public void testValue_Initial() {
     LOGGER.log(Level.INFO, "testValue_Initial: Test the initial state of the counter");
-    Counter<E> instance = getCounter();
+    C instance = getCounter();
 
     assertEquals(getValue(0), instance.value());
   }

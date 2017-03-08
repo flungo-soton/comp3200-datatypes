@@ -56,10 +56,10 @@ public abstract class CounterAbstractTest<E, C extends Counter<E>>
   @Test
   public void testDecrement() {
     LOGGER.log(Level.INFO, "testDecrement: Test that the counter decrements as expected.");
-    Counter<E> instance = getCounter();
+    C instance = getCounter();
     assertEquals(getValue(0), instance.value());
 
-    for (int i = 1; i < MAX_INCREMENT; i++) {
+    for (int i = 1; i <= MAX_OPERATIONS; i++) {
       instance.decrement();
       assertEquals(getValue(0, i), instance.value());
     }
@@ -72,11 +72,11 @@ public abstract class CounterAbstractTest<E, C extends Counter<E>>
   public void testWeave() {
     LOGGER.log(Level.INFO, "testWeave: Test incrementing and decrementing.");
 
-    Counter<E> instance = getCounter();
+    C instance = getCounter();
     int increments = 0;
     int decrements = 0;
 
-    for (int i = 0; i < MAX_INCREMENT / 20; i++) {
+    for (int i = 0; i <= MAX_OPERATIONS / 20; i++) {
       for (int j = 0; j < i; j++) {
         instance.increment();
         assertEquals(getValue(++increments, decrements), instance.value());
@@ -99,12 +99,12 @@ public abstract class CounterAbstractTest<E, C extends Counter<E>>
   public void testRandom() {
     LOGGER.log(Level.INFO, "testRandom: Test random incrementing and decrementing.");
 
-    Counter<E> instance = getCounter();
+    C instance = getCounter();
     int increments = 0;
     int decrements = 0;
     Random rand = new Random();
 
-    for (int i = 0; i < MAX_INCREMENT; i++) {
+    for (int i = 0; i <= MAX_OPERATIONS; i++) {
       if (rand.nextFloat() > 0.5f) {
         instance.increment();
         increments++;
