@@ -96,6 +96,11 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
+  public void increment() throws ArithmeticException {
+    versionVector.increment(identifier);
+  }
+
+  @Override
   public void sync(K id, T value) {
     versionVector.sync(id, value);
   }
@@ -133,11 +138,6 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   @Override
   public boolean identical(Version<Map<K, T>> version) {
     return versionVector.identical(version);
-  }
-
-  @Override
-  public void increment() throws ArithmeticException {
-    versionVector.increment(identifier);
   }
 
   @Override
