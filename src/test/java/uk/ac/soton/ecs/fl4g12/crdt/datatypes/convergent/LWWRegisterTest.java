@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.Register;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.RegisterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
