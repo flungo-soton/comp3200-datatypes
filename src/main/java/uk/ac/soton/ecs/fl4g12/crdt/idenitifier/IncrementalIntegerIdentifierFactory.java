@@ -27,10 +27,10 @@ package uk.ac.soton.ecs.fl4g12.crdt.idenitifier;
  */
 public class IncrementalIntegerIdentifierFactory implements IdentifierFactory<Integer> {
 
-  private int id = 0;
+  private volatile int id = 0;
 
   @Override
-  public Integer create() {
+  public synchronized Integer create() {
     return id++;
   }
 

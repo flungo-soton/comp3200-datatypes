@@ -27,10 +27,10 @@ package uk.ac.soton.ecs.fl4g12.crdt.idenitifier;
  */
 public class IncrementalLongIdentifierFactory implements IdentifierFactory<Long> {
 
-  private long id = 0;
+  private volatile long id = 0;
 
   @Override
-  public Long create() {
+  public synchronized Long create() {
     return id++;
   }
 
