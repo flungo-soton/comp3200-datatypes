@@ -43,7 +43,7 @@ public interface Register<T> {
    */
   T value();
 
-  static class RegisterValueComparator<T extends Comparable<T>>
+  class RegisterValueComparator<T extends Comparable<T>>
       implements Comparator<Register<T>>, Serializable {
 
     @Override
