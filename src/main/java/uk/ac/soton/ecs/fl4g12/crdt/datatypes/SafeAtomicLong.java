@@ -30,10 +30,18 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class SafeAtomicLong extends AtomicLong {
 
+  /**
+   * Construct a {@linkplain SafeAtomicLong} with a given initial value.
+   *
+   * @param initialValue the initial value of the {@linkplain SafeAtomicInteger}.
+   */
   public SafeAtomicLong(long initialValue) {
     super(initialValue);
   }
 
+  /**
+   * Construct a {@linkplain SafeAtomicLong} with an initial value of 0.
+   */
   public SafeAtomicLong() {}
 
   /**

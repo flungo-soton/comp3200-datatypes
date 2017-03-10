@@ -28,6 +28,9 @@ import org.junit.Test;
 
 /**
  * Abstract tests for {@linkplain Arithmetic} implementations.
+ * 
+ * @param <T> the type of object which the {@link Arithmetic} being tested operates on.
+ * @param <A> the type of {@link Arithmetic} being tested.
  */
 public abstract class ArithmeticAbstractTest<T, A extends Arithmetic<T>> {
 

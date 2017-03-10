@@ -63,7 +63,7 @@ public final class GCounter<E extends Comparable<E>, K>
    * @param initialVersion the initial {@link VersionVector} value to use. This should be a zero
    *        version for a new counter as the sum of the timestamps is used as the value of the
    *        counter.
-   * @param identifier the identifier of this instance or null for it to be assigned by the
+   * @param identifier the identifier of this instance or {@code null} for it to be assigned by the
    *        {@link DeliveryChannel}.
    * @param deliveryChannel the {@link DeliveryChannel} which this object should communicate changes
    *        over.

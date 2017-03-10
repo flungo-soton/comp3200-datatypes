@@ -213,6 +213,8 @@ public class LWWRegisterTest
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_NoChange() throws Exception {
@@ -241,6 +243,8 @@ public class LWWRegisterTest
 
   /**
    * Test update with local assignment.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_LocalAssign() throws Exception {
@@ -280,6 +284,8 @@ public class LWWRegisterTest
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_RemoteAssign() throws Exception {
@@ -319,6 +325,8 @@ public class LWWRegisterTest
 
   /**
    * Test update with concurrent assignment (local first).
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_BothAssign_LocalFirst() throws Exception {
@@ -362,6 +370,8 @@ public class LWWRegisterTest
 
   /**
    * Test update with concurrent assignment (remote first).
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_BothAssign_RemoteFirst() throws Exception {

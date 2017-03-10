@@ -28,6 +28,8 @@ import org.junit.Test;
 
 /**
  * Abstract tests for incremental {@linkplain IdentifierFactory}.
+ * 
+ * @param <I> the type of the {@link IdentifierFactory} being tested.
  */
 public abstract class IncrementalIdentifierFactoryAbstractTest<I extends IdentifierFactory<? extends Number>> {
 
@@ -36,7 +38,7 @@ public abstract class IncrementalIdentifierFactoryAbstractTest<I extends Identif
 
   /**
    * Instantiate the {@linkplain IdentifierFactory}.
-   * 
+   *
    * @return the {@link IdentifierFactory} to be tested.
    */
   protected abstract I getIdentifierFactory();

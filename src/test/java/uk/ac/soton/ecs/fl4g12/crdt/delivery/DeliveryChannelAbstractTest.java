@@ -31,6 +31,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
 
 /**
  * Abstract tests for {@linkplain DeliveryChannel} implementations.
+ *
+ * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
+ * @param <U> The type of updates sent via the delivery channel.
+ * @param <C> the type of the {@linkplain DeliveryChannel} to be tested.
  */
 public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, ?>, C extends DeliveryChannel<K, U>> {
 
@@ -156,9 +160,11 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
 
   /**
    * Test that individually publiushed messages are sent to the right reciptients.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
-  public void testPublish_Single() throws DeliveryUpdateException {
+  public void testPublish_Single() throws Exception {
     // Setup channel A0
     C channelA0 = getDeliveryChannel(Channel.A, 0);
 
@@ -234,9 +240,11 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
    * the others. Tested with both receivers throwing an exception for each message to ensure that
    * regardless of the order that the messages are delivered, this method will test that the
    * exception does not stop delivery to other receivers.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
-  public void testPublish_SingleException() throws DeliveryUpdateException {
+  public void testPublish_SingleException() throws Exception {
     // Setup channel A0
     C channelA0 = getDeliveryChannel(Channel.A, 0);
 
@@ -286,9 +294,11 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
 
   /**
    * Test that when multiple messages are published, they are published in the correct order.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
-  public void testPublish_Multiple() throws DeliveryUpdateException {
+  public void testPublish_Multiple() throws Exception {
     // Setup channel A0
     C channelA0 = getDeliveryChannel(Channel.A, 0);
 
@@ -330,9 +340,11 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
   /**
    * Test that when an exception delivering one message in a batch fails, the rest are not
    * delivered.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
-  public void testPublish_MultipleException() throws DeliveryUpdateException {
+  public void testPublish_MultipleException() throws Exception {
     // Setup channel A0
     C channelA0 = getDeliveryChannel(Channel.A, 0);
 
@@ -399,6 +411,8 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
 
   /**
    * {@linkplain UpdateMessage} that can be used as part of tests.
+   * 
+   * @param <K> the type of identifier used to identify nodes.
    */
   public static class TestUpdateMessage<K> implements UpdateMessage<K, TestUpdateMessage<K>> {
 

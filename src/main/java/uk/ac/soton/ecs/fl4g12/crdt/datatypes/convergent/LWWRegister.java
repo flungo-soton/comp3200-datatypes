@@ -67,6 +67,16 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
 
   private final AtomicReference<Element<E>> element;
 
+  /**
+   * Construct a new Last-Writer-Wins {@linkplain Register}.
+   *
+   * @param initialVersion the initial {@link VersionVector} value to use. This should be a zero
+   *        version.
+   * @param identifier the identifier of this instance or {@code null} for it to be assigned by the
+   *        {@link DeliveryChannel}.
+   * @param deliveryChannel the {@link DeliveryChannel} which this object should communicate changes
+   *        over.
+   */
   public LWWRegister(VersionVector<K, T> initialVersion, K identifier,
       DeliveryChannel<K, LWWRegisterState<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);

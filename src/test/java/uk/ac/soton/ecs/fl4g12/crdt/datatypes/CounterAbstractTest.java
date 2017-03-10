@@ -29,6 +29,9 @@ import org.junit.Test;
 
 /**
  * Tests for implementations of {@linkplain Counter}.
+ * 
+ * @param <E> the type of counter value that the test uses.
+ * @param <C> the type of the counter being tested.
  */
 public abstract class CounterAbstractTest<E, C extends Counter<E>>
     extends IncrementableCounterAbstractTest<E, C> {

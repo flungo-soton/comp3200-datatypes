@@ -58,6 +58,12 @@ public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
     return identifier;
   }
 
+  /**
+   * Get the {@linkplain DeliveryChannel} which this {@linkplain Updatable} communicates
+   * {@linkplain UpdateMessage}s.
+   *
+   * @return
+   */
   public final DeliveryChannel<K, U> getDeliveryChannel() {
     return deliveryChannel;
   }

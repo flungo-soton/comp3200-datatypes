@@ -286,6 +286,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_NoChange() throws Exception {
@@ -314,6 +316,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_LocalIncrement() throws Exception {
@@ -350,6 +354,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_RemoteIncrement() throws Exception {
@@ -386,6 +392,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_BothIncrement() throws Exception {
@@ -423,6 +431,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_LocalDecrement() throws Exception {
@@ -459,6 +469,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_RemoteDecrement() throws Exception {
@@ -495,6 +507,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_BothDecrement() throws Exception {
@@ -532,6 +546,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_IncrementDecrement() throws Exception {

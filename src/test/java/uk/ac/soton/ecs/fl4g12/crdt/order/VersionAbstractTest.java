@@ -28,6 +28,9 @@ import org.junit.Test;
 
 /**
  * Abstract test for implementations of {@linkplain Version}.
+ *
+ * @param <T> the type of the timestamp in the {@link Version} being tested.
+ * @param <V> the type of the {@link Version} being tested.
  */
 public abstract class VersionAbstractTest<T, V extends Version<T>> {
 

@@ -26,6 +26,8 @@ import java.util.Comparator;
 
 /**
  * Interface for basic registers. Registers are used to store a value.
+ *
+ * @param <T> the type of values stored by the register.
  */
 public interface Register<T> {
 
@@ -43,6 +45,12 @@ public interface Register<T> {
    */
   T value();
 
+  /**
+   * A comparator for comparing the value of {@linkplain Register}s which contain
+   * {@linkplain Comparable} objects.
+   *
+   * @param <T> the type of values stored by the register.
+   */
   class RegisterValueComparator<T extends Comparable<T>>
       implements Comparator<Register<T>>, Serializable {
 

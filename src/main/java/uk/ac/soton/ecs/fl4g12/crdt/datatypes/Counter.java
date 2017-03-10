@@ -53,6 +53,12 @@ public interface Counter<E> {
    */
   E value();
 
+  /**
+   * A comparator for comparing the value of {@linkplain Counter}s which contain
+   * {@linkplain Comparable} objects
+   *
+   * @param <T> the type of values stored by the register.
+   */
   class CounterValueComparator<T extends Comparable<T>>
       implements Comparator<Counter<T>>, Serializable {
 

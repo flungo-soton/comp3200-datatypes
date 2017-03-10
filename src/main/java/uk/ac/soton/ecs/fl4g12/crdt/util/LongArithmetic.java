@@ -46,6 +46,12 @@ public final class LongArithmetic extends AbstractArithmetic<Long> {
     return accumulator;
   }
 
+  /**
+   * Get the instance of {@linkplain LongArithmetic}. {@linkplain LongArithmetic} is a singleton and
+   * this method returns the single instance.
+   *
+   * @return the {@linkplain LongArithmetic} instance.
+   */
   public static LongArithmetic getInstance() {
     return LongArithmeticHolder.INSTANCE;
   }

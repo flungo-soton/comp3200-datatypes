@@ -29,6 +29,9 @@ import org.junit.Test;
 
 /**
  * Abstract tests for {@linkplain Register} implementations.
+ *
+ * @param <E> the type of register value that the test uses.
+ * @param <R> the type of the register being tested.
  */
 public abstract class RegisterAbstractTest<E, R extends Register<E>> {
 

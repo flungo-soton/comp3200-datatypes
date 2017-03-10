@@ -149,6 +149,8 @@ public class GCounterTest
 
   /**
    * Test update with no changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_NoChange() throws Exception {
@@ -176,11 +178,13 @@ public class GCounterTest
   }
 
   /**
-   * Test update with no changes.
+   * Test update with a local increment.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_LocalIncrement() throws Exception {
-    LOGGER.log(Level.INFO, "testUpdate_LocalIncrement: Test update with no changes.");
+    LOGGER.log(Level.INFO, "testUpdate_LocalIncrement: Test update with a local increment.");
 
     final GCounter<Integer, Object> counter1 = getCounter();
     final GCounter<Integer, Object> counter2 = getCounter();
@@ -212,11 +216,13 @@ public class GCounterTest
   }
 
   /**
-   * Test update with no changes.
+   * Test update with a remote increment.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_RemoteIncrement() throws Exception {
-    LOGGER.log(Level.INFO, "testUpdate_RemoteIncrement: Test update with no changes.");
+    LOGGER.log(Level.INFO, "testUpdate_RemoteIncrement: Test update with a remote increment.");
 
     final GCounter<Integer, Object> counter1 = getCounter();
     final GCounter<Integer, Object> counter2 = getCounter();
@@ -248,11 +254,13 @@ public class GCounterTest
   }
 
   /**
-   * Test update with no changes.
+   * Test update with concurrent changes.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
   public void testUpdate_BothIncrement() throws Exception {
-    LOGGER.log(Level.INFO, "testUpdate_BothIncrement: Test update with no changes.");
+    LOGGER.log(Level.INFO, "testUpdate_BothIncrement: Test update with concurrent increments.");
 
     final GCounter<Integer, Object> counter1 = getCounter();
     final GCounter<Integer, Object> counter2 = getCounter();

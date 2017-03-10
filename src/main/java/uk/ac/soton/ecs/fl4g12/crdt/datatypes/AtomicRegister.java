@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Local {@linkplain Register} backed by an {@linkplain AtomicReference}.
+ * 
+ * @param <V> the type of values stored by the register.
  */
 public class AtomicRegister<V> implements Register<V> {
 
@@ -39,7 +41,7 @@ public class AtomicRegister<V> implements Register<V> {
 
   /**
    * Construct a new {@linkplain AtomicRegister} with a given initial value.
-   * 
+   *
    * @param initial the initial value to use.
    */
   public AtomicRegister(V initial) {

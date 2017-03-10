@@ -30,10 +30,18 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SafeAtomicInteger extends AtomicInteger {
 
+  /**
+   * Construct a {@linkplain SafeAtomicInteger} with a given initial value.
+   *
+   * @param initialValue the initial value of the {@linkplain SafeAtomicInteger}.
+   */
   public SafeAtomicInteger(int initialValue) {
     super(initialValue);
   }
 
+  /**
+   * Construct a {@linkplain SafeAtomicInteger} with an initial value of 0.
+   */
   public SafeAtomicInteger() {}
 
   /**

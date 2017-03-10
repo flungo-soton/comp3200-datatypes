@@ -40,8 +40,12 @@ public final class PNCounterState<E extends Comparable<E>, K>
   /**
    * Instantiate a new {@linkplain GCounterState}.
    *
+   * Provided version vectors will be copied as part of instantiation.
+   *
    * @param identifier the identifier of the instance that was updated.
    * @param versionVector the version as a result of the update.
+   * @param p the version vector representing increments.
+   * @param n the version vector representing decrements.
    */
   PNCounterState(K identifier, VersionVector<K, E> versionVector, VersionVector<K, E> p,
       VersionVector<K, E> n) {

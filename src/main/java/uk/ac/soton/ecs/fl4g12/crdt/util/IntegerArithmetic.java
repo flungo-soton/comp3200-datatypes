@@ -46,6 +46,12 @@ public final class IntegerArithmetic extends AbstractArithmetic<Integer> {
     return accumulator;
   }
 
+  /**
+   * Get the instance of {@linkplain IntegerArithmetic}. {@linkplain IntegerArithmetic} is a
+   * singleton and this method returns the single instance.
+   *
+   * @return the {@linkplain IntegerArithmetic} instance.
+   */
   public static IntegerArithmetic getInstance() {
     return IntegerArithmeticHolder.INSTANCE;
   }

@@ -35,6 +35,7 @@ import java.io.Serializable;
  * {@link DeliveryChannel} which communicates the messages can serialize them.
  *
  * @param <K> the type of identifier used to identify nodes.
+ * @param <U> the type of {@linkplain UpdateMessage} instances can be compared with.
  */
 public interface UpdateMessage<K, U extends UpdateMessage<K, U>>
     extends Comparable<U>, Serializable {

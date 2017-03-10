@@ -33,10 +33,12 @@ public class DeliveryUpdateException extends Exception {
    * Constructs an instance of <code>DeliveryUpdateException</code> with the specified detail
    * message.
    *
-   * @param msg the detail message.
+   * @param updatable the {@link Updatable} that could not be updated.
+   * @param updateMessage the {@linkplain UpdateMessage} that could not be applied.
+   * @param reason the reason the update could not be applied.
    */
-  public DeliveryUpdateException(Updatable updatable, UpdateMessage updateMessage, String msg) {
-    super(updateMessage + " could not be delivered to " + updatable + ": " + msg);
+  public DeliveryUpdateException(Updatable updatable, UpdateMessage updateMessage, String reason) {
+    super(updateMessage + " could not be delivered to " + updatable + ": " + reason);
     this.updatable = updatable;
     this.updateMessage = updateMessage;
   }
@@ -52,7 +54,7 @@ public class DeliveryUpdateException extends Exception {
 
   /**
    * Get the {@linkplain UpdateMessage} that could not be applied.
-   * 
+   *
    * @return the {@link UpdateMessage} that could not be applied.
    */
   public UpdateMessage getUpdateMessage() {

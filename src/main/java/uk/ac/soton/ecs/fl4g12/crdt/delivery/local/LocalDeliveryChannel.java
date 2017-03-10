@@ -35,6 +35,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
  * A delivery channel which delivers messages between local instances. This is not useful in
  * production and is primarily designed for testing. Delivery will be performed between
  * {@link Updatable} instances which are instantiated with this {@link DeliveryChannel}.
+ * 
+ * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
+ * @param <U> The type of updates sent via the delivery channel.
  */
 public class LocalDeliveryChannel<K, U extends UpdateMessage<K, ?>>
     implements DeliveryChannel<K, U> {

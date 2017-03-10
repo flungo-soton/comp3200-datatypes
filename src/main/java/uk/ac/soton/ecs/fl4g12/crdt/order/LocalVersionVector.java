@@ -29,6 +29,9 @@ import java.util.Set;
  * A locally incrementable {@linkplain VersionVector}. Wraps {@linkplain VersionVector} which acts
  * as a {@linkplain LogicalVersion} by incrementing a fixed identifier in the
  * {@linkplain VersionVector}.
+ * 
+ * @param <K> the type of the identifier.
+ * @param <T> the type of the timestamp.
  */
 public final class LocalVersionVector<K, T extends Comparable<T>>
     implements VersionVector<K, T>, LogicalVersion<Map<K, T>> {

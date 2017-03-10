@@ -23,6 +23,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.idenitifier;
 
 /**
  * Factory for creating new identifiers.
+ *
+ * @param <K> the type of identifier that the factory creates.
  */
 public interface IdentifierFactory<K> {
 

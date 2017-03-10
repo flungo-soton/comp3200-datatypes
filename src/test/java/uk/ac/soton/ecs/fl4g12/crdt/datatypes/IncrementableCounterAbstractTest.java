@@ -30,6 +30,9 @@ import org.junit.rules.ExpectedException;
 
 /**
  * Tests for increment only implementations of {@linkplain Counter}.
+ * 
+ * @param <E> the type of counter value that the test uses.
+ * @param <C> the type of the counter being tested.
  */
 public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>> {
 
