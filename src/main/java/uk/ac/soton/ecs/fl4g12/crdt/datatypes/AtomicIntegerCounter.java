@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AtomicIntegerCounter implements Counter<Integer> {
 
-  private AtomicInteger integer = new AtomicInteger();
+  private final AtomicInteger integer = new AtomicInteger();
 
   @Override
   public void increment() {

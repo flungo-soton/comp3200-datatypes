@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class AtomicLongCounter implements Counter<Long> {
 
-  private AtomicLong counter = new AtomicLong();
+  private final AtomicLong counter = new AtomicLong();
 
   @Override
   public void increment() {
