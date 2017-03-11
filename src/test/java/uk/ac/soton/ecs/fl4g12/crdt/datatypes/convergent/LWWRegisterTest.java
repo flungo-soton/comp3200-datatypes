@@ -47,7 +47,7 @@ public class LWWRegisterTest
 
   private static final Logger LOGGER = Logger.getLogger(LWWRegisterTest.class.getName());
 
-  private static IncrementalIntegerIdentifierFactory ID_FACTORY =
+  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
   @Override

@@ -626,6 +626,8 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
     assertEquals(instance, copy);
     assertTrue(copy.identical(instance));
     assertNotSame(instance, copy);
+
+    // TODO: Ensure that modifying copy does not change original and vice-versa
   }
 
   /**

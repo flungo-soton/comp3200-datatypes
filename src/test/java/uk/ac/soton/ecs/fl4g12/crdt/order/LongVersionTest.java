@@ -155,8 +155,8 @@ public class LongVersionTest extends VersionAbstractTest<Long, LongVersion> {
    * Test of copy method of an unmodified {@linkplain LongVersion} unmodified.
    */
   @Test
-  public void testCopy_0() {
-    LOGGER.log(Level.INFO, "testCopy_0: Testing copy method of a version with 0 value");
+  public void testCopy_Zero() {
+    LOGGER.log(Level.INFO, "testCopy_Zero: Testing copy method of a version with 0 value");
     Long expInstanceValue = 0l;
     Long expCopyValue = 0l;
     LongVersion copy = instance.copy();

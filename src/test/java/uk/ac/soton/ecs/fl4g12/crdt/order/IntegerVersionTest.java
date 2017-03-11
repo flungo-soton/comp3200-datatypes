@@ -155,8 +155,8 @@ public class IntegerVersionTest extends VersionAbstractTest<Integer, IntegerVers
    * Test of copy method of an unmodified {@linkplain IntegerVersion} unmodified.
    */
   @Test
-  public void testCopy_0() {
-    LOGGER.log(Level.INFO, "testCopy_0: Testing copy method of a version with 0 value");
+  public void testCopy_Zero() {
+    LOGGER.log(Level.INFO, "testCopy_Zero: Testing copy method of a version with 0 value");
     Integer expInstanceValue = 0;
     Integer expCopyValue = 0;
     IntegerVersion copy = instance.copy();

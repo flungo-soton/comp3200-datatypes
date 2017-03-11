@@ -40,6 +40,7 @@ public final class LocalDeliveryChannelTest extends
     return (Integer) i;
   }
 
+  @Override
   public TestUpdateMessage<Integer> getUpdateMessage(final Integer id, final int order) {
     return Mockito.spy(new TestUpdateMessage(id, order));
   }

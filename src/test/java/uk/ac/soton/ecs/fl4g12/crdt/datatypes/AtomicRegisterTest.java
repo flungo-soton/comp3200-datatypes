@@ -54,7 +54,7 @@ public class AtomicRegisterTest extends RegisterAbstractTest<Object, AtomicRegis
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       Object value = getValue(i);
-      AtomicRegister<Object> instance = new AtomicRegister<Object>(value);
+      AtomicRegister<Object> instance = new AtomicRegister<>(value);
       assertSame(value, instance.value());
     }
   }
