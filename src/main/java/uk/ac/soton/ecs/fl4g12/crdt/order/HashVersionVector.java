@@ -33,7 +33,8 @@ import java.util.Set;
  * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
  */
-public class HashVersionVector<K, T extends Comparable<T>> extends AbstractVersionVector<K, T> {
+public final class HashVersionVector<K, T extends Comparable<T>>
+    extends AbstractVersionVector<K, T> {
 
   private final LogicalVersion<T> zero;
 
@@ -51,7 +52,16 @@ public class HashVersionVector<K, T extends Comparable<T>> extends AbstractVersi
     this(zero, dotted, new HashMap<K, LogicalVersion<T>>());
   }
 
-  HashVersionVector(LogicalVersion<T> zero, boolean dotted, HashMap<K, LogicalVersion<T>> vector) {
+  /**
+   * Construct a {@linkplain HashVersionVector} with all fields specified. For internal use only.
+   *
+   * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
+   *        timestamps.
+   * @param dotted whether or not this is a dotted {@link VersionVector}.
+   * @param vector the vector to initialise with. This value is not copied.
+   */
+  private HashVersionVector(LogicalVersion<T> zero, boolean dotted,
+      HashMap<K, LogicalVersion<T>> vector) {
     super(zero.get(), dotted);
     this.zero = zero.copy();
     this.vector = vector;
