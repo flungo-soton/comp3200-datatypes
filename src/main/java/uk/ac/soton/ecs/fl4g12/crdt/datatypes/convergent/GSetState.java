@@ -29,7 +29,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Representation of the state for a {@linkplain GSet}.
- * 
+ *
  * @param <E> the type of values stored in the {@link GSet}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
@@ -48,11 +48,32 @@ public final class GSetState<E, K, T extends Comparable<T>>
    */
   GSetState(K identifier, VersionVector<K, T> versionVector, Set<E> state) {
     super(identifier, versionVector);
-    this.state = state;
+    this.state = new HashSet<>(state);
   }
 
   public Set<E> getState() {
     return new HashSet<>(state);
   }
+
+  @Override
+  public int hashCode() {
+    int hash = super.hashCode();
+    hash = 97 * hash + this.state.hashCode();
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!super.equals(obj)) {
+      return false;
+    }
+    final GSetState<?, ?, ?> other = (GSetState<?, ?, ?>) obj;
+    if (!this.state.equals(other.state)) {
+      return false;
+    }
+    return true;
+  }
+
+
 
 }
