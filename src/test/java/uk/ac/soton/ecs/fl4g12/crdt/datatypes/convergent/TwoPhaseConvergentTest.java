@@ -22,36 +22,39 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowOnlySetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.State;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 
 /**
- * Tests for the {@linkplain GSet} implementation.
+ * Test of the {@linkplain State} based features of the {@linkplain TwoPhaseSet}.
  */
-public class GSetTest extends GrowOnlySetAbstractTest<Integer, GSet<Integer, Integer, Integer>> {
+public class TwoPhaseConvergentTest extends
+    ConvergentSetAbstractTest<Integer, Integer, Integer, TwoPhaseSetState<Integer, Integer, Integer>, TwoPhaseSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  public GSetTest() {
-    super(Integer.class, Integer[].class);
-  }
-
   @Override
-  protected GSet<Integer, Integer, Integer> getSet() {
-    DeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel =
+  protected TwoPhaseSet<Integer, Integer, Integer> getSet() {
+    DeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel =
         Mockito.mock(DeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
         .register(Mockito.any(Updatable.class));
-    return new GSet<>(new IntegerVersion(), null, deliveryChannel);
+    return new TwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 
   @Override
   protected Integer getElement(int i) {
     return i;
+  }
+
+  @Override
+  protected LogicalVersion<Integer> getZeroVersion() {
+    return new IntegerVersion();
   }
 
 }

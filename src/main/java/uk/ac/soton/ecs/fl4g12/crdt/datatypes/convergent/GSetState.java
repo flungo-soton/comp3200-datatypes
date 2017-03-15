@@ -24,7 +24,6 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.HashSet;
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -35,7 +34,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public final class GSetState<E, K, T extends Comparable<T>>
-    extends AbstractVersionedUpdateMessage<K, T> implements StateSnapshot<K, T> {
+    extends AbstractVersionedUpdateMessage<K, T> implements SetState<E, K, T> {
 
   private final Set<E> state;
 
@@ -51,6 +50,12 @@ public final class GSetState<E, K, T extends Comparable<T>>
     this.state = new HashSet<>(state);
   }
 
+  /**
+   * Get a copy of the set of elements that have been added to the {@link GSet}.
+   *
+   * @return a copy of the set of elements that have been added to the {@link GSet}.
+   */
+  @Override
   public Set<E> getState() {
     return new HashSet<>(state);
   }

@@ -24,8 +24,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.HashSet;
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+
 
 /**
  * Representation of the state for a {@linkplain TwoPhaseSet}.
@@ -35,7 +35,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public final class TwoPhaseSetState<E, K, T extends Comparable<T>>
-    extends AbstractVersionedUpdateMessage<K, T> implements StateSnapshot<K, T> {
+    extends AbstractVersionedUpdateMessage<K, T> implements SetState<E, K, T> {
 
   private final Set<E> additions;
   private final Set<E> removals;
@@ -80,6 +80,7 @@ public final class TwoPhaseSetState<E, K, T extends Comparable<T>>
    *
    * @return the effective of the {@link TwoPhaseSet}.
    */
+  @Override
   public Set<E> getState() {
     Set<E> state = getAdditions();
     state.removeAll(removals);

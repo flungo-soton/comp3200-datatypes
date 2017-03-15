@@ -22,23 +22,21 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowOnlySetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.State;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 
 /**
- * Tests for the {@linkplain GSet} implementation.
+ * Test of the {@linkplain State} based features of the {@linkplain GSet}.
  */
-public class GSetTest extends GrowOnlySetAbstractTest<Integer, GSet<Integer, Integer, Integer>> {
+public class GSetConvergentTest extends
+    ConvergentSetAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
-
-  public GSetTest() {
-    super(Integer.class, Integer[].class);
-  }
 
   @Override
   protected GSet<Integer, Integer, Integer> getSet() {
@@ -52,6 +50,11 @@ public class GSetTest extends GrowOnlySetAbstractTest<Integer, GSet<Integer, Int
   @Override
   protected Integer getElement(int i) {
     return i;
+  }
+
+  @Override
+  protected LogicalVersion<Integer> getZeroVersion() {
+    return new IntegerVersion();
   }
 
 }

@@ -42,6 +42,9 @@ import org.junit.rules.ExpectedException;
 
 /**
  * Abstract tests for grow-only {@linkplain Set} implementations.
+ * 
+ * @param <E> the type of set value that the test uses.
+ * @param <S> the type of the set being tested.
  */
 public abstract class GrowOnlySetAbstractTest<E, S extends Set<E>> {
 

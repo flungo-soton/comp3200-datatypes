@@ -55,4 +55,13 @@ public interface Updatable<K, U extends UpdateMessage<K, ?>> {
    * @throws DeliveryUpdateException if the update could not be applied.
    */
   void update(U message) throws DeliveryUpdateException;
+
+  /**
+   * Get the delivery channel that is used by this {@linkplain Updatable} to deliver updates to
+   * replicas.
+   *
+   * @return the delivery channel that is used by this {@link Updatable} to deliver updates to
+   *         replicas.
+   */
+  DeliveryChannel<K, U> getDeliveryChannel();
 }

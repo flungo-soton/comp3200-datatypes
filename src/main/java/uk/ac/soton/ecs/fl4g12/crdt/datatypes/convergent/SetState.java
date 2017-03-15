@@ -21,37 +21,23 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
-import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowOnlySetAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import java.util.Set;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
 
 /**
- * Tests for the {@linkplain GSet} implementation.
+ * Interface for objects that represent a {@linkplain Set} state.
+ *
+ * @param <E> the type of values stored in the {@link Set}.
+ * @param <K> the type of identifier used to identify nodes.
+ * @param <T> the type of the timestamp within the {@link VersionVector}
  */
-public class GSetTest extends GrowOnlySetAbstractTest<Integer, GSet<Integer, Integer, Integer>> {
+public interface SetState<E, K, T extends Comparable<T>> extends StateSnapshot<K, T> {
 
-  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
-      new IncrementalIntegerIdentifierFactory();
-
-  public GSetTest() {
-    super(Integer.class, Integer[].class);
-  }
-
-  @Override
-  protected GSet<Integer, Integer, Integer> getSet() {
-    DeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
-    return new GSet<>(new IntegerVersion(), null, deliveryChannel);
-  }
-
-  @Override
-  protected Integer getElement(int i) {
-    return i;
-  }
+  /**
+   * Get or compute the effective state of the {@link Set}.
+   *
+   * @return the effective state of the {@link Set}.
+   */
+  Set<E> getState();
 
 }

@@ -291,11 +291,10 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
     @Override
     public synchronized void remove() {
       if (!hasNexted) {
-        throw new IllegalStateException("next is yet to be called.");
+        throw new IllegalStateException();
       }
-      if (!TwoPhaseSet.this.remove(current)) {
-
-      }
+      TwoPhaseSet.this.remove(current);
+      hasNexted = false;
     }
 
   }
