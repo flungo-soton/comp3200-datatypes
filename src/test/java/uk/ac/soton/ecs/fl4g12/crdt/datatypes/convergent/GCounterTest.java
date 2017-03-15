@@ -118,11 +118,11 @@ public class GCounterTest
   }
 
   /**
-   * Test snapshot of a zero counter.
+   * Test snapshot of an incremented counter.
    */
   @Test
   public void testSnapshot_Incremented() {
-    LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a zero counter.");
+    LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of an incremented counter.");
     final GCounter<Integer, Object> counter = getCounter();
 
     final VersionVector<Object, Integer> expectedVersionVector =
@@ -242,7 +242,7 @@ public class GCounterTest
     assertTrue("The counters should be identical after update",
         counter2.getVersion().identical(counter1.getVersion()));
     assertEquals("counter1 should have seen 1 increment", getValue(1), counter1.value());
-    assertEquals("counter2 should have seen 1 increments", getValue(1), counter2.value());
+    assertEquals("counter2 should have seen 1 increment", getValue(1), counter2.value());
 
     counter2.update(counter1.snapshot());
     assertTrue("The counters should be identical after bi-directional update",
@@ -281,7 +281,7 @@ public class GCounterTest
     assertTrue("counter2 should have happenedBefore counter1",
         counter2.getVersion().happenedBefore(counter1.getVersion()));
     assertEquals("counter1 should have seen 2 increment", getValue(2), counter1.value());
-    assertEquals("counter2 should have seen 1 increments", getValue(1), counter2.value());
+    assertEquals("counter2 should have seen 1 increment", getValue(1), counter2.value());
 
     counter2.update(counter1.snapshot());
     assertTrue("The counters should be identical after bi-directional update",
