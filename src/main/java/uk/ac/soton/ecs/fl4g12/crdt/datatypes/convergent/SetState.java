@@ -23,6 +23,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Interface for objects that represent a {@linkplain Set} state.
