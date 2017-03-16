@@ -23,11 +23,11 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.State;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 
 /**
  * Test of the {@linkplain State} based features of the {@linkplain TwoPhaseSet}.

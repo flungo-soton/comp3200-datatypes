@@ -34,21 +34,21 @@ import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.State;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 
 /**
- * Tests for convergent {@linkplain State} based {@link Set} implementations.
+ * Tests for convergent {@link StatefulUpdatable} based {@link Set} implementations.
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
  * @param <U> the type of snapshot made from this state.
- * @param <S> the type of {@linkplain State} based {@link Set} being tested.
+ * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
  */
-public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & State<K, T, U>> {
+public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>> {
 
   private static final Logger LOGGER = Logger.getLogger(ConvergentSetAbstractTest.class.getName());
 
