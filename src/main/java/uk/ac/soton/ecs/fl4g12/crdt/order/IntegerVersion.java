@@ -55,6 +55,15 @@ public class IntegerVersion extends AbstractLogicalVersion<Integer> {
   }
 
   @Override
+  public Integer successor() {
+    Integer successor = get() + 1;
+    if (successor == Integer.MIN_VALUE) {
+      throw new ArithmeticException("Arithmetic overflow");
+    }
+    return successor;
+  }
+
+  @Override
   public void increment() {
     timestamp.safeIncrementAndGet();
   }

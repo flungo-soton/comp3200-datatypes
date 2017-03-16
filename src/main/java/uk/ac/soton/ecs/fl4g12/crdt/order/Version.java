@@ -46,10 +46,23 @@ public interface Version<T> extends Comparable<Version<T>> {
    * {@code a.happenedBefore(b) == true}.
    *
    * @param version the {@linkplain Version} to compare with.
-   * @return {@code true} if this {@linkplain Version} is concurrent with the {@code other}
+   * @return {@code true} if this {@linkplain Version} is concurrent with the provided
    *         {@linkplain Version}, {@code false} otherwise.
    */
   boolean happenedBefore(Version<T> version);
+
+  /**
+   * Determine if this {@linkplain Version} happens exactly one increment before the provided one.
+   * If this returns true, then there should exist no version which happened-before this version but
+   * happened-after the provided one.
+   *
+   * @param version
+   * @return {@code true} if this {@linkplain Version} directly proceeds the provided
+   *         {@linkplain Version} such that no other {@linkplain Version} exists which
+   *         happened-before this version but happened-after the provided one, {@code false}
+   *         otherwise.
+   */
+  boolean precedes(Version<T> version);
 
   /**
    * Synchronise the local {@linkplain Version} with another {@linkplain Version}. A synchronisation

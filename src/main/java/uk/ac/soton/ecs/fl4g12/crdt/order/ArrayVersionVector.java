@@ -65,7 +65,7 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
    */
   private ArrayVersionVector(LogicalVersion<T> zero, boolean dotted, List<LogicalVersion<T>> vector,
       Set<Integer> identifiers) {
-    super(zero.get(), dotted);
+    super(zero, dotted);
     this.zero = zero.copy();
     this.vector = vector;
     this.identifiers = identifiers;
@@ -73,7 +73,7 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
   }
 
   @Override
-  protected LogicalVersion<T> getInternal(Integer id) {
+  public LogicalVersion<T> getLogicalVersion(Integer id) {
     try {
       return vector.get(id);
     } catch (IndexOutOfBoundsException ex) {
@@ -108,7 +108,7 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
     if (!identifiers.contains(id)) {
       init(id);
     }
-    getInternal(id).sync(value);
+    getLogicalVersion(id).sync(value);
   }
 
   @Override

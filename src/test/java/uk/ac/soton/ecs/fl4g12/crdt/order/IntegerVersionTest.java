@@ -48,7 +48,7 @@ public class IntegerVersionTest extends VersionAbstractTest<Integer, IntegerVers
 
   @Override
   public Integer getTimestamp(int order) {
-    return order == 0 ? 0 : 1 << (order - 1);
+    return order;
   }
 
   @Rule

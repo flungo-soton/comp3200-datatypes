@@ -34,6 +34,11 @@ public abstract class AbstractLogicalVersion<T extends Comparable<T>> extends Ab
     implements LogicalVersion<T> {
 
   @Override
+  public boolean precedes(Version<T> version) {
+    return successor().equals(version.get());
+  }
+
+  @Override
   public int compareTo(Version<T> version) {
     return get().compareTo(version.get());
   }

@@ -48,7 +48,7 @@ public class LongVersionTest extends VersionAbstractTest<Long, LongVersion> {
 
   @Override
   public Long getTimestamp(int order) {
-    return order == 0 ? 0 : 1l << (order - 1);
+    return (long) order;
   }
 
   @Rule

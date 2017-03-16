@@ -58,6 +58,18 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   T get(K id);
 
   /**
+   * Gets the {@linkplain LogicalVersion} being used for a specific identifier. If the identifier
+   * has not been initialised then {@code null} will be returned. Mutating the
+   * {@linkplain LogicalVersion} will alter the {@linkplain VersionVector} but can be the
+   * {@link LogicalVersion#copy()} method can be used to get a copy which will not affect the
+   * {@linkplain VersionVector}.
+   *
+   * @param id the identifier which the {@link LogicalVersion} should be returned for.
+   * @return the timestamp from the vector for the specified identifier.
+   */
+  LogicalVersion<T> getLogicalVersion(K id);
+
+  /**
    * Gets a set of initialised identifiers contained within this vector.
    *
    * @return the set of identifiers which this vector contains.
@@ -79,6 +91,18 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
    * @param id the id of the node who's timestamp is to be incremented.
    */
   void increment(K id);
+
+  /**
+   * The the state of the {@linkplain VersionVector} with given id incremented. This method does not
+   * change the state of the {@linkplain VersionVector} and represents a successor of this
+   * {@linkplain VersionVector}. The {@link Map} returned is the same as the one which would be
+   * returned by {@link #get()} with the given {@code id} incremented.
+   *
+   * @param id the id of the node who's timestamp would be incremented.
+   * @return a map of the current state with the given id incremented.
+   * @see #get() for details about the map that is returned.
+   */
+  Map<K, T> successor(K id);
 
   /**
    * Synchronise a single node's timestamp. If the timestamp given is greater than the local

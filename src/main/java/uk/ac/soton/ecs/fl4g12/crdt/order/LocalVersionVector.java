@@ -29,7 +29,7 @@ import java.util.Set;
  * A locally incrementable {@linkplain VersionVector}. Wraps {@linkplain VersionVector} which acts
  * as a {@linkplain LogicalVersion} by incrementing a fixed identifier in the
  * {@linkplain VersionVector}.
- * 
+ *
  * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
  */
@@ -74,6 +74,11 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
+  public LogicalVersion<T> getLogicalVersion(K id) {
+    return versionVector.getLogicalVersion(id);
+  }
+
+  @Override
   public Map<K, T> get() {
     return versionVector.get();
   }
@@ -104,6 +109,16 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
+  public Map<K, T> successor(K id) {
+    return versionVector.successor(id);
+  }
+
+  @Override
+  public Map<K, T> successor() {
+    return versionVector.successor(identifier);
+  }
+
+  @Override
   public void sync(K id, T value) {
     versionVector.sync(id, value);
   }
@@ -121,6 +136,11 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   @Override
   public boolean happenedBefore(Version<Map<K, T>> version) {
     return versionVector.happenedBefore(version);
+  }
+
+  @Override
+  public boolean precedes(Version<Map<K, T>> version) {
+    return versionVector.precedes(version);
   }
 
   @Override

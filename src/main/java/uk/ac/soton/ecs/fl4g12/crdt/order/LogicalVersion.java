@@ -31,12 +31,20 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 public interface LogicalVersion<T> extends Version<T> {
 
   /**
-   * Increment the {@linkplain Version}'s timestamp. Typically increments should be of the same
-   * amount each time and of the smallest incrementable amount.
+   * Increment the {@linkplain LogicalVersion}'s timestamp. Typically increments should be of the
+   * same amount each time and of the smallest incrementable amount.
    *
    * @throws ArithmeticException when incremented beyond the maximum value for the version.
    */
   void increment() throws ArithmeticException;
+
+  /**
+   * Get what the value of the {@linkplain LogicalVersion} would be after an increment. Does not
+   * alter the state of the {@linkplain LogicalVersion}.
+   *
+   * @return the value of the {@linkplain LogicalVersion} after an increment.
+   */
+  T successor();
 
   @Override
   LogicalVersion<T> copy();

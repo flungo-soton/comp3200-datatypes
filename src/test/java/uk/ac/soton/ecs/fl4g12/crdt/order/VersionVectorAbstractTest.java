@@ -154,6 +154,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   @Override
   public HashMap<K, Integer> getTimestamp(int order) {
+    HashMap<K, Integer> timestamp;
     switch (order) {
       case 0:
         return getTimestamp("c0");
@@ -168,13 +169,19 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
       case 5:
         return getTimestamp("a2");
       case 6:
-        return getTimestamp("b4");
+        timestamp = getTimestamp("a2");
+        timestamp.put(getKey(1), 3);
+        return timestamp;
       case 7:
-        return getTimestamp("b5");
+        return getTimestamp("b4");
       case 8:
-        return getTimestamp("c4");
+        timestamp = getTimestamp("b4");
+        timestamp.put(getKey(2), 2);
+        return timestamp;
       case 9:
-        return getTimestamp("c5");
+        timestamp = getTimestamp("b4");
+        timestamp.put(getKey(2), 3);
+        return timestamp;
       default:
         throw new UnsupportedOperationException("order should be between 0 and 9");
     }

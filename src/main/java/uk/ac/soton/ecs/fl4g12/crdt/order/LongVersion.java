@@ -76,6 +76,15 @@ public class LongVersion extends AbstractLogicalVersion<Long> {
   }
 
   @Override
+  public Long successor() {
+    Long successor = get() + 1;
+    if (successor == Long.MIN_VALUE) {
+      throw new ArithmeticException("Arithmetic overflow");
+    }
+    return successor;
+  }
+
+  @Override
   public LongVersion copy() {
     return new LongVersion(get());
   }

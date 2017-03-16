@@ -37,11 +37,11 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
   protected final int VERSION_MAX_ORDER = 9;
 
   /**
-   * Create a version given an order. The order or the version relative to other values returned by
-   * this method.
+   * Create a version given an order.
    *
    * The order value will be between 0 and 9. If it is 0, then the version returned should be a
-   * newly instantiated un-incremented version.
+   * newly instantiated un-incremented version. Sequential values for order should get values that
+   * precede each other ({@code getVersion(x).precedes(getVersion(x+1))}).
    *
    * @param order the order of the version relative to the other values returned by this method.
    * @return the version with order {@code order} relative to other versions from this method.
@@ -251,6 +251,108 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
   @Test
   public void testHappenedBefore_9() {
     testHappenedBefore(9);
+  }
+
+
+  private void testPrecedes(final int order) {
+    // Get the version instance
+    V instance = getVersion(order);
+
+    for (int i = 0; i <= VERSION_MAX_ORDER; i++) {
+      // Verify the happensBefore relation
+      assertEquals(order + 1 == i, instance.precedes(getVersion(i)));
+    }
+  }
+
+  /**
+   * Test that the version with order 0 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_0() {
+    testPrecedes(0);
+  }
+
+  /**
+   * Test that the version with order 1 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_1() {
+    testPrecedes(1);
+  }
+
+
+  /**
+   * Test that the version with order 2 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_2() {
+    testPrecedes(2);
+  }
+
+  /**
+   * Test that the version with order 3 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_3() {
+    testPrecedes(3);
+  }
+
+  /**
+   * Test that the version with order 4 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_4() {
+    testPrecedes(4);
+  }
+
+  /**
+   * Test that the version with order 5 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_5() {
+    testPrecedes(5);
+  }
+
+  /**
+   * Test that the version with order 6 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_6() {
+    testPrecedes(6);
+  }
+
+  /**
+   * Test that the version with order 7 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_7() {
+    testPrecedes(7);
+  }
+
+  /**
+   * Test that the version with order 8 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_8() {
+    testPrecedes(8);
+  }
+
+  /**
+   * Test that the version with order 9 has the expected happensBefore relation with the other
+   * versions.
+   */
+  @Test
+  public void testPrecedes_9() {
+    testPrecedes(9);
   }
 
   private void testSync_Version(final int order) {

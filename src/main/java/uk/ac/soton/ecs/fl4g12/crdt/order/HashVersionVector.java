@@ -62,13 +62,13 @@ public final class HashVersionVector<K, T extends Comparable<T>>
    */
   private HashVersionVector(LogicalVersion<T> zero, boolean dotted,
       HashMap<K, LogicalVersion<T>> vector) {
-    super(zero.get(), dotted);
+    super(zero, dotted);
     this.zero = zero.copy();
     this.vector = vector;
   }
 
   @Override
-  protected LogicalVersion<T> getInternal(K id) {
+  public LogicalVersion<T> getLogicalVersion(K id) {
     return vector.get(id);
   }
 
@@ -90,7 +90,7 @@ public final class HashVersionVector<K, T extends Comparable<T>>
     if (!vector.containsKey(id)) {
       init(id);
     }
-    getInternal(id).sync(value);
+    getLogicalVersion(id).sync(value);
   }
 
   @Override

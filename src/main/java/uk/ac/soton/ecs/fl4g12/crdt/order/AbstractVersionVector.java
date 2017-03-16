@@ -38,6 +38,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     extends AbstractVersion<Map<K, T>> implements VersionVector<K, T> {
 
   private final T zero;
+  private final LogicalVersion<T> zeroVersion;
   private final boolean dotted;
 
   /**
@@ -48,22 +49,15 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
    * @param zero the timestamp that represents zero.
    * @param dotted whether or not this is a dotted {@link VersionVector}.
    */
-  public AbstractVersionVector(T zero, boolean dotted) {
-    this.zero = zero;
+  public AbstractVersionVector(LogicalVersion<T> zero, boolean dotted) {
+    this.zeroVersion = zero.copy();
+    this.zero = zero.get();
     this.dotted = dotted;
   }
 
-  /**
-   * Get the {@linkplain LogicalVersion} being used to track the version of the given id.
-   *
-   * @param id the identifier which the timestamp should be returned for.
-   * @return the {@link LogicalVersion} being used internally, or null if not initialised.
-   */
-  protected abstract LogicalVersion<T> getInternal(K id);
-
   @Override
   public T get(K id) {
-    LogicalVersion<T> internalVersion = getInternal(id);
+    LogicalVersion<T> internalVersion = getLogicalVersion(id);
     return internalVersion == null ? zero : internalVersion.get();
   }
 
@@ -78,12 +72,29 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
   @Override
   public void increment(K id) {
-    LogicalVersion<T> internalVersion = getInternal(id);
+    LogicalVersion<T> internalVersion = getLogicalVersion(id);
     if (internalVersion == null) {
       throw new IllegalArgumentException(
           "Provided ID has not been initialised as part of the vector.");
     }
     internalVersion.increment();
+  }
+
+  @Override
+  public Map<K, T> successor(K id) {
+    // Loop to ensure the successor is the true successor from the snapshot created by `get()`
+    while (true) {
+      Map<K, T> snapshot = get();
+      LogicalVersion<T> localVersion = getLogicalVersion(id);
+
+      // Retry if the localVersion is different since when the snapshot was taken.
+      if (!snapshot.get(id).equals(localVersion.get())) {
+        continue;
+      }
+
+      snapshot.put(id, localVersion.successor());
+      return snapshot;
+    }
   }
 
   @Override
@@ -125,6 +136,57 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
     return !this.identical(version);
   }
+
+  private T successor(T timestamp) {
+    LogicalVersion<T> version = zeroVersion.copy();
+    version.sync(timestamp);
+    return version.successor();
+  }
+
+  @Override
+  public boolean precedes(Version<Map<K, T>> version) {
+    Map<K, T> local = get();
+    Map<K, T> other = version.get();
+
+    // Merge all identifiers together
+    Set<K> identifiers = new HashSet(local.keySet());
+    identifiers.addAll(other.keySet());
+
+    boolean precedes = false;
+    for (K id : identifiers) {
+      // Get the local and other value for the current ID.
+      T localValue = local.get(id);
+      if (localValue == null) {
+        // If the node has not been seen locally, then its value is implicitly zero.
+        localValue = zero;
+      }
+      T otherValue = other.get(id);
+      if (otherValue == null) {
+        // If the node has not been seen by the other, then its value is implicitly zero.
+        otherValue = zero;
+      }
+
+      if (localValue.equals(otherValue)) {
+        continue;
+      }
+
+      if (successor(localValue).equals(otherValue)) {
+        if (precedes) {
+          // Two elements precede, therefor the vector does not.
+          return false;
+        }
+        precedes = true;
+        continue;
+      }
+
+      // Not equal and does not precede, return false
+      return false;
+    }
+
+    return precedes;
+  }
+
+
 
   private Integer compareToInternal(Version<Map<K, T>> version) {
     // Get snapshot of each vector to work with
