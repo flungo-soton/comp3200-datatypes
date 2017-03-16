@@ -24,8 +24,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * An immutable snapshot of of a {@linkplain State}. A {@linkplain StateSnapshot} can be used as an
- * {@link UpdateMessage} for {@link State} based objects.
+ * An immutable snapshot of of a {@linkplain StatefulUpdatable}. A {@linkplain StateSnapshot} can be
+ * used as an {@link UpdateMessage} for other {@linkplain StatefulUpdatable}s.
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
