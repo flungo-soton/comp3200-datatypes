@@ -87,20 +87,22 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
   }
 
   @Override
-  public synchronized void init(Integer id) {
+  public synchronized LogicalVersion<T> init(Integer id) {
     if (identifiers.contains(id)) {
-      return;
+      return vector.get(id);
     }
+    LogicalVersion<T> version = zero.copy();
     if (id > size - 1) {
       for (int i = size; i < id; i++) {
         vector.add(i, null);
       }
-      vector.add(id, zero.copy());
+      vector.add(id, version);
       size = id + 1;
     } else {
-      vector.set(id, zero.copy());
+      vector.set(id, version);
     }
     identifiers.add(id);
+    return version;
   }
 
   @Override

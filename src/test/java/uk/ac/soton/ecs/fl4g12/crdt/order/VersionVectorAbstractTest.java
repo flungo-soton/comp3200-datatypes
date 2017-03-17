@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Test;
@@ -320,23 +321,26 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
   }
 
   private void testInit(final int order) {
-    // Setup the mock
+    // Setup the mock (for cummulative testing)
     V instance = getVersion(order);
 
-    // Get the timestamp which has the expected values
+    // Get the timestamp which has the expected values (for cummulative testing)
     Map<K, Integer> timestamp = getTimestamp(order);
 
     for (int i = 0; i <= 3; i++) {
       K id = getKey(i);
 
       // Test init on the initial version
+      // Get a fresh version to test on
       V initialInitted = getVersion(order);
       Map<K, Integer> expectedTimestamp = getTimestamp(order);
       if (!expectedTimestamp.containsKey(id)) {
         expectedTimestamp.put(id, 0);
       }
 
-      initialInitted.init(id);
+      LogicalVersion<Integer> initialVersion = initialInitted.init(id);
+      assertEquals("The LogicalVersion should have a 0 value", expectedTimestamp.get(id),
+          initialVersion.get());
 
       assertTrue("Identifiers should contain the new identifier",
           expectedTimestamp.keySet().contains(id));
@@ -346,12 +350,18 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
       assertEquals("Version timestamp should match the expectation", expectedTimestamp,
           initialInitted.get());
 
+      assertSame("The same version should be returned using getLogicalVersion", initialVersion,
+          initialInitted.getLogicalVersion(id));
+
       // Test init cumulatively
+      // Test on the version kept between itterations of the loop.
       if (!timestamp.containsKey(id)) {
         timestamp.put(id, 0);
       }
 
-      instance.init(id);
+      LogicalVersion<Integer> logicalVersion = instance.init(id);
+      assertEquals("The LogicalVersion should have a 0 value", expectedTimestamp.get(id),
+          logicalVersion.get());
 
       assertTrue("Identifiers should contain the new identifier",
           expectedTimestamp.keySet().contains(id));
@@ -359,6 +369,9 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
           instance.getIdentifiers());
 
       assertEquals("Version timestamp should match the expectation", timestamp, instance.get());
+
+      assertSame("The same version should be returned using getLogicalVersion", logicalVersion,
+          instance.getLogicalVersion(id));
     }
   }
 

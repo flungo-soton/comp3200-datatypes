@@ -38,6 +38,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
 
   private final VersionVector<K, T> versionVector;
   private final K identifier;
+  private final LogicalVersion<T> localVersion;
 
   /**
    * Wrap a given {@link VersionVector} as a {@link LocalVersionVector}. If the provided id is not
@@ -50,7 +51,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   public LocalVersionVector(VersionVector<K, T> versionVector, K identifier) {
     this.versionVector = versionVector;
     this.identifier = identifier;
-    versionVector.init(identifier);
+    this.localVersion = versionVector.init(identifier);
   }
 
   /**
@@ -94,8 +95,8 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public void init(K id) {
-    versionVector.init(id);
+  public LogicalVersion<T> init(K id) {
+    return versionVector.init(id);
   }
 
   @Override
@@ -105,7 +106,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
 
   @Override
   public void increment() throws ArithmeticException {
-    versionVector.increment(identifier);
+    localVersion.increment();
   }
 
   @Override

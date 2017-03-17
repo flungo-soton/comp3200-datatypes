@@ -37,14 +37,18 @@ public class LocalVersionVectorTest {
 
   private static final Logger LOGGER = Logger.getLogger(LocalVersionVectorTest.class.getName());
 
-  private VersionVector version;
   private Object identifier;
+  private LogicalVersion logicalVersion;
+  private VersionVector version;
   private LocalVersionVector instance;
 
   @Before
   public void setUp() {
-    version = Mockito.mock(VersionVector.class, Mockito.CALLS_REAL_METHODS);
     identifier = Mockito.mock(Object.class);
+    logicalVersion = Mockito.mock(LogicalVersion.class);
+    version = Mockito.mock(VersionVector.class, Mockito.CALLS_REAL_METHODS);
+    Mockito.doReturn(logicalVersion).when(version).init(identifier);
+    Mockito.doReturn(logicalVersion).when(version).get(identifier);
     instance = new LocalVersionVector(version, identifier);
   }
 
@@ -260,7 +264,7 @@ public class LocalVersionVectorTest {
     LOGGER.log(Level.INFO, "increment");
     Mockito.reset(version);
     instance.increment();
-    Mockito.verify(version).increment(identifier);
+    Mockito.verify(logicalVersion).increment();
     Mockito.verifyNoMoreInteractions(version);
   }
 

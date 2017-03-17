@@ -56,7 +56,7 @@ public interface Version<T> extends Comparable<Version<T>> {
    * If this returns true, then there should exist no version which happened-before this version but
    * happened-after the provided one.
    *
-   * @param version
+   * @param version the version to compare against.
    * @return {@code true} if this {@linkplain Version} directly proceeds the provided
    *         {@linkplain Version} such that no other {@linkplain Version} exists which
    *         happened-before this version but happened-after the provided one, {@code false}

@@ -1270,7 +1270,7 @@ public class AbstractVersionVectorTest
     }
 
     @Override
-    public void init(Object id) {
+    public LogicalVersion<Integer> init(Object id) {
       throw new UnsupportedOperationException("Out of test scope.");
     }
 
@@ -1338,7 +1338,7 @@ public class AbstractVersionVectorTest
     }
 
     @Override
-    public void init(K id) {
+    public LogicalVersion<T> init(K id) {
       throw new UnsupportedOperationException("Cannot be mutated.");
     }
 

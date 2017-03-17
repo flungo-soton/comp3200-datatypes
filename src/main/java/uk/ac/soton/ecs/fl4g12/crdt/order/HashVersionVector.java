@@ -78,11 +78,13 @@ public final class HashVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public synchronized void init(K id) {
+  public synchronized LogicalVersion<T> init(K id) {
     if (vector.containsKey(id)) {
-      return;
+      return vector.get(id);
     }
-    vector.put(id, zero.copy());
+    LogicalVersion<T> version = zero.copy();
+    vector.put(id, version);
+    return version;
   }
 
   @Override

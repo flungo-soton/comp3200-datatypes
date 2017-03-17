@@ -78,11 +78,14 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
 
   /**
    * Initialise the given ID in the vector. Adds the identifier to the vector initialising with a 0
-   * value.
+   * value returning the {@linkplain LogicalVersion} that is created. If the version already exists
+   * then no changes are made and the existing {@linkplain LogicalVersion} stored in the
+   * {@linkplain VersionVector} is returned.
    *
    * @param id the id to initialise.
+   * @return the initialised {@linkplain LogicalVersion} for the given identifier.
    */
-  void init(K id);
+  LogicalVersion<T> init(K id);
 
   /**
    * Increments the timestamp for the node represented by the given identifier. Only the local id
