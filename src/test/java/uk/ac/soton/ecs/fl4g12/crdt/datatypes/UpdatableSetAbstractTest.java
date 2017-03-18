@@ -42,7 +42,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
  * @param <U> the type of snapshot made from this state.
- * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
+ * @param <S> the type of {@link Updatable} based {@link Set} being tested.
  */
 public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends UpdateMessage<K, ?>, S extends Set<E> & Updatable<K, U>> {
 
