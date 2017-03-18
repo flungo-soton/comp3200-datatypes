@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -21,17 +21,26 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CRDT;
+import java.util.Set;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Interface for Commutative Replicated Data Types.
+ * Interface for {@linkplain Set} {@linkplain UpdateMessage}s.
  *
+ * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of timestamps which are used by each node.
- * @param <U> the type of updates which this object can be updated by.
+ * @param <T> the type of the timestamp within the {@link VersionVector}
  */
-public interface CmRDT<K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>>
-    extends CRDT<K, U> {
+public interface SetUpdateMessage<E, K, T extends Comparable<T>>
+    extends VersionedUpdateMessage<K, T> {
+
+  /**
+   * Get the elements that are involved in the update.
+   *
+   * @return the elements affected by the update.
+   */
+  Set<E> getElements();
 
 }

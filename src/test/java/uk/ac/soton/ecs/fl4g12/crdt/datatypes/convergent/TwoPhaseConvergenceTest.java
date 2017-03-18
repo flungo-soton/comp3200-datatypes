@@ -30,21 +30,21 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 
 /**
- * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain GSet}.
+ * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain TwoPhaseSet}.
  */
-public class GSetConvergentTest extends
-    ConvergentSetAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
+public class TwoPhaseConvergenceTest extends
+    SetConvergenceAbstractTest<Integer, Integer, Integer, TwoPhaseSetState<Integer, Integer, Integer>, TwoPhaseSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
   @Override
-  protected GSet<Integer, Integer, Integer> getSet() {
-    DeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel =
+  protected TwoPhaseSet<Integer, Integer, Integer> getSet() {
+    DeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel =
         Mockito.mock(DeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
         .register(Mockito.any(Updatable.class));
-    return new GSet<>(new IntegerVersion(), null, deliveryChannel);
+    return new TwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 
   @Override

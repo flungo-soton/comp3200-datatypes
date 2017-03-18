@@ -21,9 +21,7 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -33,11 +31,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Tests for convergent {@link StatefulUpdatable} based {@link Set} implementations.
@@ -48,29 +46,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
  */
-public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>> {
+public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+    extends UpdatableSetAbstractTest<E, K, T, U, S> {
 
-  private static final Logger LOGGER = Logger.getLogger(ConvergentSetAbstractTest.class.getName());
-
-  public static final int MAX_OPERATIONS = 10;
-
-  /**
-   * Get the {@linkplain Set} instance for testing.
-   *
-   * @return a {@link Set} to be tested.
-   */
-  protected abstract S getSet();
-
-  /**
-   * Get a random element to store in the {@linkplain Set}. {@code i} is in order to denote unique
-   * elements.
-   *
-   * @param i the iteration number.
-   * @return a value to store in the set.
-   */
-  protected abstract E getElement(int i);
-
-  protected abstract LogicalVersion<T> getZeroVersion();
+  private static final Logger LOGGER = Logger.getLogger(SetConvergenceAbstractTest.class.getName());
 
   /**
    * Ensure that when an element is added, that the change is published to the
@@ -113,37 +92,11 @@ public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U
   }
 
   /**
-   * Ensure that when a duplicate element is added, that no change is published to the
-   * {@linkplain DeliveryChannel}.
-   */
-  @Test
-  public void testAdd_Duplicate_NoPublish() {
-    LOGGER.log(Level.INFO, "testAdd_Publish: "
-        + "Ensure that when a duplicate element is added, that no change is published to the DeliveryChannel.");
-    final S set = getSet();
-
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
-
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
-
-      final E element = getElement(i);
-      set.add(element);
-      Mockito.reset(deliveryChannel);
-      set.add(element);
-      Mockito.verifyZeroInteractions(deliveryChannel);
-    }
-  }
-
-  /**
    * Ensure that when an elements are added, that the change is published to the
    * {@linkplain DeliveryChannel}.
    */
   @Test
-  public void testAddAll_Publish() {
+  public void testAddAll_Single_Publish() {
     LOGGER.log(Level.INFO, "testAddAll_Publish: "
         + "Ensure that when an elements are added, that the change is published to the DeliveryChannel.");
     final S set = getSet();
@@ -175,35 +128,6 @@ public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U
         }
       }));
       Mockito.verifyNoMoreInteractions(deliveryChannel);
-    }
-  }
-
-  /**
-   * Ensure that when duplicates element is added, that no change is published to the
-   * {@linkplain DeliveryChannel}.
-   */
-  @Test
-  public void testAddAll_Duplicate_NoPublish() {
-    LOGGER.log(Level.INFO, "testAdd_Publish: "
-        + "Ensure that when duplicate elements are added, that no change is published to the DeliveryChannel.");
-    final S set = getSet();
-
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
-
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
-
-      final Collection<E> elements = new ArrayList<>();
-      for (int j = 0; j < MAX_OPERATIONS; j++) {
-        elements.add(getElement(i * MAX_OPERATIONS + j));
-      }
-      set.addAll(elements);
-      Mockito.reset(deliveryChannel);
-      set.addAll(elements);
-      Mockito.verifyZeroInteractions(deliveryChannel);
     }
   }
 

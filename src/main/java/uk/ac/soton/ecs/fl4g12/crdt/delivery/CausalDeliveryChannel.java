@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,19 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
+package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CRDT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Interface for Commutative Replicated Data Types.
+ * Tagging interface for {@link DeliveryChannel}s which implement causal ordering. Causal delivery
+ * channels should provide the correct ordering of messages as well as provided guaranteed at least
+ * once delivery.
  *
- * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of timestamps which are used by each node.
- * @param <U> the type of updates which this object can be updated by.
+ * Data types using should additionally check that the messages are delivered in order and that
+ * messages are applied on an exactly once basis.
+ *
+ * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
+ * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <U> The type of updates sent via the delivery channel.
  */
-public interface CmRDT<K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>>
-    extends CRDT<K, U> {
+public interface CausalDeliveryChannel<K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>>
+    extends DeliveryChannel<K, U> {
 
 }
