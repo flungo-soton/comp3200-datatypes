@@ -23,30 +23,24 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * {@linkplain UpdateMessage} for {@link CommutativeGSet} representing the new additions. This
- * {@link UpdateMessage} contains the elements that were added by the operation which created the
- * {@link UpdateMessage}.
+ * Interface for {@linkplain Set} {@linkplain UpdateMessage}s.
  *
- * @param <E> the type of values stored in the {@link CommutativeGSet}.
+ * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp stored in the {@link VersionVector}
+ * @param <T> the type of the timestamp within the {@link VersionVector}
  */
-public final class CommutativeGSetUpdate<E, K, T extends Comparable<T>>
-    extends AbstractGrowOnlySetUpdateMessage<E, K, T> {
+public interface GrowOnlySetUpdateMessage<E, K, T extends Comparable<T>>
+    extends VersionedUpdateMessage<K, T> {
 
   /**
-   * Construct a {@link CommutativeGSetUpdate} with a list of elements that were added.
+   * Get the elements that are involved in the update.
    *
-   * @param identifier the identifier of the instance that was updated.
-   * @param versionVector the version as a result of the update.
-   * @param elements the elements that were added to the set. The set will not be copied.
+   * @return the elements affected by the update.
    */
-  public CommutativeGSetUpdate(K identifier, VersionVector<K, T> versionVector,
-      Set<? extends E> elements) {
-    super(identifier, versionVector, elements);
-  }
+  Set<? extends E> getElements();
 
 }

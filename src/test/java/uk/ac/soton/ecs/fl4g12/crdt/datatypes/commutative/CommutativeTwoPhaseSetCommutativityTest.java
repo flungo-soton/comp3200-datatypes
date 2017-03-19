@@ -32,21 +32,21 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests for the {@linkplain CommutativeGSetUpdate} implementation.
+ * Tests for the {@linkplain CommutativeTwoPhaseSetUpdate} implementation.
  */
-public final class CommutativeGSetCommutativityTest extends
-    GrowOnlySetCommutativityAbstractTest<Integer, Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>, CommutativeGSet<Integer, Integer, Integer>> {
+public final class CommutativeTwoPhaseSetCommutativityTest extends
+    SetCommutativityAbstractTest<Integer, Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>, CommutativeTwoPhaseSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
   @Override
-  protected CommutativeGSet<Integer, Integer, Integer> getSet() {
-    CausalDeliveryChannel<Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
+  protected CommutativeTwoPhaseSet<Integer, Integer, Integer> getSet() {
+    CausalDeliveryChannel<Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> deliveryChannel =
         Mockito.mock(CausalDeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
         .register(Mockito.any(Updatable.class));
-    return new CommutativeGSet<>(new IntegerVersion(), null, deliveryChannel);
+    return new CommutativeTwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 
   @Override
@@ -60,9 +60,17 @@ public final class CommutativeGSetCommutativityTest extends
   }
 
   @Override
-  protected CommutativeGSetUpdate<Integer, Integer, Integer> getAddUpdate(Integer identifier,
+  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getAddUpdate(Integer identifier,
       VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeGSetUpdate<>(identifier, version, new HashSet<>(elements));
+    return new CommutativeTwoPhaseSetUpdate<>(identifier, version, SetUpdateMessage.Operation.ADD,
+        new HashSet<>(elements));
+  }
+
+  @Override
+  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getRemoveUpdate(
+      Integer identifier, VersionVector<Integer, Integer> version, Collection<Integer> elements) {
+    return new CommutativeTwoPhaseSetUpdate<>(identifier, version,
+        SetUpdateMessage.Operation.REMOVE, new HashSet<>(elements));
   }
 
 }

@@ -23,7 +23,6 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -34,13 +33,31 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp within the {@link VersionVector}
  */
 public interface SetUpdateMessage<E, K, T extends Comparable<T>>
-    extends VersionedUpdateMessage<K, T> {
+    extends GrowOnlySetUpdateMessage<E, K, T> {
+
+
+  /**
+   * Get the {@linkplain Operation} which was performed with the elements contained in this
+   * {@link UpdateMessage}.
+   *
+   * @return the {@linkplain Operation} which was performed with the elements contained in this
+   *         {@linkplain SetUpdateMessage}.
+   */
+  Operation getOperation();
 
   /**
    * Get the elements that are involved in the update.
    *
    * @return the elements affected by the update.
    */
-  Set<E> getElements();
+  @Override
+  Set<? extends E> getElements();
+
+  /**
+   * The type of operations that the update message can represent.
+   */
+  enum Operation {
+    ADD, REMOVE;
+  }
 
 }

@@ -26,9 +26,8 @@ import java.util.Collection;
 
 /**
  * Exception for insertions into a {@linkplain Collection} which failed due to a semantic of the
- * {@linkplain Collection}. Contains an array of elements that were not added. If this exception is
- * caught, all elements involved in the operation but not contained within the elements set of this
- * exception should have been successfully inserted.
+ * {@linkplain Collection}. Contains an array of elements that caused the exception. If the
+ * exception is thrown then no change should have happened to the {@linkplain Collection}.
  */
 public class IllegalInsertionException extends IllegalArgumentException {
 

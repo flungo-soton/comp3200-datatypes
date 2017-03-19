@@ -22,31 +22,37 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.SetUpdateMessage.Operation;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * {@linkplain UpdateMessage} for {@link CommutativeGSet} representing the new additions. This
- * {@link UpdateMessage} contains the elements that were added by the operation which created the
- * {@link UpdateMessage}.
+ * Abstract {@link SetUpdateMessage} to be extended for use with {@linkplain CmRDT}
+ * {@linkplain Set}s. Contains a {@link Set} of elements that were involved in the operation.
  *
- * @param <E> the type of values stored in the {@link CommutativeGSet}.
+ * @param <E> the type of values stored in the {@linkplain CmRDT} {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
-public final class CommutativeGSetUpdate<E, K, T extends Comparable<T>>
-    extends AbstractGrowOnlySetUpdateMessage<E, K, T> {
+public abstract class AbstractSetUpdateMessage<E, K, T extends Comparable<T>>
+    extends AbstractGrowOnlySetUpdateMessage<E, K, T> implements SetUpdateMessage<E, K, T> {
+
+  private final Operation operation;
 
   /**
-   * Construct a {@link CommutativeGSetUpdate} with a list of elements that were added.
+   * Construct an {@link AbstractSetUpdateMessage} with a list of elements that were added.
    *
    * @param identifier the identifier of the instance that was updated.
    * @param versionVector the version as a result of the update.
    * @param elements the elements that were added to the set. The set will not be copied.
    */
-  public CommutativeGSetUpdate(K identifier, VersionVector<K, T> versionVector,
-      Set<? extends E> elements) {
+  public AbstractSetUpdateMessage(K identifier, VersionVector<K, T> versionVector,
+      Operation operation, Set<? extends E> elements) {
     super(identifier, versionVector, elements);
+    this.operation = operation;
+  }
+
+  public Operation getOperation() {
+    return operation;
   }
 
 }
