@@ -198,5 +198,9 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
     return true;
   }
 
+  @Override
+  public String toString() {
+    return versionVector.toString();
+  }
 
 }
