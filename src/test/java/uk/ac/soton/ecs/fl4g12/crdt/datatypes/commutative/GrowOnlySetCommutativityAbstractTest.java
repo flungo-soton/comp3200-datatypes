@@ -67,12 +67,12 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
   }
 
   /**
-   * Get an {@link UpdateMessage} which adds the given elements to the set.
+   * Get a {@link GrowOnlySetUpdateMessage} which adds the given elements to the set.
    *
    * @param identifier the identifier of the node that the update message should come from.
    * @param version the version vector at the time of the update,
    * @param elements the elements that should be added as part of the update message.
-   * @return an {@link UpdateMessage} representing the addition of the given elements.
+   * @return an {@link GrowOnlySetUpdateMessage} representing the addition of the given elements.
    */
   protected abstract U getAddUpdate(K identifier, VersionVector<K, T> version,
       Collection<E> elements);
@@ -338,10 +338,8 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
      * Ensure that when an element is added, that the change is published to the
      * {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(GrowOnlySetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>The element that was added to the {@link Set} being tested.
      * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
@@ -353,10 +351,8 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
      * Ensure that when an element that has already been added is added, that no change is published
      * to the {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(GrowOnlySetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>The element that was added to the {@link Set} being tested.
      * </ul>
@@ -367,10 +363,8 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
      * Ensure that when an element is added using {@linkplain Set#addAll(java.util.Collection)},
      * that the change is published to the {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(GrowOnlySetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>A {@link Set} that contains the element that was added to the {@link Set} being tested.
      * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
@@ -382,13 +376,11 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
      * Ensure that when elements are added using {@linkplain Set#addAll(java.util.Collection)}, that
      * the change is published to the {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(GrowOnlySetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>A {@link Set} that contains the element that was added to the {@link Set} being tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
+     * <li>The {@link GrowOnlySetUpdateMessage} that was published the {@link Set} being tested.
      * </ul>
      */
     ADDALL_MULTIPLE,
@@ -397,13 +389,11 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
      * Ensure that when an elements are added using {@linkplain Set#addAll(java.util.Collection)},
      * that only new elements are published to the {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(GrowOnlySetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>A {@link Set} that contains the element that was added to the {@link Set} being tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
+     * <li>The {@link GrowOnlySetUpdateMessage} that was published the {@link Set} being tested.
      * </ul>
      */
     ADDALL_OVERLAP,
@@ -411,12 +401,10 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
     /**
      * Test applying an update with a single element to be added.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(GrowOnlySetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
-     * <li>The {@link UpdateMessage} that was given to the {@link Set} being tested.
+     * <li>The {@link GrowOnlySetUpdateMessage} that was given to the {@link Set} being tested.
      * </ul>
      */
     UPDATE_ADD_SINGLE,
@@ -424,12 +412,10 @@ public abstract class GrowOnlySetCommutativityAbstractTest<E, K, T extends Compa
     /**
      * Test applying an update with multiple element to be added.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(GrowOnlySetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
-     * <li>The {@link UpdateMessage} that was given to the {@link Set} being tested.
+     * <li>The {@link GrowOnlySetUpdateMessage} that was given to the {@link Set} being tested.
      * </ul>
      */
     UPDATE_ADD_MULTIPLE;

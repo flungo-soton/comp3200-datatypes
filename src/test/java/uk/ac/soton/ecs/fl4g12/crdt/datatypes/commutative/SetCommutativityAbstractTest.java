@@ -52,12 +52,12 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
       Logger.getLogger(SetCommutativityAbstractTest.class.getName());
 
   /**
-   * Get an {@link UpdateMessage} which adds the given elements to the set. It is expected that the
+   * Get a {@link SetUpdateMessage} which adds the given elements to the set.
    *
    * @param identifier the identifier of the node that the update message should come from.
    * @param version the version vector at the time of the update,
    * @param elements the elements that should be added as part of the update message.
-   * @return an {@link UpdateMessage} representing the addition of the given elements.
+   * @return an {@link SetUpdateMessage} representing the addition of the given elements.
    */
   protected abstract U getRemoveUpdate(K identifier, VersionVector<K, T> version,
       Collection<E> elements);
@@ -385,13 +385,11 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
      * Ensure that when an element is removed, that the change is published to the
      * {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>The element that was removed from the {@link Set} being tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
+     * <li>The {@link SetUpdateMessage} that was published the {@link Set} being tested.
      * </ul>
      */
     REMOVE,
@@ -400,13 +398,11 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
      * Ensure that when an element that has already been removed is removed, that no change is
      * published to the {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>The element that was removed from the {@link Set} being tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
+     * <li>The {@link SetUpdateMessage} that was published the {@link Set} being tested.
      * </ul>
      */
     REMOVE_DUPLICATE,
@@ -416,14 +412,12 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
      * {@linkplain Set#removeAll(java.util.Collection)}, that the change is published to the
      * {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>A {@link Set} that contains the element that was removed from the {@link Set} being
      * tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
+     * <li>The {@link SetUpdateMessage} that was published the {@link Set} being tested.
      * </ul>
      */
     REMOVEALL_SINGLE,
@@ -432,14 +426,12 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
      * Ensure that when elements are removed using {@linkplain Set#removeAll(java.util.Collection)},
      * that the change is published to the {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>A {@link Set} that contains the element that was removed from the {@link Set} being
      * tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
+     * <li>The {@link SetUpdateMessage} that was published the {@link Set} being tested.
      * </ul>
      */
     REMOVEALL_MULTIPLE,
@@ -449,14 +441,12 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
      * {@linkplain Set#removeAll(java.util.Collection)}, that only new elements are published to the
      * {@linkplain DeliveryChannel}.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
      * <li>A {@link Set} that contains the element that was removed from the {@link Set} being
      * tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
+     * <li>The {@link SetUpdateMessage} that was published the {@link Set} being tested.
      * </ul>
      */
     REMOVEALL_OVERLAP,
@@ -464,12 +454,10 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
     /**
      * Test applying an update with a single element to be removed.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
-     * <li>The {@link UpdateMessage} that was given from the {@link Set} being tested.
+     * <li>The {@link SetUpdateMessage} that was given from the {@link Set} being tested.
      * </ul>
      */
     UPDATE_REMOVE_SINGLE,
@@ -477,12 +465,10 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
     /**
      * Test applying an update with multiple element to be removed.
      *
-     * For
-     * {@link #makeTestAssertions(uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.GrowOnlySetCommutativityAbstractTest.GrowOnlySetCommutativityTestCase,
-     * java.lang.Object&java.util.Set<E>&uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable<K,T,U>,
-     * java.lang.Object...)}, the object arguments are:
+     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
+     * arguments are:
      * <ul>
-     * <li>The {@link UpdateMessage} that was given from the {@link Set} being tested.
+     * <li>The {@link SetUpdateMessage} that was given from the {@link Set} being tested.
      * </ul>
      */
     UPDATE_REMOVE_MULTIPLE;
