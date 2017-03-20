@@ -24,9 +24,12 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CounterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
@@ -40,6 +43,14 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Integer, Object>> {
 
   private static final Logger LOGGER = Logger.getLogger(PNCounterTest.class.getName());
+
+  @Captor
+  public ArgumentCaptor<PNCounterState> updateMessageCaptor;
+
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+  }
 
   @Override
   protected PNCounter<Integer, Object> getCounter() {
@@ -65,36 +76,31 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
     final PNCounter<Integer, Object> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
-    final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    expectedVersionVector.init(counter.getIdentifier());
-    expectedVersionVector.increment(counter.getIdentifier());
+    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
+    final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
     final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
-    Mockito.reset(deliveryChannel);
-    counter.increment();
-    Mockito.verify(deliveryChannel).publish(Mockito.argThat(new ArgumentMatcher<PNCounterState>() {
-      @Override
-      public boolean matches(PNCounterState t) {
-        if (!t.getIdentifier().equals(counter.getIdentifier())) {
-          return false;
-        }
-        if (!t.getVersionVector().identical(expectedVersionVector)) {
-          return false;
-        }
-        if (!t.getP().identical(expectedP)) {
-          return false;
-        }
-        if (!t.getN().identical(expectedN)) {
-          return false;
-        }
-        return true;
-      }
-    }));
-    Mockito.verifyNoMoreInteractions(deliveryChannel);
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(counter.getIdentifier());
+      expectedP.increment(counter.getIdentifier());
+
+      Mockito.reset(deliveryChannel);
+      counter.increment();
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      PNCounterState updateMessage = updateMessageCaptor.getValue();
+
+      assertEquals("Update message identifier should be the same as the set's",
+          counter.getIdentifier(), updateMessage.getIdentifier());
+      assertTrue("Update version should be as expected",
+          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertTrue("P version should be as expected", updateMessage.getP().identical(expectedP));
+      assertTrue("N version should be as expected", updateMessage.getN().identical(expectedN));
+    }
   }
 
   /**
@@ -107,36 +113,31 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
     final PNCounter<Integer, Object> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
-    expectedVersionVector.init(counter.getIdentifier());
-    expectedVersionVector.increment(counter.getIdentifier());
     final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
     final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
-    Mockito.reset(deliveryChannel);
-    counter.decrement();
-    Mockito.verify(deliveryChannel).publish(Mockito.argThat(new ArgumentMatcher<PNCounterState>() {
-      @Override
-      public boolean matches(PNCounterState t) {
-        if (!t.getIdentifier().equals(counter.getIdentifier())) {
-          return false;
-        }
-        if (!t.getVersionVector().identical(expectedVersionVector)) {
-          return false;
-        }
-        if (!t.getP().identical(expectedP)) {
-          return false;
-        }
-        if (!t.getN().identical(expectedN)) {
-          return false;
-        }
-        return true;
-      }
-    }));
-    Mockito.verifyNoMoreInteractions(deliveryChannel);
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(counter.getIdentifier());
+      expectedN.increment(counter.getIdentifier());
+
+      Mockito.reset(deliveryChannel);
+      counter.decrement();
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      PNCounterState updateMessage = updateMessageCaptor.getValue();
+
+      assertEquals("Update message identifier should be the same as the set's",
+          counter.getIdentifier(), updateMessage.getIdentifier());
+      assertTrue("Update version should be as expected",
+          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertTrue("P version should be as expected", updateMessage.getP().identical(expectedP));
+      assertTrue("N version should be as expected", updateMessage.getN().identical(expectedN));
+    }
   }
 
   /**
@@ -149,38 +150,34 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
     final PNCounter<Integer, Object> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
-    expectedVersionVector.init(counter.getIdentifier());
-    expectedVersionVector.increment(counter.getIdentifier());
+    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
     final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    expectedVersionVector.increment(counter.getIdentifier());
     final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
-    counter.increment();
-    Mockito.reset(deliveryChannel);
-    counter.decrement();
-    Mockito.verify(deliveryChannel).publish(Mockito.argThat(new ArgumentMatcher<PNCounterState>() {
-      @Override
-      public boolean matches(PNCounterState t) {
-        if (!t.getIdentifier().equals(counter.getIdentifier())) {
-          return false;
-        }
-        if (!t.getVersionVector().identical(expectedVersionVector)) {
-          return false;
-        }
-        if (!t.getP().identical(expectedP)) {
-          return false;
-        }
-        if (!t.getN().identical(expectedN)) {
-          return false;
-        }
-        return true;
-      }
-    }));
-    Mockito.verifyNoMoreInteractions(deliveryChannel);
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(counter.getIdentifier());
+      expectedP.increment(counter.getIdentifier());
+      counter.increment();
+
+      expectedVersionVector.increment(counter.getIdentifier());
+      expectedN.increment(counter.getIdentifier());
+      Mockito.reset(deliveryChannel);
+      counter.decrement();
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      PNCounterState updateMessage = updateMessageCaptor.getValue();
+
+      assertEquals("Update message identifier should be the same as the set's",
+          counter.getIdentifier(), updateMessage.getIdentifier());
+      assertTrue("Update version should be as expected",
+          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertTrue("P version should be as expected", updateMessage.getP().identical(expectedP));
+      assertTrue("N version should be as expected", updateMessage.getN().identical(expectedN));
+    }
   }
 
   /**
@@ -193,38 +190,34 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
     final PNCounter<Integer, Object> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
-    expectedVersionVector.init(counter.getIdentifier());
-    expectedVersionVector.increment(counter.getIdentifier());
+    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
     final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    expectedVersionVector.increment(counter.getIdentifier());
     final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
-    counter.decrement();
-    Mockito.reset(deliveryChannel);
-    counter.increment();
-    Mockito.verify(deliveryChannel).publish(Mockito.argThat(new ArgumentMatcher<PNCounterState>() {
-      @Override
-      public boolean matches(PNCounterState t) {
-        if (!t.getIdentifier().equals(counter.getIdentifier())) {
-          return false;
-        }
-        if (!t.getVersionVector().identical(expectedVersionVector)) {
-          return false;
-        }
-        if (!t.getP().identical(expectedP)) {
-          return false;
-        }
-        if (!t.getN().identical(expectedN)) {
-          return false;
-        }
-        return true;
-      }
-    }));
-    Mockito.verifyNoMoreInteractions(deliveryChannel);
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(counter.getIdentifier());
+      expectedN.increment(counter.getIdentifier());
+      counter.decrement();
+
+      expectedVersionVector.increment(counter.getIdentifier());
+      expectedP.increment(counter.getIdentifier());
+      Mockito.reset(deliveryChannel);
+      counter.increment();
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      PNCounterState updateMessage = updateMessageCaptor.getValue();
+
+      assertEquals("Update message identifier should be the same as the set's",
+          counter.getIdentifier(), updateMessage.getIdentifier());
+      assertTrue("Update version should be as expected",
+          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertTrue("P version should be as expected", updateMessage.getP().identical(expectedP));
+      assertTrue("N version should be as expected", updateMessage.getN().identical(expectedN));
+    }
   }
 
   /**

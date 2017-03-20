@@ -28,9 +28,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
@@ -50,6 +53,14 @@ public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, 
     extends UpdatableSetAbstractTest<E, K, T, U, S> {
 
   private static final Logger LOGGER = Logger.getLogger(SetConvergenceAbstractTest.class.getName());
+
+  @Captor
+  public ArgumentCaptor<U> updateMessageCaptor;
+
+  @Before
+  public void setUpSetConvergenceAbstractTest() {
+    MockitoAnnotations.initMocks(this);
+  }
 
   /**
    * Ensure that when an element is added, that the change is published to the
@@ -72,22 +83,18 @@ public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, 
       final E element = getElement(i);
       Mockito.reset(deliveryChannel);
       set.add(element);
-      Mockito.verify(deliveryChannel).publish(Mockito.argThat(new ArgumentMatcher<U>() {
-        @Override
-        public boolean matches(U t) {
-          if (!t.getIdentifier().equals(set.getIdentifier())) {
-            return false;
-          }
-          if (!t.getVersionVector().identical(expectedVersionVector)) {
-            return false;
-          }
-          if (!t.getState().contains(element)) {
-            return false;
-          }
-          return true;
-        }
-      }));
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
       Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      U updateMessage = updateMessageCaptor.getValue();
+
+      assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
+          updateMessage.getIdentifier());
+      assertTrue("Update version should be as expected",
+          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertTrue("The set state should contain the element that was added",
+          updateMessage.getState().contains(element));
     }
   }
 
@@ -112,22 +119,18 @@ public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, 
       final E element = getElement(i);
       Mockito.reset(deliveryChannel);
       set.add(element);
-      Mockito.verify(deliveryChannel).publish(Mockito.argThat(new ArgumentMatcher<U>() {
-        @Override
-        public boolean matches(U t) {
-          if (!t.getIdentifier().equals(set.getIdentifier())) {
-            return false;
-          }
-          if (!t.getVersionVector().identical(expectedVersionVector)) {
-            return false;
-          }
-          if (!t.getState().contains(element)) {
-            return false;
-          }
-          return true;
-        }
-      }));
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
       Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      U updateMessage = updateMessageCaptor.getValue();
+
+      assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
+          updateMessage.getIdentifier());
+      assertTrue("Update version should be as expected",
+          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertTrue("The set state should contain the element that was added",
+          updateMessage.getState().contains(element));
     }
   }
 

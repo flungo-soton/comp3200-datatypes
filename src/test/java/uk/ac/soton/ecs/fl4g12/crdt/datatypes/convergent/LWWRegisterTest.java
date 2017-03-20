@@ -27,9 +27,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.Register;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.RegisterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
@@ -49,6 +52,14 @@ public class LWWRegisterTest
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
+
+  @Captor
+  public ArgumentCaptor<LWWRegisterState> updateMessageCaptor;
+
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+  }
 
   @Override
   protected LWWRegister<Integer, Integer, Integer> getRegister() {
@@ -90,31 +101,22 @@ public class LWWRegisterTest
       final long timestampBefore = System.currentTimeMillis();
       register.assign(value);
       final long timestampAfter = System.currentTimeMillis();
-      Mockito.verify(deliveryChannel)
-          .publish(Mockito.argThat(new ArgumentMatcher<LWWRegisterState>() {
-            @Override
-            public boolean matches(LWWRegisterState t) {
-              if (!t.getIdentifier().equals(register.getIdentifier())) {
-                return false;
-              }
-              if (!t.getVersionVector().identical(expectedVersionVector)) {
-                return false;
-              }
-              if (!t.getElement().getValue().equals(value)) {
-                return false;
-              }
-              // Timestamp can't be earlier than before the call was made
-              if (t.getElement().getTimestamp() < timestampBefore) {
-                return false;
-              }
-              // Timestamp can't be after the call completed
-              if (t.getElement().getTimestamp() > timestampAfter) {
-                return false;
-              }
-              return true;
-            }
-          }));
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
       Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      LWWRegisterState updateMessage = updateMessageCaptor.getValue();
+
+      assertEquals("Update message identifier should be the same as the set's",
+          register.getIdentifier(), updateMessage.getIdentifier());
+      assertTrue("Update version should be as expected",
+          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertEquals("Element value should equal the assigned value", value,
+          updateMessage.getElement().getValue());
+      assertFalse("Timestamp shouldn't be earlier than before the call was made",
+          updateMessage.getElement().getTimestamp() < timestampBefore);
+      assertFalse("Timestamp shouldn't be after the call completed",
+          updateMessage.getElement().getTimestamp() > timestampAfter);
     }
   }
 

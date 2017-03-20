@@ -24,9 +24,12 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IncrementableCounterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
@@ -41,6 +44,14 @@ public class GCounterTest
     extends IncrementableCounterAbstractTest<Integer, GCounter<Integer, Object>> {
 
   private static final Logger LOGGER = Logger.getLogger(GCounterTest.class.getName());
+
+  @Captor
+  public ArgumentCaptor<GCounterState> updateMessageCaptor;
+
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+  }
 
   @Override
   protected GCounter<Integer, Object> getCounter() {
@@ -75,19 +86,16 @@ public class GCounterTest
 
     Mockito.reset(deliveryChannel);
     counter.increment();
-    Mockito.verify(deliveryChannel).publish(Mockito.argThat(new ArgumentMatcher<GCounterState>() {
-      @Override
-      public boolean matches(GCounterState t) {
-        if (!t.getIdentifier().equals(counter.getIdentifier())) {
-          return false;
-        }
-        if (!t.getVersionVector().identical(expectedVersionVector)) {
-          return false;
-        }
-        return true;
-      }
-    }));
+
+    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
     Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+    GCounterState updateMessage = updateMessageCaptor.getValue();
+
+    assertEquals("Update message identifier should be the same as the set's",
+        counter.getIdentifier(), updateMessage.getIdentifier());
+    assertTrue("Update version should be as expected",
+        updateMessage.getVersionVector().identical(expectedVersionVector));
   }
 
   /**
