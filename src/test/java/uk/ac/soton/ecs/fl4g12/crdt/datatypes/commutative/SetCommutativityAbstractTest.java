@@ -146,39 +146,6 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
     }
   }
 
-
-  /**
-   * @see SetCommutativityTestCase#REMOVE_DUPLICATE
-   */
-  @Test
-  public void testRemove_Duplicate() {
-    LOGGER.log(Level.INFO,
-        "testRemove_Duplicate: "
-            + "Ensure that when an element that has already been removed is removed, "
-            + "that no change is published to the DeliveryChannel.");
-    final S set = getSet();
-
-    // Populate with elements
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      set.add(getElement(i));
-    }
-
-    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
-
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
-
-      final E element = getElement(i);
-      set.remove(element);
-      Mockito.reset(deliveryChannel);
-      set.remove(element);
-      Mockito.verifyZeroInteractions(deliveryChannel);
-
-      makeTestAssertions(SetCommutativityTestCase.REMOVE_DUPLICATE, set, element);
-    }
-  }
-
   /**
    * @see SetCommutativityTestCase#REMOVEALL_SINGLE
    */
@@ -380,6 +347,18 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
 
   // TODO: test retainAll and clear
 
+  @Override
+  @Test
+  public void testRemove_Duplicate() {
+    super.testRemove_Duplicate();
+  }
+
+  @Override
+  @Test
+  public void testRemoveAll_Duplicate() {
+    super.testRemoveAll_Duplicate();
+  }
+
   public static enum SetCommutativityTestCase {
     /**
      * Ensure that when an element is removed, that the change is published to the
@@ -393,19 +372,6 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
      * </ul>
      */
     REMOVE,
-
-    /**
-     * Ensure that when an element that has already been removed is removed, that no change is
-     * published to the {@linkplain DeliveryChannel}.
-     *
-     * For {@link #makeTestAssertions(SetCommutativityTestCase, Set, Object...)}, the object
-     * arguments are:
-     * <ul>
-     * <li>The element that was removed from the {@link Set} being tested.
-     * <li>The {@link SetUpdateMessage} that was published the {@link Set} being tested.
-     * </ul>
-     */
-    REMOVE_DUPLICATE,
 
     /**
      * Ensure that when an element is removed using

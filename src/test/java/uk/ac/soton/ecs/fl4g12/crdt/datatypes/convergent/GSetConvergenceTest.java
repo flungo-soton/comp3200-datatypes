@@ -33,7 +33,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
  * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain GSet}.
  */
 public class GSetConvergenceTest extends
-    SetConvergenceAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
+    GrowOnlySetConvergenceAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
