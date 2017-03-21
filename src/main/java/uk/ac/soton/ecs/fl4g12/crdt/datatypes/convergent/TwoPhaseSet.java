@@ -143,6 +143,9 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
         version.increment();
         boolean added = additions.add(element);
         boolean removed = removals.add(element);
+        if (removed) {
+          getDeliveryChannel().publish(snapshot());
+        }
         return !added && removed;
       }
     } catch (ClassCastException ex) {
@@ -174,6 +177,9 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
       version.increment();
       boolean added = additions.addAll(collection);
       boolean removed = removals.addAll(collection);
+      if (removed) {
+        getDeliveryChannel().publish(snapshot());
+      }
       return !added && removed;
     }
   }
@@ -200,7 +206,6 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
     removals.addAll(additions);
     getDeliveryChannel().publish(snapshot());
   }
-
 
   @Override
   public boolean contains(Object o) {
@@ -235,7 +240,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
 
   @Override
   public Iterator<E> iterator() {
-    return new IteratorWrapper(getElements().iterator()); // TODO: Implement remove
+    return new IteratorWrapper(getElements().iterator());
   }
 
   @Override
