@@ -22,22 +22,17 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
-import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -49,90 +44,39 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowOnlySetConvergenceAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+public abstract class GrowableSetConvergenceAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
     extends UpdatableSetAbstractTest<E, K, T, U, S> {
 
   private static final Logger LOGGER =
-      Logger.getLogger(GrowOnlySetConvergenceAbstractTest.class.getName());
-
-  @Captor
-  public ArgumentCaptor<U> updateMessageCaptor;
-
-  @Before
-  public void setUpSetConvergenceAbstractTest() {
-    MockitoAnnotations.initMocks(this);
-  }
+      Logger.getLogger(GrowableSetConvergenceAbstractTest.class.getName());
 
   /**
    * Ensure that when an element is added, that the change is published to the
    * {@linkplain DeliveryChannel}.
    */
-  @Test
-  public void testAdd_Publish() {
-    LOGGER.log(Level.INFO, "testAdd_Publish: "
-        + "Ensure that when an element is added, that the change is published to the DeliveryChannel.");
-    final S set = getSet();
-
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
-
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
-
-      final E element = getElement(i);
-      Mockito.reset(deliveryChannel);
-      set.add(element);
-
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-      Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      U updateMessage = updateMessageCaptor.getValue();
-
-      assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
-          updateMessage.getIdentifier());
-      assertTrue("Update version should be as expected",
-          updateMessage.getVersionVector().identical(expectedVersionVector));
-      assertTrue("The set state should contain the element that was added",
-          updateMessage.getState().contains(element));
-    }
+  @Override
+  protected void assertAdd(S set, E element, U updateMessage) {
+    assertTrue("The set state should contain the element that was added",
+        updateMessage.getState().contains(element));
   }
 
-  /**
-   * Ensure that when an elements are added, that the change is published to the
-   * {@linkplain DeliveryChannel}.
-   */
-  @Test
-  public void testAddAll_Single_Publish() {
-    LOGGER.log(Level.INFO, "testAddAll_Publish: "
-        + "Ensure that when an elements are added, that the change is published to the DeliveryChannel.");
-    final S set = getSet();
+  @Override
+  protected void assertAddAll_Single(S set, E element, U updateMessage) {
+    assertTrue("The set state should contain the element that was added",
+        updateMessage.getState().contains(element));
+  }
 
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
+  @Override
+  protected void assertAddAll_Multiple(S set, Collection<E> elements, U updateMessage) {
+    assertTrue("The set state should contain the elements that were added",
+        updateMessage.getState().containsAll(elements));
+  }
 
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
-
-      final E element = getElement(i);
-      Mockito.reset(deliveryChannel);
-      set.add(element);
-
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-      Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      U updateMessage = updateMessageCaptor.getValue();
-
-      assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
-          updateMessage.getIdentifier());
-      assertTrue("Update version should be as expected",
-          updateMessage.getVersionVector().identical(expectedVersionVector));
-      assertTrue("The set state should contain the element that was added",
-          updateMessage.getState().contains(element));
-    }
+  @Override
+  protected void assertAddAll_Overlap(S set, Collection<E> elements, Collection<E> newElements,
+      U updateMessage) {
+    assertTrue("The set state should contain the elements that were added",
+        updateMessage.getState().containsAll(elements));
   }
 
   /**
@@ -143,8 +87,7 @@ public abstract class GrowOnlySetConvergenceAbstractTest<E, K, T extends Compara
     LOGGER.log(Level.INFO, "testSnapshot_Initial: Test snapshot of the initial set state.");
     final S set = getSet();
 
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
 
     U state = set.snapshot();
 
@@ -172,12 +115,10 @@ public abstract class GrowOnlySetConvergenceAbstractTest<E, K, T extends Compara
     LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a set with an element added.");
     final S set = getSet();
 
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
-    expectedVersionVector.increment(set.getIdentifier());
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
 
     set.add(getElement(0));
+    expectedVersionVector.increment(set.getIdentifier());
     U state = set.snapshot();
 
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
@@ -202,12 +143,10 @@ public abstract class GrowOnlySetConvergenceAbstractTest<E, K, T extends Compara
     LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a set with an element added.");
     final S set = getSet();
 
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
-    expectedVersionVector.increment(set.getIdentifier());
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
 
     set.addAll(Arrays.asList(getElement(0), getElement(1), getElement(2)));
+    expectedVersionVector.increment(set.getIdentifier());
     U state = set.snapshot();
 
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),

@@ -28,7 +28,6 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -55,12 +54,8 @@ public final class CommutativeTwoPhaseSetCommutativityTest extends
   }
 
   @Override
-  protected LogicalVersion<Integer> getZeroVersion() {
-    return new IntegerVersion();
-  }
-
-  @Override
-  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getAddUpdate(Integer identifier,
+  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getAddUpdate(
+      CommutativeTwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
       VersionVector<Integer, Integer> version, Collection<Integer> elements) {
     return new CommutativeTwoPhaseSetUpdate<>(identifier, version, SetUpdateMessage.Operation.ADD,
         new HashSet<>(elements));

@@ -46,7 +46,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
 public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>, U extends SetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
-    extends GrowOnlySetCommutativityAbstractTest<E, K, T, U, S> {
+    extends GrowableSetCommutativityAbstractTest<E, K, T, U, S> {
 
   private static final Logger LOGGER =
       Logger.getLogger(SetCommutativityAbstractTest.class.getName());
@@ -66,31 +66,14 @@ public abstract class SetCommutativityAbstractTest<E, K, T extends Comparable<T>
     return getRemoveUpdate(identifier, version, Arrays.asList(elements));
   }
 
+  protected void assertUpdateOperation(SetUpdateMessage.Operation expected, U updateMessage) {
+    assertEquals("Update message should be an " + expected + " operation", expected,
+        updateMessage.getOperation());
+  }
+
   @Override
-  protected void makeTestAssertions(GrowOnlySetCommutativityTestCase testCase, S set,
-      Object... objects) {
-    super.makeTestAssertions(testCase, set, objects);
-
-    U updateMessage = null;
-
-    // Extract variables from cases
-    switch (testCase) {
-      case ADD:
-      case ADDALL_SINGLE:
-      case ADDALL_MULTIPLE:
-      case ADDALL_OVERLAP:
-        updateMessage = (U) objects[1];
-        break;
-      case UPDATE_ADD_MULTIPLE:
-      case UPDATE_ADD_SINGLE:
-        updateMessage = (U) objects[0];
-        break;
-    }
-
-    if (updateMessage != null) {
-      assertEquals("Update message should be an ADD operation", SetUpdateMessage.Operation.ADD,
-          updateMessage.getOperation());
-    }
+  protected void assertAddUpdate(U updateMessage) {
+    assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
   }
 
   /**

@@ -21,19 +21,22 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain GSet}.
  */
 public class GSetConvergenceTest extends
-    GrowOnlySetConvergenceAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
+    GrowableSetConvergenceAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
@@ -53,8 +56,11 @@ public class GSetConvergenceTest extends
   }
 
   @Override
-  protected LogicalVersion<Integer> getZeroVersion() {
-    return new IntegerVersion();
+  protected GSetState<Integer, Integer, Integer> getAddUpdate(GSet<Integer, Integer, Integer> set,
+      Integer identifier, VersionVector<Integer, Integer> version, Collection<Integer> elements) {
+    Set<Integer> state = new HashSet<>(set);
+    state.addAll(elements);
+    return new GSetState<>(identifier, version, state);
   }
 
 }

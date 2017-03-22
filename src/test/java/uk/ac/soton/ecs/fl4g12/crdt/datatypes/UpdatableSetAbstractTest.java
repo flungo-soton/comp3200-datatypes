@@ -28,14 +28,19 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
-import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -47,11 +52,19 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link Updatable} based {@link Set} being tested.
  */
-public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends UpdateMessage<K, ?>, S extends Set<E> & VersionedUpdatable<K, T, U>> {
+public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>> {
 
   private static final Logger LOGGER = Logger.getLogger(UpdatableSetAbstractTest.class.getName());
 
   public static final int MAX_OPERATIONS = 10;
+
+  @Captor
+  public ArgumentCaptor<U> updateMessageCaptor;
+
+  @Before
+  public void setUpUpdateMessageCaptor() {
+    MockitoAnnotations.initMocks(this);
+  }
 
   /**
    * Get the {@linkplain Set} instance for testing.
@@ -69,34 +82,93 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    */
   protected abstract E getElement(int i);
 
-  protected abstract LogicalVersion<T> getZeroVersion();
-
   /**
-   * Called within the provided tests to allow additional assertions to be made. All implementations
-   * should call their super to ensure that all assertions are made.
+   * Get a {@link VersionedUpdateMessage} which adds the given elements to the set.
    *
-   * @param testCase the {@link UpdatableSetTestCase} which the assertions are being performed
-   *        within.
-   * @param set the {@link Set} instance being tested.
-   * @param objects the objects for assertions to be made on. This differs for each case and so
-   *        {@link UpdatableSetTestCase} documentation should be consulted for the details.
+   * @param set the set which the update will be delivered to.
+   * @param identifier the identifier of the node that the update message should come from.
+   * @param version the version vector at the time of the update,
+   * @param elements the elements that should be added as part of the update message.
+   * @return an {@link VersionedUpdateMessage} representing the addition of the given elements.
    */
-  protected void makeTestAssertions(UpdatableSetTestCase testCase, S set, Object... objects) {}
+  protected abstract U getAddUpdate(S set, K identifier, VersionVector<K, T> version,
+      Collection<E> elements);
 
   /**
-   * Test {@link Set#add(java.lang.Object)} twice.
+   * Get a {@link VersionedUpdateMessage} which adds the given elements to the set.
    *
-   * @see UpdatableSetTestCase#ADD_DUPLICATE
+   * @param set the set which the update will be delivered to.
+   * @param identifier the identifier of the node that the update message should come from.
+   * @param version the version vector at the time of the update,
+   * @param elements the elements that should be added as part of the update message.
+   * @return an {@link VersionedUpdateMessage} representing the addition of the given elements.
+   * @see #getAddUpdate(Set, Object, VersionVector, Collection) for more details.
+   */
+  protected final U getAddUpdate(S set, K identifier, VersionVector<K, T> version, E... elements) {
+    return getAddUpdate(set, identifier, version, Arrays.asList(elements));
+  }
+
+  protected final void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
+      U updateMessage) {
+    assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
+        updateMessage.getIdentifier());
+    assertTrue("Update version should be as expected",
+        updateMessage.getVersionVector().identical(expectedVersion));
+  }
+
+  /**
+   * Ensure that when an element is added, that the change is published to the
+   * {@linkplain DeliveryChannel}.
+   */
+  @Test
+  public void testAdd() {
+    LOGGER.log(Level.INFO, "testAdd: "
+        + "Ensure that when an element is added, that the change is published to the DeliveryChannel.");
+    final S set = getSet();
+
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
+
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(set.getIdentifier());
+      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+      final E element = getElement(i);
+      Mockito.reset(deliveryChannel);
+      set.add(element);
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      U updateMessage = updateMessageCaptor.getValue();
+
+      assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
+      assertAdd(set, element, updateMessage);
+    }
+  }
+
+  /**
+   * Make assertions for the {@linkplain #testAdd()} method. Needs to ensure that the update message
+   * is accurate given the element that was added.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param element the element that was added to the {@link Set} being tested.
+   * @param updateMessage the {@link UpdateMessage} that was published by the {@link Set} being
+   *        tested.
+   */
+  protected abstract void assertAdd(S set, E element, U updateMessage);
+
+  /**
+   * Ensure that when an element that has already been added is added, that no change is published
+   * to the {@linkplain DeliveryChannel}.
    */
   @Test
   public void testAdd_Duplicate() {
-    LOGGER.log(Level.INFO, "testAdd_Publish: "
-        + "Ensure that when a duplicate element is added, that no change is published to the DeliveryChannel.");
+    LOGGER.log(Level.INFO,
+        "testAdd_Duplicate: Ensure that when an element that has already been added is added, "
+            + "that no change is published to the DeliveryChannel.");
     final S set = getSet();
 
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
@@ -108,14 +180,159 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       set.add(element);
       Mockito.verifyZeroInteractions(deliveryChannel);
 
-      makeTestAssertions(UpdatableSetTestCase.ADD_DUPLICATE, set, element);
+      assertAdd_Duplicate(set, element);
     }
   }
 
   /**
-   * Test {@link Set#addAll(java.util.Collection)} twice.
+   * Make assertions for the {@linkplain #testAdd_Duplicate()} method.
    *
-   * @see UpdatableSetTestCase#ADD_ALL_DUPLICATE
+   * @param set the {@link Set} instance being tested.
+   * @param element the element that was added to the {@link Set} being tested.
+   */
+  protected void assertAdd_Duplicate(S set, E element) {
+    // Do nothing by default
+  }
+
+  /**
+   * Ensure that when an element is added using {@linkplain Set#addAll(java.util.Collection)}, that
+   * the change is published to the {@linkplain DeliveryChannel}.
+   */
+  @Test
+  public void testAddAll_Single() {
+    LOGGER.log(Level.INFO, "testAddAll_Single: Ensure that when an element is added using addAll, "
+        + "that the change is published to the DeliveryChannel.");
+    final S set = getSet();
+
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
+
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(set.getIdentifier());
+      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+      final E element = getElement(i);
+      Mockito.reset(deliveryChannel);
+      set.addAll(new HashSet<>(Arrays.asList(getElement(i))));
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      U updateMessage = updateMessageCaptor.getValue();
+
+      assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
+      assertAddAll_Single(set, element, updateMessage);
+    }
+  }
+
+  /**
+   * Make assertions for the {@linkplain #testAddAll_Single()} method. Needs to ensure that the
+   * update message is accurate given the element that was added.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param element the element that was added to the {@link Set} being tested.
+   * @param updateMessage the {@link UpdateMessage} that was published by the {@link Set} being
+   *        tested.
+   */
+  protected abstract void assertAddAll_Single(S set, E element, U updateMessage);
+
+  /**
+   * Ensure that when elements are added using {@linkplain Set#addAll(java.util.Collection)}, that
+   * the change is published to the {@linkplain DeliveryChannel}.
+   */
+  @Test
+  public void testAddAll_Multiple() {
+    LOGGER.log(Level.INFO, "testAddAll_Multiple: Ensure that when elements are added using addAll, "
+        + "that the change is published to the DeliveryChannel.");
+    final S set = getSet();
+
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
+
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(set.getIdentifier());
+      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+      final HashSet<E> elements = new HashSet<>(
+          Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
+      Mockito.reset(deliveryChannel);
+      set.addAll(elements);
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      U updateMessage = updateMessageCaptor.getValue();
+
+      assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
+      assertAddAll_Multiple(set, elements, updateMessage);
+    }
+  }
+
+  /**
+   * Make assertions for the {@linkplain #testAddAll_Multiple()} method. Needs to ensure that the
+   * update message is accurate given the elements that were added.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param elements A {@link Collection} that contains the elements that were added to the
+   *        {@link Set} being tested.
+   * @param updateMessage the {@link UpdateMessage} that was published by the {@link Set} being
+   *        tested.
+   */
+  protected abstract void assertAddAll_Multiple(S set, Collection<E> elements, U updateMessage);
+
+  /**
+   * Ensure that when an elements are added using {@linkplain Set#addAll(java.util.Collection)},
+   * that only new elements are published to the {@linkplain DeliveryChannel}.
+   */
+  @Test
+  public void testAddAll_Overlap() {
+    LOGGER.log(Level.INFO,
+        "testAddAll_Overlap: Ensure that when an elements are added using addAll, "
+            + "that only new elements are published to the DeliveryChannel.");
+    final S set = getSet();
+
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
+
+    set.addAll(new HashSet<>(Arrays.asList(getElement(0), getElement(1), getElement(2))));
+    expectedVersionVector.increment(set.getIdentifier());
+
+    for (int i = 1; i < MAX_OPERATIONS; i++) {
+      expectedVersionVector.increment(set.getIdentifier());
+      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+      final HashSet<E> elements = new HashSet<>(
+          Arrays.asList(getElement(2 * i), getElement(2 * i + 1), getElement(2 * i + 2)));
+      final HashSet<E> newElements =
+          new HashSet<>(Arrays.asList(getElement(2 * i + 1), getElement(2 * i + 2)));
+      Mockito.reset(deliveryChannel);
+      set.addAll(elements);
+
+      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verifyNoMoreInteractions(deliveryChannel);
+
+      U updateMessage = updateMessageCaptor.getValue();
+
+      assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
+      assertAddAll_Overlap(set, elements, newElements, updateMessage);
+    }
+  }
+
+  /**
+   * Make assertions for the {@linkplain #testAddAll_Overlap()} method. Needs to ensure that the
+   * update message is accurate given the elements that were added.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param elements A {@link Collection} that contains the elements that were added to the
+   *        {@link Set} being tested.
+   * @param newElements A {@link Collection} that contains the new elements that were added to the
+   *        {@link Set} being tested.
+   * @param updateMessage the {@link UpdateMessage} that was published by the {@link Set} being
+   *        tested.
+   */
+  protected abstract void assertAddAll_Overlap(S set, Collection<E> elements,
+      Collection<E> newElements, U updateMessage);
+
+  /**
+   * Ensure that when duplicates element is added, that no change is published to the
+   * {@linkplain DeliveryChannel}.
    */
   @Test
   public void testAddAll_Duplicate() {
@@ -123,9 +340,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
         + "Ensure that when duplicate elements are added, that no change is published to the DeliveryChannel.");
     final S set = getSet();
 
-    final VersionVector<K, T> expectedVersionVector =
-        new HashVersionVector<>(getZeroVersion(), false);
-    expectedVersionVector.init(set.getIdentifier());
+    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
@@ -140,18 +355,28 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       set.addAll(elements);
       Mockito.verifyZeroInteractions(deliveryChannel);
 
-      makeTestAssertions(UpdatableSetTestCase.ADD_ALL_DUPLICATE, set, elements);
+      assertAddAll_Duplicate(set, elements);
     }
   }
 
   /**
-   * Test {@link Set#remove(java.lang.Object)} twice.
+   * Make assertions for the {@linkplain #testAddAll_Duplicate()} method.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param elements A {@link Set} that contains the elements that were added to the {@link Set}
+   *        being tested.
+   */
+  protected void assertAddAll_Duplicate(S set, Collection<E> elements) {
+    // Do nothing by default
+  }
+
+  /**
+   * Ensure that when an element that has already been removed is removed, that no change is
+   * published to the {@linkplain DeliveryChannel}.
    *
    * This test needs to be overridden with the {@code @Test} annotation and a call to this
    * implementation (by {@code super.testRemoveAll_Duplicate_NoPublish()}) in order for it to be
    * activated.
-   *
-   * @see UpdatableSetTestCase#REMOVE_DUPLICATE
    */
   public void testRemove_Duplicate() {
     LOGGER.log(Level.INFO,
@@ -177,18 +402,27 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       set.remove(element);
       Mockito.verifyZeroInteractions(deliveryChannel);
 
-      makeTestAssertions(UpdatableSetTestCase.REMOVE_DUPLICATE, set, element);
+      assertRemove_Duplicate(set, element);
     }
   }
 
   /**
-   * Test {@link Set#removeAll(java.util.Collection)} twice.
+   * Make assertions for the {@linkplain #testRemove_Duplicate()} method.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param element the element that was removed from the {@link Set} being tested.
+   */
+  protected void assertRemove_Duplicate(S set, E element) {
+    // Do nothing by default
+  }
+
+  /**
+   * Ensure that when elements that have already been removed are removed, that no change is
+   * published to the {@linkplain DeliveryChannel}.
    *
    * This test needs to be overridden with the {@code @Test} annotation and a call to this
    * implementation (by {@code super.testRemoveAll_Duplicate_NoPublish()}) in order for it to be
    * activated.
-   *
-   * @see UpdatableSetTestCase#REMOVE_ALL_DUPLICATE
    */
   public void testRemoveAll_Duplicate() {
     LOGGER.log(Level.INFO,
@@ -215,65 +449,100 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       set.removeAll(elements);
       Mockito.verifyZeroInteractions(deliveryChannel);
 
-      makeTestAssertions(UpdatableSetTestCase.REMOVE_ALL_DUPLICATE, set, elements);
+      assertRemoveAll_Duplicate(set, elements);
     }
+  }
+
+  /**
+   * Make assertions for the {@linkplain #testRemoveAll_Duplicate()} method.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param elements A {@link Set} that contains the elements that were added to the {@link Set}
+   *        being tested.
+   */
+  protected void assertRemoveAll_Duplicate(S set, Collection<E> elements) {
+    // Do nothing by default
   }
 
   // TODO: test retainAll and clear
 
-  public static enum UpdatableSetTestCase {
-    /**
-     * Ensure that when a duplicate element is added, that no change is published to the
-     * {@linkplain DeliveryChannel}.
-     *
-     * For {@link #makeTestAssertions(UpdatableSetTestCase, Set, Object...)}, the object arguments
-     * are:
-     * <ul>
-     * <li>The element that was added to the {@link Set} being tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
-     * </ul>
-     */
-    ADD_DUPLICATE,
+  /**
+   * Test applying an update with a single element to be added.
+   *
+   * @throws Exception if the test fails.
+   */
+  @Test
+  public void testUpdate_Add_Single() throws Exception {
+    LOGGER.log(Level.INFO,
+        "testUpdate_Add_Single: Test applying an update with a single element to be added.");
+    final S set = getSet();
 
-    /**
-     * Ensure that when duplicates element is added, that no change is published to the
-     * {@linkplain DeliveryChannel}.
-     *
-     * For {@link #makeTestAssertions(UpdatableSetTestCase, Set, Object...)}, the object arguments
-     * are:
-     * <ul>
-     * <li>A {@link Set} that contains the elements that were added to the {@link Set} being tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
-     * </ul>
-     */
-    ADD_ALL_DUPLICATE,
+    final VersionVector<K, T> messageVersionVector = set.getVersion().copy();
 
-    /**
-     * Ensure that when an element that has already been removed is removed, that no change is
-     * published to the {@linkplain DeliveryChannel}.
-     *
-     * For {@link #makeTestAssertions(UpdatableSetTestCase, Set, Object...)}, the object arguments
-     * are:
-     * <ul>
-     * <li>The element that was removed from the {@link Set} being tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
-     * </ul>
-     */
-    REMOVE_DUPLICATE,
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      final E element = getElement(i);
 
-    /**
-     * Ensure that when elements that have already been removed are removed, that no change is
-     * published to the {@linkplain DeliveryChannel}.
-     *
-     * For {@link #makeTestAssertions(UpdatableSetTestCase, Set, Object...)}, the object arguments
-     * are:
-     * <ul>
-     * <li>A {@link Set} that contains the elements that were removed from the {@link Set} being
-     * tested.
-     * <li>The {@link UpdateMessage} that was published the {@link Set} being tested.
-     * </ul>
-     */
-    REMOVE_ALL_DUPLICATE
+      messageVersionVector.increment(set.getIdentifier());
+      final U message = getAddUpdate(set, set.getIdentifier(), messageVersionVector, element);
+
+      set.update(message);
+
+      assertTrue("The set should contain the element which was added", set.contains(element));
+
+      assertUpdate_Add_Single(set, message);
+    }
+  }
+
+  /**
+   * Make assertions for the {@linkplain #testUpdate_Add_Single()} method. Needs to ensure that the
+   * update message is accurate given the element that was added.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param updateMessage the {@link UpdateMessage} that was applied to the {@link Set} being
+   *        tested.
+   */
+  protected void assertUpdate_Add_Single(S set, U updateMessage) {
+    // Do nothing by default
+  }
+
+  /**
+   * Test applying an update with multiple elements to be added.
+   *
+   * @throws Exception if the test fails.
+   */
+  @Test
+  public void testUpdate_Add_Multiple() throws Exception {
+    LOGGER.log(Level.INFO,
+        "testUpdate_Add_Multiple: Test applying an update with multiple element to be added.");
+    final S set = getSet();
+
+    final VersionVector<K, T> messageVersionVector = set.getVersion().copy();
+
+    for (int i = 0; i < MAX_OPERATIONS; i++) {
+      final HashSet<E> elements = new HashSet<>(
+          Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
+
+      messageVersionVector.increment(set.getIdentifier());
+      final U message = getAddUpdate(set, set.getIdentifier(), messageVersionVector, elements);
+
+      set.update(message);
+
+      assertTrue("The set should contain the elements which were added", set.containsAll(elements));
+
+      assertUpdate_Add_Multiple(set, message);
+    }
+  }
+
+  /**
+   * Make assertions for the {@linkplain #testUpdate_Add_Multiple()} method. Needs to ensure that
+   * the update message is accurate given the element that was added.
+   *
+   * @param set the {@link Set} instance being tested.
+   * @param updateMessage the {@link UpdateMessage} that was applied to the {@link Set} being
+   *        tested.
+   */
+  protected void assertUpdate_Add_Multiple(S set, U updateMessage) {
+    // Do nothing by default
   }
 
 }

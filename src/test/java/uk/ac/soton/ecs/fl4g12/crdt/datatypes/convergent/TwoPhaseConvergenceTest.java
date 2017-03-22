@@ -21,13 +21,16 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain TwoPhaseSet}.
@@ -53,8 +56,13 @@ public class TwoPhaseConvergenceTest extends
   }
 
   @Override
-  protected LogicalVersion<Integer> getZeroVersion() {
-    return new IntegerVersion();
+  protected TwoPhaseSetState<Integer, Integer, Integer> getAddUpdate(
+      TwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
+      VersionVector<Integer, Integer> version, Collection<Integer> elements) {
+    TwoPhaseSetState<Integer, Integer, Integer> state = set.snapshot();
+    Set<Integer> additions = new HashSet<>(state.getAdditions());
+    additions.addAll(elements);
+    return new TwoPhaseSetState<>(identifier, version, additions, state.getRemovals());
   }
 
 }

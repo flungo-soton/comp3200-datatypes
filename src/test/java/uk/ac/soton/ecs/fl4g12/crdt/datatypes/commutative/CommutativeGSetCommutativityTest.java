@@ -23,19 +23,19 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Collection;
 import java.util.HashSet;
+import static org.junit.Assert.assertNotNull;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Tests for the {@linkplain CommutativeGSetUpdate} implementation.
  */
 public final class CommutativeGSetCommutativityTest extends
-    GrowOnlySetCommutativityAbstractTest<Integer, Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>, CommutativeGSet<Integer, Integer, Integer>> {
+    GrowableSetCommutativityAbstractTest<Integer, Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>, CommutativeGSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
@@ -55,14 +55,16 @@ public final class CommutativeGSetCommutativityTest extends
   }
 
   @Override
-  protected LogicalVersion<Integer> getZeroVersion() {
-    return new IntegerVersion();
+  protected CommutativeGSetUpdate<Integer, Integer, Integer> getAddUpdate(
+      CommutativeGSet<Integer, Integer, Integer> set, Integer identifier,
+      VersionVector<Integer, Integer> version, Collection<Integer> elements) {
+    return new CommutativeGSetUpdate<>(identifier, version, new HashSet<>(elements));
   }
 
   @Override
-  protected CommutativeGSetUpdate<Integer, Integer, Integer> getAddUpdate(Integer identifier,
-      VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeGSetUpdate<>(identifier, version, new HashSet<>(elements));
+  protected void assertAddUpdate(CommutativeGSetUpdate<Integer, Integer, Integer> updateMessage) {
+    // All CommutativeGSetUpdate are additions. Just check that the message is not null.
+    assertNotNull("Update message should not be null", updateMessage);
   }
 
 }

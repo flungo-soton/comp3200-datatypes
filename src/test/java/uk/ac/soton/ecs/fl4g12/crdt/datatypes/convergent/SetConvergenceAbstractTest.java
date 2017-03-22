@@ -28,12 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -48,17 +44,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
  */
 public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
-    extends GrowOnlySetConvergenceAbstractTest<E, K, T, U, S> {
+    extends GrowableSetConvergenceAbstractTest<E, K, T, U, S> {
 
   private static final Logger LOGGER = Logger.getLogger(SetConvergenceAbstractTest.class.getName());
-
-  @Captor
-  public ArgumentCaptor<U> updateMessageCaptor;
-
-  @Before
-  public void setUpSetConvergenceAbstractTest() {
-    MockitoAnnotations.initMocks(this);
-  }
 
   /**
    * Ensure that when an element is removed, that the change is published to the
@@ -66,8 +54,8 @@ public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, 
    */
   @Test
   public void testRemove() {
-    LOGGER.log(Level.INFO, "testRemove_Publish: "
-        + "Ensure that when an element is removed, that the change is published to the DeliveryChannel.");
+    LOGGER.log(Level.INFO, "testRemove_Publish: Ensure that when an element is removed, "
+        + "that the change is published to the DeliveryChannel.");
     final S set = getSet();
 
     // Populate with elements
@@ -108,8 +96,8 @@ public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, 
    */
   @Test
   public void testRemoveAll_Single() {
-    LOGGER.log(Level.INFO, "testRemoveAll_Single: "
-        + "Ensure that when an elements are removed, that the change is published to the DeliveryChannel.");
+    LOGGER.log(Level.INFO, "testRemoveAll_Single: Ensure that when an elements are removed, "
+        + "that the change is published to the DeliveryChannel.");
     final S set = getSet();
 
     // Populate with elements
