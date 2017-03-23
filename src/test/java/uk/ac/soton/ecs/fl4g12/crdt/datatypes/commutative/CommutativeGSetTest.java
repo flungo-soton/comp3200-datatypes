@@ -21,6 +21,7 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
+import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowOnlySetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
@@ -29,7 +30,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFacto
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 
 /**
- * Tests for the {@linkplain CommutativeGSetUpdate} implementation.
+ * Tests the {@linkplain CommutativeGSetUpdate} implementation as a {@linkplain Set}.
  */
 public final class CommutativeGSetTest
     extends GrowOnlySetAbstractTest<Integer, CommutativeGSet<Integer, Integer, Integer>> {
@@ -42,7 +43,7 @@ public final class CommutativeGSetTest
   }
 
   @Override
-  protected CommutativeGSet<Integer, Integer, Integer> getSet() {
+  public CommutativeGSet<Integer, Integer, Integer> getSet() {
     CausalDeliveryChannel<Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
         Mockito.mock(CausalDeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
@@ -51,7 +52,7 @@ public final class CommutativeGSetTest
   }
 
   @Override
-  protected Integer getElement(int i) {
+  public Integer getElement(int i) {
     return i;
   }
 

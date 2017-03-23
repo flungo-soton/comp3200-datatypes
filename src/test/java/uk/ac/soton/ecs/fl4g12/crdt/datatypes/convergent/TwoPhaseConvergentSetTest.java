@@ -24,34 +24,23 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.TwoPhaseSetTest.getTwoPhaseSet;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain TwoPhaseSet}.
  */
-public class TwoPhaseConvergenceTest extends
-    SetConvergenceAbstractTest<Integer, Integer, Integer, TwoPhaseSetState<Integer, Integer, Integer>, TwoPhaseSet<Integer, Integer, Integer>> {
-
-  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
-      new IncrementalIntegerIdentifierFactory();
+public class TwoPhaseConvergentSetTest extends
+    ConvergentSetAbstractTest<Integer, Integer, Integer, TwoPhaseSetState<Integer, Integer, Integer>, TwoPhaseSet<Integer, Integer, Integer>> {
 
   @Override
-  protected TwoPhaseSet<Integer, Integer, Integer> getSet() {
-    DeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
-    return new TwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
+  public TwoPhaseSet<Integer, Integer, Integer> getSet() {
+    return getTwoPhaseSet();
   }
 
   @Override
-  protected Integer getElement(int i) {
+  public Integer getElement(int i) {
     return i;
   }
 
@@ -63,6 +52,16 @@ public class TwoPhaseConvergenceTest extends
     Set<Integer> additions = new HashSet<>(state.getAdditions());
     additions.addAll(elements);
     return new TwoPhaseSetState<>(identifier, version, additions, state.getRemovals());
+  }
+
+  @Override
+  protected TwoPhaseSetState<Integer, Integer, Integer> getRemoveUpdate(
+      TwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
+      VersionVector<Integer, Integer> version, Collection<Integer> elements) {
+    TwoPhaseSetState<Integer, Integer, Integer> state = set.snapshot();
+    Set<Integer> removals = new HashSet<>(state.getAdditions());
+    removals.addAll(elements);
+    return new TwoPhaseSetState<>(identifier, version, state.getAdditions(), removals);
   }
 
 }

@@ -31,7 +31,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests of the commutativity of grow only {@link VersionedUpdatable} {@link Set} implementations.
+ * Tests of the commutativity of {@link VersionedUpdatable} {@link Set} implementations.
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
@@ -39,42 +39,69 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowableSetCommutativityAbstractTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
+public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends SetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
     extends UpdatableSetAbstractTest<E, K, T, U, S> {
 
-  /**
-   * Assert that the update message represents an addition.
-   *
-   * @param updateMessage the update message to make the assertion on.
-   */
-  protected abstract void assertAddUpdate(U updateMessage);
+  protected void assertUpdateOperation(SetUpdateMessage.Operation expected, U updateMessage) {
+    assertEquals("Update message should be an " + expected + " operation", expected,
+        updateMessage.getOperation());
+  }
 
   @Override
   protected void assertAdd(S set, E element, U updateMessage) {
-    assertAddUpdate(updateMessage);
+    assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist of the new element",
         new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
   }
 
   @Override
   protected void assertAddAll_Single(S set, E element, U updateMessage) {
-    assertAddUpdate(updateMessage);
+    assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist of the new element",
         new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
   }
 
   @Override
-  protected void assertAddAll_Multiple(S set, Collection<E> elements, U updateMessage) {
-    assertAddUpdate(updateMessage);
+  protected void assertAddAll_Multiple(S set, Set<E> elements, U updateMessage) {
+    assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist of the new elements", elements,
         updateMessage.getElements());
   }
 
   @Override
-  protected void assertAddAll_Overlap(S set, Collection<E> elements, Collection<E> newElements,
-      U updateMessage) {
-    assertAddUpdate(updateMessage);
+  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, U updateMessage) {
+    assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist only of the new elements", newElements,
         updateMessage.getElements());
   }
+
+  @Override
+  protected void assertRemove(S set, E element, U updateMessage) {
+    assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
+    assertEquals("Update element set should consist of the new element",
+        new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
+  }
+
+  @Override
+  protected void assertRemoveAll_Single(S set, E element, U updateMessage) {
+    assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
+    assertEquals("Update element set should consist of the new element",
+        new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
+  }
+
+  @Override
+  protected void assertRemoveAll_Multiple(S set, Collection<E> elements, U updateMessage) {
+    assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
+    assertEquals("Update element set should consist of the new elements", elements,
+        updateMessage.getElements());
+  }
+
+  @Override
+  protected void assertRemoveAll_Overlap(S set, Collection<E> elements, Collection<E> newElements,
+      U updateMessage) {
+    assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
+    assertEquals("Update element set should consist only of the new elements", newElements,
+        updateMessage.getElements());
+  }
+
 }

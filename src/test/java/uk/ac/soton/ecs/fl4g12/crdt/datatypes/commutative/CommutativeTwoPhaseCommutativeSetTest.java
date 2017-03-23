@@ -23,7 +23,6 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Collection;
 import java.util.HashSet;
-import static org.junit.Assert.assertNotNull;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
@@ -32,39 +31,42 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests for the {@linkplain CommutativeGSetUpdate} implementation.
+ * Tests for the {@linkplain CommutativeTwoPhaseSetUpdate} implementation.
  */
-public final class CommutativeGSetCommutativityTest extends
-    GrowableSetCommutativityAbstractTest<Integer, Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>, CommutativeGSet<Integer, Integer, Integer>> {
+public final class CommutativeTwoPhaseCommutativeSetTest extends
+    CommutativeSetAbstractTest<Integer, Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>, CommutativeTwoPhaseSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
   @Override
-  protected CommutativeGSet<Integer, Integer, Integer> getSet() {
-    CausalDeliveryChannel<Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
+  public CommutativeTwoPhaseSet<Integer, Integer, Integer> getSet() {
+    CausalDeliveryChannel<Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> deliveryChannel =
         Mockito.mock(CausalDeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
         .register(Mockito.any(Updatable.class));
-    return new CommutativeGSet<>(new IntegerVersion(), null, deliveryChannel);
+    return new CommutativeTwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 
   @Override
-  protected Integer getElement(int i) {
+  public Integer getElement(int i) {
     return i;
   }
 
   @Override
-  protected CommutativeGSetUpdate<Integer, Integer, Integer> getAddUpdate(
-      CommutativeGSet<Integer, Integer, Integer> set, Integer identifier,
+  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getAddUpdate(
+      CommutativeTwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
       VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeGSetUpdate<>(identifier, version, new HashSet<>(elements));
+    return new CommutativeTwoPhaseSetUpdate<>(identifier, version, SetUpdateMessage.Operation.ADD,
+        new HashSet<>(elements));
   }
 
   @Override
-  protected void assertAddUpdate(CommutativeGSetUpdate<Integer, Integer, Integer> updateMessage) {
-    // All CommutativeGSetUpdate are additions. Just check that the message is not null.
-    assertNotNull("Update message should not be null", updateMessage);
+  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getRemoveUpdate(
+      CommutativeTwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
+      VersionVector<Integer, Integer> version, Collection<Integer> elements) {
+    return new CommutativeTwoPhaseSetUpdate<>(identifier, version,
+        SetUpdateMessage.Operation.REMOVE, new HashSet<>(elements));
   }
 
 }

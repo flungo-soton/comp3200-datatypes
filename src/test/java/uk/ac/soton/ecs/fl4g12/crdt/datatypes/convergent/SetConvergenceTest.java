@@ -29,108 +29,23 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests for convergent {@link StatefulUpdatable} based {@link Set} implementations.
+ * Tests to ensure that two {@linkplain StatefulUpdatable} {@linkplain Set}s converge under various
+ * operations.
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
  * @param <U> the type of snapshot made from this state.
- * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
+ * @param <S> the type of {@link Set} being tested.
  */
-public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
-    extends GrowableSetConvergenceAbstractTest<E, K, T, U, S> {
+public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+    extends GrowableSetConvergenceTest<E, K, T, U, S> {
 
-  private static final Logger LOGGER = Logger.getLogger(SetConvergenceAbstractTest.class.getName());
-
-  /**
-   * Ensure that when an element is removed, that the change is published to the
-   * {@linkplain DeliveryChannel}.
-   */
-  @Test
-  public void testRemove() {
-    LOGGER.log(Level.INFO, "testRemove_Publish: Ensure that when an element is removed, "
-        + "that the change is published to the DeliveryChannel.");
-    final S set = getSet();
-
-    // Populate with elements
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      set.add(getElement(i));
-    }
-
-    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
-
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
-
-      final E element = getElement(i);
-      Mockito.reset(deliveryChannel);
-      set.remove(element);
-
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-      Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      U updateMessage = updateMessageCaptor.getValue();
-
-      assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
-          updateMessage.getIdentifier());
-      assertTrue("Update version should be as expected",
-          updateMessage.getVersionVector().identical(expectedVersionVector));
-
-      for (int j = 0; j < MAX_OPERATIONS; j++) {
-        assertEquals("The set state only should contain the elements that haven't been removed",
-            j > i, updateMessage.getState().contains(getElement(j)));
-      }
-    }
-  }
-
-  /**
-   * Ensure that when an elements are removed, that the change is published to the
-   * {@linkplain DeliveryChannel}.
-   */
-  @Test
-  public void testRemoveAll_Single() {
-    LOGGER.log(Level.INFO, "testRemoveAll_Single: Ensure that when an elements are removed, "
-        + "that the change is published to the DeliveryChannel.");
-    final S set = getSet();
-
-    // Populate with elements
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      set.add(getElement(i));
-    }
-
-    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
-
-    for (int i = 0; i < MAX_OPERATIONS; i++) {
-      expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
-
-      final Set<E> elements = new HashSet<>(Arrays.asList(getElement(i)));
-      Mockito.reset(deliveryChannel);
-      set.removeAll(elements);
-
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-      Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      U updateMessage = updateMessageCaptor.getValue();
-
-      assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
-          updateMessage.getIdentifier());
-      assertTrue("Update version should be as expected",
-          updateMessage.getVersionVector().identical(expectedVersionVector));
-
-      for (int j = 0; j < MAX_OPERATIONS; j++) {
-        assertEquals("The set state only should contain the elements that haven't been removed",
-            j > i, updateMessage.getState().contains(getElement(j)));
-      }
-    }
-  }
+  private static final Logger LOGGER = Logger.getLogger(SetConvergenceTest.class.getName());
 
   /**
    * Test update with a local remove.
@@ -317,16 +232,6 @@ public abstract class SetConvergenceAbstractTest<E, K, T extends Comparable<T>, 
     assertEquals("set2 should have seen 2 elements", removed, set2.snapshot().getState());
   }
 
-  @Override
-  @Test
-  public void testRemove_Duplicate() {
-    super.testRemove_Duplicate();
-  }
-
-  @Override
-  @Test
-  public void testRemoveAll_Duplicate() {
-    super.testRemoveAll_Duplicate();
-  }
+  // TODO: test remove, removeAll, retain, retainAll and clear - other inter leavings.
 
 }

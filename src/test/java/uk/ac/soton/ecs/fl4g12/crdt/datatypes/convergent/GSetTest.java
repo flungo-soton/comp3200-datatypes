@@ -21,6 +21,7 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
+import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowOnlySetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
@@ -29,19 +30,14 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFacto
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 
 /**
- * Tests for the {@linkplain GSet} implementation.
+ * Tests the {@linkplain GSet} implementation as a {@linkplain Set}.
  */
 public class GSetTest extends GrowOnlySetAbstractTest<Integer, GSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  public GSetTest() {
-    super(Integer.class, Integer[].class);
-  }
-
-  @Override
-  protected GSet<Integer, Integer, Integer> getSet() {
+  public static GSet<Integer, Integer, Integer> getGSet() {
     DeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel =
         Mockito.mock(DeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
@@ -49,8 +45,17 @@ public class GSetTest extends GrowOnlySetAbstractTest<Integer, GSet<Integer, Int
     return new GSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 
+  public GSetTest() {
+    super(Integer.class, Integer[].class);
+  }
+
   @Override
-  protected Integer getElement(int i) {
+  public GSet<Integer, Integer, Integer> getSet() {
+    return getGSet();
+  }
+
+  @Override
+  public Integer getElement(int i) {
     return i;
   }
 

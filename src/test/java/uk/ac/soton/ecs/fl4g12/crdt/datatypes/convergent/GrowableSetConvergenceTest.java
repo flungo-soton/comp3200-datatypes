@@ -22,7 +22,6 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -30,138 +29,24 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.SetTestInterface;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests for convergent {@link StatefulUpdatable} based {@link Set} implementations.
+ * Tests to ensure that two growable {@linkplain StatefulUpdatable} {@linkplain Set}s converge under
+ * various operations.
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
  * @param <U> the type of snapshot made from this state.
- * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
+ * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableSetConvergenceAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
-    extends UpdatableSetAbstractTest<E, K, T, U, S> {
+public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+    implements SetTestInterface<E, S> {
 
-  private static final Logger LOGGER =
-      Logger.getLogger(GrowableSetConvergenceAbstractTest.class.getName());
-
-  /**
-   * Ensure that when an element is added, that the change is published to the
-   * {@linkplain DeliveryChannel}.
-   */
-  @Override
-  protected void assertAdd(S set, E element, U updateMessage) {
-    assertTrue("The set state should contain the element that was added",
-        updateMessage.getState().contains(element));
-  }
-
-  @Override
-  protected void assertAddAll_Single(S set, E element, U updateMessage) {
-    assertTrue("The set state should contain the element that was added",
-        updateMessage.getState().contains(element));
-  }
-
-  @Override
-  protected void assertAddAll_Multiple(S set, Collection<E> elements, U updateMessage) {
-    assertTrue("The set state should contain the elements that were added",
-        updateMessage.getState().containsAll(elements));
-  }
-
-  @Override
-  protected void assertAddAll_Overlap(S set, Collection<E> elements, Collection<E> newElements,
-      U updateMessage) {
-    assertTrue("The set state should contain the elements that were added",
-        updateMessage.getState().containsAll(elements));
-  }
-
-  /**
-   * Test snapshot of the initial {@linkplain GSet} state.
-   */
-  @Test
-  public void testSnapshot_Initial() {
-    LOGGER.log(Level.INFO, "testSnapshot_Initial: Test snapshot of the initial set state.");
-    final S set = getSet();
-
-    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
-
-    U state = set.snapshot();
-
-    assertEquals("state identifier should be the same as the set", set.getIdentifier(),
-        state.getIdentifier());
-    assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
-    assertTrue("The state should be empty", state.getState().isEmpty());
-
-    // Check that the state snapshot is immutable by changes to the set.
-    set.add(getElement(0));
-
-    assertEquals("state identifier should be the same as the set", set.getIdentifier(),
-        state.getIdentifier());
-    assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
-    assertTrue("The state should still be empty", state.getState().isEmpty());
-  }
-
-  /**
-   * Test snapshot of a set with an element added.
-   */
-  @Test
-  public void testSnapshot_Add() {
-    LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a set with an element added.");
-    final S set = getSet();
-
-    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
-
-    set.add(getElement(0));
-    expectedVersionVector.increment(set.getIdentifier());
-    U state = set.snapshot();
-
-    assertEquals("state identifier should be the same as the set", set.getIdentifier(),
-        state.getIdentifier());
-    assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
-
-    // Check that the state snapshot is immutable by changes to the set.
-    set.add(getElement(1));
-
-    assertEquals("state identifier should be the same as the set", set.getIdentifier(),
-        state.getIdentifier());
-    assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
-  }
-
-  /**
-   * Test snapshot of a set with an element added.
-   */
-  @Test
-  public void testSnapshot_AddAll() {
-    LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a set with an element added.");
-    final S set = getSet();
-
-    final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
-
-    set.addAll(Arrays.asList(getElement(0), getElement(1), getElement(2)));
-    expectedVersionVector.increment(set.getIdentifier());
-    U state = set.snapshot();
-
-    assertEquals("state identifier should be the same as the set", set.getIdentifier(),
-        state.getIdentifier());
-    assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
-
-    // Check that the state snapshot is immutable by changes to the set.
-    set.addAll(Arrays.asList(getElement(3), getElement(4), getElement(5)));
-
-    assertEquals("state identifier should be the same as the set", set.getIdentifier(),
-        state.getIdentifier());
-    assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
-  }
+  private static final Logger LOGGER = Logger.getLogger(GrowableSetConvergenceTest.class.getName());
 
   /**
    * Test update with no changes.
@@ -324,7 +209,7 @@ public abstract class GrowableSetConvergenceAbstractTest<E, K, T extends Compara
    * @throws Exception if the test fails.
    */
   @Test
-  public void testUpdate_BothSame() throws Exception {
+  public void testUpdate_BothAdd_Same() throws Exception {
     LOGGER.log(Level.INFO,
         "testUpdate_BothSame: Test update with concurrent additions of the same element.");
 

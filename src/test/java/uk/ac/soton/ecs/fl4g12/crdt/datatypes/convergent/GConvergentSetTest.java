@@ -21,43 +21,35 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.AddOnceSetAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSetTest.getGSet;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests the {@linkplain TwoPhaseSet} implementation as a {@linkplain Set}.
+ * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain GSet}.
  */
-public class TwoPhaseSetTest
-    extends AddOnceSetAbstractTest<Integer, TwoPhaseSet<Integer, Integer, Integer>> {
-
-  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
-      new IncrementalIntegerIdentifierFactory();
-
-  public static TwoPhaseSet<Integer, Integer, Integer> getTwoPhaseSet() {
-    DeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
-    return new TwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
-  }
-
-  public TwoPhaseSetTest() {
-    super(Integer.class, Integer[].class);
-  }
+public class GConvergentSetTest extends
+    GrowableConvergentSetAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
 
   @Override
-  public TwoPhaseSet<Integer, Integer, Integer> getSet() {
-    return getTwoPhaseSet();
+  public GSet<Integer, Integer, Integer> getSet() {
+    return getGSet();
   }
 
   @Override
   public Integer getElement(int i) {
     return i;
+  }
+
+  @Override
+  protected GSetState<Integer, Integer, Integer> getAddUpdate(GSet<Integer, Integer, Integer> set,
+      Integer identifier, VersionVector<Integer, Integer> version, Collection<Integer> elements) {
+    Set<Integer> state = new HashSet<>(set);
+    state.addAll(elements);
+    return new GSetState<>(identifier, version, state);
   }
 
 }

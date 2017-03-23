@@ -19,28 +19,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
-import java.util.HashSet;
+import java.util.Set;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests of the {@link HashSet}. This is used to ensure that {@link SetAbstractTest} is implemented
- * correctly.
+ * Abstract tests for {@linkplain StatefulUpdatable} {@linkplain Set}.
+ *
+ * @param <E> the type of values stored in the {@link Set}.
+ * @param <K> the type of identifier used to identify nodes.
+ * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <U> the type of snapshot made from this state.
+ * @param <S> the type of {@link Set} being tested.
  */
-public final class HashSetTest extends SetAbstractTest<Integer, HashSet<Integer>> {
+public abstract class StatefulSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+    extends GrowableStatefulSetAbstractTest<E, K, T, U, S> {
 
-  public HashSetTest() {
-    super(Integer.class, Integer[].class);
-  }
-
-  @Override
-  public HashSet<Integer> getSet() {
-    return new HashSet<>();
-  }
-
-  @Override
-  public Integer getElement(int i) {
-    return i;
-  }
+  // TODO: test remove, removeAll, retain, retainAll and clear.
 
 }

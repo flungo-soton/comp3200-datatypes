@@ -21,26 +21,30 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Tests of the {@link HashSet}. This is used to ensure that {@link SetAbstractTest} is implemented
- * correctly.
+ * Interface for {@linkplain Set} tests.
+ * 
+ * @param <E> the type of values stored in the {@link Set}.
+ * @param <S> the type of {@link Set} being tested.
  */
-public final class HashSetTest extends SetAbstractTest<Integer, HashSet<Integer>> {
+public interface SetTestInterface<E, S extends Set<E>> {
 
-  public HashSetTest() {
-    super(Integer.class, Integer[].class);
-  }
+  /**
+   * Get the {@linkplain Set} instance for testing.
+   *
+   * @return a {@link Set} to be tested.
+   */
+  S getSet();
 
-  @Override
-  public HashSet<Integer> getSet() {
-    return new HashSet<>();
-  }
-
-  @Override
-  public Integer getElement(int i) {
-    return i;
-  }
+  /**
+   * Get a random element to store in the {@linkplain Set}. {@code i} is in order to denote unique
+   * elements.
+   *
+   * @param i the iteration number.
+   * @return a value to store in the set.
+   */
+  E getElement(int i);
 
 }

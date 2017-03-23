@@ -42,11 +42,12 @@ import org.junit.rules.ExpectedException;
 
 /**
  * Abstract tests for grow-only {@linkplain Set} implementations.
- * 
+ *
  * @param <E> the type of set value that the test uses.
  * @param <S> the type of the set being tested.
  */
-public abstract class GrowOnlySetAbstractTest<E, S extends Set<E>> {
+public abstract class GrowOnlySetAbstractTest<E, S extends Set<E>>
+    implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER = Logger.getLogger(GrowOnlySetAbstractTest.class.getName());
 
@@ -62,22 +63,6 @@ public abstract class GrowOnlySetAbstractTest<E, S extends Set<E>> {
     this.elementClass = elementClass;
     this.elementArrayClass = elementArrayClass;
   }
-
-  /**
-   * Get the {@linkplain Set} instance for testing.
-   *
-   * @return a {@link Set} to be tested.
-   */
-  protected abstract S getSet();
-
-  /**
-   * Get a random element to store in the {@linkplain Set}. {@code i} is in order to denote unique
-   * elements.
-   *
-   * @param i the iteration number.
-   * @return a value to store in the set.
-   */
-  protected abstract E getElement(int i);
 
   /**
    * Test adding single elements to the set.

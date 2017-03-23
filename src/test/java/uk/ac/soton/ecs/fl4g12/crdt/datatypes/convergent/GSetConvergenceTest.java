@@ -21,46 +21,22 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSetTest.getGSet;
 
 /**
- * Test of the {@linkplain StatefulUpdatable} based features of the {@linkplain GSet}.
+ * Tests to ensure that two {@linkplain GSet}s converge under various operations.
  */
 public class GSetConvergenceTest extends
-    GrowableSetConvergenceAbstractTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
-
-  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
-      new IncrementalIntegerIdentifierFactory();
+    GrowableSetConvergenceTest<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
 
   @Override
-  protected GSet<Integer, Integer, Integer> getSet() {
-    DeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
-    return new GSet<>(new IntegerVersion(), null, deliveryChannel);
+  public GSet<Integer, Integer, Integer> getSet() {
+    return getGSet();
   }
 
   @Override
-  protected Integer getElement(int i) {
+  public Integer getElement(int i) {
     return i;
-  }
-
-  @Override
-  protected GSetState<Integer, Integer, Integer> getAddUpdate(GSet<Integer, Integer, Integer> set,
-      Integer identifier, VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    Set<Integer> state = new HashSet<>(set);
-    state.addAll(elements);
-    return new GSetState<>(identifier, version, state);
   }
 
 }
