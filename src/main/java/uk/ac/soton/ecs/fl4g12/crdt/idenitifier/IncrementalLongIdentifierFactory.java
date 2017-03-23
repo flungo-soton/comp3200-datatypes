@@ -21,17 +21,19 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.idenitifier;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * {@linkplain IdentifierFactory} that returns an incrementally increased {@linkplain Integer} each
  * time an ID is created.
  */
 public class IncrementalLongIdentifierFactory implements IdentifierFactory<Long> {
 
-  private volatile long id = 0;
+  private AtomicLong id = new AtomicLong();
 
   @Override
   public synchronized Long create() {
-    return id++;
+    return id.getAndIncrement();
   }
 
 }
