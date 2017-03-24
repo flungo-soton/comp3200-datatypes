@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.SetTestInterface;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetTestInterface;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
@@ -44,16 +44,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <S> the type of {@link Set} being tested.
  */
 public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
-    implements SetTestInterface<E, S> {
+    implements GrowableConflictFreeSetTestInterface<E, S> {
 
   private static final Logger LOGGER = Logger.getLogger(GrowableSetConvergenceTest.class.getName());
 
-  /**
-   * Test update with no changes.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
+  @Override
   public void testUpdate_NoChange() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_NoChange: Test update with no changes.");
 
@@ -78,12 +74,8 @@ public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, 
         set2.snapshot().getState());
   }
 
-  /**
-   * Test update with a local addition.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
+  @Override
   public void testUpdate_LocalAdd() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_LocalAdd: Test update with a local addition.");
 
@@ -119,12 +111,8 @@ public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, 
     assertEquals("set2 should have seen 1 element", comparison1, set2.snapshot().getState());
   }
 
-  /**
-   * Test update with a remote addition.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
+  @Override
   public void testUpdate_RemoteAdd() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_RemoteAdd: Test update with a remote addition.");
 
@@ -160,12 +148,8 @@ public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, 
     assertEquals("set2 should have seen 1 element", comparison1, set2.snapshot().getState());
   }
 
-  /**
-   * Test update with concurrent additions.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
+  @Override
   public void testUpdate_BothAdd() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_BothAdd: Test update with concurrent additions.");
 
@@ -203,12 +187,8 @@ public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, 
     assertEquals("set2 should have seen 2 elements", comparison2, set2.snapshot().getState());
   }
 
-  /**
-   * Test update with concurrent additions of the same element.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
+  @Override
   public void testUpdate_BothAdd_Same() throws Exception {
     LOGGER.log(Level.INFO,
         "testUpdate_BothSame: Test update with concurrent additions of the same element.");

@@ -21,6 +21,7 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.ConflictFreeSetTestInterface;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,15 +44,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <S> the type of {@link Set} being tested.
  */
 public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
-    extends GrowableSetConvergenceTest<E, K, T, U, S> {
+    extends GrowableSetConvergenceTest<E, K, T, U, S>
+    implements ConflictFreeSetTestInterface<E, S> {
 
   private static final Logger LOGGER = Logger.getLogger(SetConvergenceTest.class.getName());
 
-  /**
-   * Test update with a local remove.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
   public void testUpdate_LocalRemove() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_LocalRemove: Test update with a local remove.");
@@ -92,11 +89,6 @@ public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extend
     assertEquals("set2 should have the mutated state", mutated, set2.snapshot().getState());
   }
 
-  /**
-   * Test update with a remote remove.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
   public void testUpdate_RemoteRemove() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_RemoteRemove: Test update with a remote remove.");
@@ -137,11 +129,6 @@ public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extend
     assertEquals("set2 should have the mutated state", mutated, set2.snapshot().getState());
   }
 
-  /**
-   * Test update with concurrent removals.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
   public void testUpdate_BothRemove() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_BothRemove: Test update with concurrent removals.");
@@ -185,11 +172,6 @@ public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extend
     assertEquals("set2 should have seen 2 elements", removed2, set2.snapshot().getState());
   }
 
-  /**
-   * Test update with concurrent removals of the same item.
-   *
-   * @throws Exception if the test fails.
-   */
   @Test
   public void testUpdate_BothRemove_Same() throws Exception {
     LOGGER.log(Level.INFO,
@@ -231,7 +213,5 @@ public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extend
     assertEquals("set1 should have seen 2 elements", removed, set1.snapshot().getState());
     assertEquals("set2 should have seen 2 elements", removed, set2.snapshot().getState());
   }
-
-  // TODO: test remove, removeAll, retain, retainAll and clear - other inter leavings.
 
 }
