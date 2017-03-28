@@ -21,18 +21,17 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
-import java.util.Collection;
-import java.util.HashSet;
 import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.CommutativeTwoPhaseSetTest.getCommutativeTwoPhaseSet;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests for the {@linkplain CommutativeTwoPhaseSet} implementation of
- * {@linkplain VersionedUpdatable}.
+ * Test the commutativity of operations on the {@link CommutativeTwoPhaseSet} implementation.
  */
-public final class CommutativeTwoPhaseCommutativeSetTest extends
-    CommutativeSetAbstractTest<Integer, Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>, CommutativeTwoPhaseSet<Integer, Integer, Integer>> {
+public class CommutativeTwoPhaseSetCommutativityTest extends
+    SetCommutativityTest<Integer, Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>, CommutativeTwoPhaseSet<Integer, Integer, Integer>> {
+
+  public CommutativeTwoPhaseSetCommutativityTest() {
+    super(false);
+  }
 
   @Override
   public CommutativeTwoPhaseSet<Integer, Integer, Integer> getSet() {
@@ -42,22 +41,6 @@ public final class CommutativeTwoPhaseCommutativeSetTest extends
   @Override
   public Integer getElement(int i) {
     return i;
-  }
-
-  @Override
-  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getAddUpdate(
-      CommutativeTwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
-      VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeTwoPhaseSetUpdate<>(identifier, version, SetUpdateMessage.Operation.ADD,
-        new HashSet<>(elements));
-  }
-
-  @Override
-  protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getRemoveUpdate(
-      CommutativeTwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
-      VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeTwoPhaseSetUpdate<>(identifier, version,
-        SetUpdateMessage.Operation.REMOVE, new HashSet<>(elements));
   }
 
 }

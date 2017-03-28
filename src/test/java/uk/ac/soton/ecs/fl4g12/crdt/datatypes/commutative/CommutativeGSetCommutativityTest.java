@@ -19,51 +19,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
-import java.util.Set;
+import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.CommutativeGSetTest.getCommutativeGSet;
 
 /**
- * Interface providing method for what should be tested in growable {@linkplain CRDT}
- * {@linkplain Set}s.
- *
- * @param <E> the type of values stored in the {@link Set}.
- * @param <S> the type of {@link Set} being tested.
+ * Test the commutativity of operations on the {@link CommutativeGSet} implementation.
  */
-public interface GrowableConflictFreeSetTestInterface<E, S extends Set<E>> extends SetTestInterface<E, S> {
+public class CommutativeGSetCommutativityTest extends
+    GrowableSetCommutativityTest<Integer, Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>, CommutativeGSet<Integer, Integer, Integer>> {
 
-  /**
-   * Test update with no changes.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_NoChange() throws Exception;
+  @Override
+  public CommutativeGSet<Integer, Integer, Integer> getSet() {
+    return getCommutativeGSet();
+  }
 
-  /**
-   * Test update with a local addition.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_LocalAdd() throws Exception;
+  @Override
+  public Integer getElement(int i) {
+    return i;
+  }
 
-  /**
-   * Test update with a remote addition.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_RemoteAdd() throws Exception;
-
-  /**
-   * Test update with concurrent additions.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_BothAdd() throws Exception;
-
-  /**
-   * Test update with concurrent additions of the same element.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_BothAdd_Same() throws Exception;
 }

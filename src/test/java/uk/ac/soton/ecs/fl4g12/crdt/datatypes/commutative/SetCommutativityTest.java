@@ -19,16 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.ConflictFreeSetAbstractTest;
-import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GrowableSetConvergenceTest.updateSet;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests to ensure that two {@linkplain StatefulUpdatable} {@linkplain Set}s converge under various
+ * Tests to ensure that two {@linkplain VersionedUpdatable} {@linkplain Set}s commute under various
  * operations.
  *
  * @param <E> the type of values stored in the {@link Set}.
@@ -37,23 +36,18 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+public abstract class SetCommutativityTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
     extends ConflictFreeSetAbstractTest<E, K, T, U, S> {
 
   /**
-   * Instantiate the abstract tests for {@linkplain StatefulUpdatable} {@linkplain Set}
+   * Instantiate the abstract tests for {@linkplain VersionedUpdatable} {@linkplain Set}
    * implementations.
    *
    * @param addWins {@code true} if the implementation being tested is an add-wins implementation or
    *        {@code false} if its a remove wins implementation.
    */
-  public SetConvergenceTest(boolean addWins) {
+  public SetCommutativityTest(boolean addWins) {
     super(addWins);
-  }
-
-  @Override
-  protected void intermediateDelivery(S destination, S source) throws Exception {
-    updateSet(destination, source);
   }
 
 }

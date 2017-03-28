@@ -23,29 +23,20 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Collection;
 import java.util.HashSet;
-import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.CommutativeGSetTest.getCommutativeGSet;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Tests for the {@linkplain CommutativeGSetUpdate} implementation.
+ * Tests for the {@linkplain CommutativeGSetUpdate} implementation as a
+ * {@linkplain VersionedUpdatable}.
  */
 public final class CommutativeGCommutativeSetTest extends
     GrowableCommutativeSetAbstractTest<Integer, Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>, CommutativeGSet<Integer, Integer, Integer>> {
 
-  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
-      new IncrementalIntegerIdentifierFactory();
-
   @Override
   public CommutativeGSet<Integer, Integer, Integer> getSet() {
-    CausalDeliveryChannel<Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(CausalDeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
-    return new CommutativeGSet<>(new IntegerVersion(), null, deliveryChannel);
+    return getCommutativeGSet();
   }
 
   @Override

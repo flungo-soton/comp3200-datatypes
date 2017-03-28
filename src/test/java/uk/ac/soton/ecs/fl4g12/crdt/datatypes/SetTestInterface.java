@@ -22,10 +22,12 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
 import java.util.Set;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 
 /**
  * Interface for {@linkplain Set} tests.
- * 
+ *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <S> the type of {@link Set} being tested.
  */
@@ -33,6 +35,9 @@ public interface SetTestInterface<E, S extends Set<E>> {
 
   /**
    * Get the {@linkplain Set} instance for testing.
+   *
+   * For {@link Updatable} {@link Set} implementations, they should be constructed with a mock
+   * {@link DeliveryChannel} which give a unique ID to the set.
    *
    * @return a {@link Set} to be tested.
    */

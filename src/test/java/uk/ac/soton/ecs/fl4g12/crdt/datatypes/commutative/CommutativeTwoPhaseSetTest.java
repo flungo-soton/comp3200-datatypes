@@ -38,17 +38,21 @@ public final class CommutativeTwoPhaseSetTest
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
+  public static CommutativeTwoPhaseSet<Integer, Integer, Integer> getCommutativeTwoPhaseSet() {
+    CausalDeliveryChannel<Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> deliveryChannel =
+        Mockito.mock(CausalDeliveryChannel.class);
+    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
+        .register(Mockito.any(Updatable.class));
+    return new CommutativeTwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
+  }
+
   public CommutativeTwoPhaseSetTest() {
     super(Integer.class, Integer[].class);
   }
 
   @Override
   public CommutativeTwoPhaseSet<Integer, Integer, Integer> getSet() {
-    CausalDeliveryChannel<Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(CausalDeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
-    return new CommutativeTwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
+    return getCommutativeTwoPhaseSet();
   }
 
   @Override

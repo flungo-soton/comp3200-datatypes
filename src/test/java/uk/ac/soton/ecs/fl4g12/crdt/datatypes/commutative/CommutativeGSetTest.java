@@ -38,17 +38,21 @@ public final class CommutativeGSetTest
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
+  public static CommutativeGSet<Integer, Integer, Integer> getCommutativeGSet() {
+    CausalDeliveryChannel<Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
+        Mockito.mock(CausalDeliveryChannel.class);
+    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
+        .register(Mockito.any(Updatable.class));
+    return new CommutativeGSet<>(new IntegerVersion(), null, deliveryChannel);
+  }
+
   public CommutativeGSetTest() {
     super(Integer.class, Integer[].class);
   }
 
   @Override
   public CommutativeGSet<Integer, Integer, Integer> getSet() {
-    CausalDeliveryChannel<Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(CausalDeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
-    return new CommutativeGSet<>(new IntegerVersion(), null, deliveryChannel);
+    return getCommutativeGSet();
   }
 
   @Override

@@ -19,48 +19,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetTestInterface;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Interface providing method for what should be tested in {@linkplain CRDT} {@linkplain Set}s.
+ * Tests to ensure that two growable {@linkplain VersionedUpdatable} {@linkplain Set}s commute under
+ * various operations.
  *
  * @param <E> the type of values stored in the {@link Set}.
+ * @param <K> the type of identifier used to identify nodes.
+ * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
- *
  */
-public interface ConflictFreeSetTestInterface<E, S extends Set<E>>
-    extends GrowableConflictFreeSetTestInterface<E, S> {
+public abstract class GrowableSetCommutativityTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
+    extends GrowableConflictFreeSetAbstractTest<E, K, T, U, S> {
 
-  /**
-   * Test update with a local remove.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_LocalRemove() throws Exception;
-
-  /**
-   * Test update with a remote remove.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_RemoteRemove() throws Exception;
-
-  /**
-   * Test update with concurrent removals.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_BothRemove() throws Exception;
-
-  /**
-   * Test update with concurrent removals of the same item.
-   *
-   * @throws Exception if the test fails.
-   */
-  void testUpdate_BothRemove_Same() throws Exception;
-
-  // TODO: test remove, removeAll, retain, retainAll and clear - other inter leavings.
 }

@@ -32,6 +32,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 public class TwoPhaseSetConvergenceTest extends
     SetConvergenceTest<Integer, Integer, Integer, TwoPhaseSetState<Integer, Integer, Integer>, TwoPhaseSet<Integer, Integer, Integer>> {
 
+  public TwoPhaseSetConvergenceTest() {
+    super(false);
+  }
+
   @Override
   public TwoPhaseSet<Integer, Integer, Integer> getSet() {
     return getTwoPhaseSet();
