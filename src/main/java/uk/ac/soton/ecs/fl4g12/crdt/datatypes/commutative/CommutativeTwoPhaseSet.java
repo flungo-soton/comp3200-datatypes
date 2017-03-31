@@ -82,7 +82,7 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
    */
   public CommutativeTwoPhaseSet(LogicalVersion<T> zero, K identifier,
       CausalDeliveryChannel<K, T, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
-    this(new HashVersionVector<K, T>(zero, false), identifier, deliveryChannel);
+    this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
   @Override

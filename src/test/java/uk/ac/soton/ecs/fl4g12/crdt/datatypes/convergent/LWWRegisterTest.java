@@ -67,8 +67,8 @@ public class LWWRegisterTest
         Mockito.mock(DeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
         .register(Mockito.any(Updatable.class));
-    return new LWWRegister<>(new HashVersionVector<Integer, Integer>(new IntegerVersion(), false),
-        null, deliveryChannel);
+    return new LWWRegister<>(new HashVersionVector<Integer, Integer>(new IntegerVersion()), null,
+        deliveryChannel);
   }
 
   @Override
@@ -87,7 +87,7 @@ public class LWWRegisterTest
     final LWWRegister<Integer, Integer, Integer> register = getRegister();
 
     final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(register.getIdentifier());
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -129,7 +129,7 @@ public class LWWRegisterTest
     final LWWRegister<Integer, Integer, Integer> register = getRegister();
 
     final VersionVector<Integer, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
 
     LWWRegisterState<Integer, Integer, Integer> state = register.snapshot();
 
@@ -160,7 +160,7 @@ public class LWWRegisterTest
     final LWWRegister<Integer, Integer, Integer> register = getRegister();
 
     final VersionVector<Integer, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(register.getIdentifier());
 
     LWWRegisterState<Integer, Integer, Integer> previousState = register.snapshot();

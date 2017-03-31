@@ -46,10 +46,9 @@ public final class HashVersionVector<K, T extends Comparable<T>>
    *
    * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
    *        timestamps.
-   * @param dotted whether or not this is a dotted {@link VersionVector}.
    */
-  public HashVersionVector(LogicalVersion<T> zero, boolean dotted) {
-    this(zero, dotted, new HashMap<K, LogicalVersion<T>>());
+  public HashVersionVector(LogicalVersion<T> zero) {
+    this(zero, new HashMap<K, LogicalVersion<T>>());
   }
 
   /**
@@ -57,12 +56,10 @@ public final class HashVersionVector<K, T extends Comparable<T>>
    *
    * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
    *        timestamps.
-   * @param dotted whether or not this is a dotted {@link VersionVector}.
    * @param vector the vector to initialise with. This value is not copied.
    */
-  private HashVersionVector(LogicalVersion<T> zero, boolean dotted,
-      HashMap<K, LogicalVersion<T>> vector) {
-    super(zero, dotted);
+  private HashVersionVector(LogicalVersion<T> zero, HashMap<K, LogicalVersion<T>> vector) {
+    super(zero);
     this.zero = zero.copy();
     this.vector = vector;
   }
@@ -97,7 +94,7 @@ public final class HashVersionVector<K, T extends Comparable<T>>
 
   @Override
   public HashVersionVector<K, T> copy() {
-    HashVersionVector<K, T> copy = new HashVersionVector<>(zero, isDotted());
+    HashVersionVector<K, T> copy = new HashVersionVector<>(zero);
     copy.sync(this);
     return copy;
   }

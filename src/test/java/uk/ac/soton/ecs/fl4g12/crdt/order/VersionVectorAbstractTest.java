@@ -24,11 +24,14 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Abstract test for implementations of {@linkplain VersionVector}.
@@ -39,12 +42,21 @@ import org.junit.Test;
 public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, Integer>>
     extends VersionAbstractTest<Map<K, Integer>, V> {
 
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  private final boolean mutable;
+
+  public VersionVectorAbstractTest(boolean mutable) {
+    this.mutable = mutable;
+  }
+
   /**
    * Get the {@linkplain VersionVector} from a set of examples.
    *
    * @param id the id of the version vector to get.
    * @return the {@link VersionVector} of the specified example.
-   * @see #getTimestamp(java.lang.String) for details about the examples and id.
+   * @see #getTimestamp(String) for details about the examples and id.
    */
   protected abstract V getVersion(String id);
 
@@ -257,6 +269,198 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
   @Test
   public void testGet_K_9() {
     testGet_K(9);
+  }
+
+  private void testGetLogicalVersion(final int order) {
+    // Get the version instance
+    V instance = getVersion(order);
+
+    // Get the timestamp which has the expected values
+    Map<K, Integer> timestamp = getTimestamp(order);
+
+    // For each key, check that the expected value is given
+    for (int i = 0; i <= 3; i++) {
+      K id = getKey(i);
+      Integer expectedValue = timestamp.get(id);
+
+      LogicalVersion<Integer> logicalVersion = instance.getLogicalVersion(id);
+      if (expectedValue == null) {
+        Assert.assertNull(logicalVersion);
+      } else {
+        assertEquals(expectedValue, logicalVersion.get());
+      }
+
+      if (logicalVersion != null) {
+        if (mutable) {
+          // Test that the logical version affects the version vector and vice-versa.
+          logicalVersion.increment();
+          expectedValue++;
+          assertEquals(expectedValue, logicalVersion.get());
+          assertEquals(expectedValue, instance.get(id));
+
+          instance.increment(id);
+          expectedValue++;
+          assertEquals(expectedValue, logicalVersion.get());
+          assertEquals(expectedValue, instance.get(id));
+        } else {
+          try {
+            logicalVersion.increment();
+            fail("UnsupportedOperationException should have been thrown.");
+          } catch (UnsupportedOperationException ex) {
+            // Do nothing, this is what is expected.
+          }
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testGetLogicalVersion_0() {
+    testGetLogicalVersion(0);
+  }
+
+  @Test
+  public void testGetLogicalVersion_1() {
+    testGetLogicalVersion(1);
+  }
+
+  @Test
+  public void testGetLogicalVersion_2() {
+    testGetLogicalVersion(2);
+  }
+
+  @Test
+  public void testGetLogicalVersion_3() {
+    testGetLogicalVersion(3);
+  }
+
+  @Test
+  public void testGetLogicalVersion_4() {
+    testGetLogicalVersion(4);
+  }
+
+  @Test
+  public void testGetLogicalVersion_5() {
+    testGetLogicalVersion(5);
+  }
+
+  @Test
+  public void testGetLogicalVersion_6() {
+    testGetLogicalVersion(6);
+  }
+
+  @Test
+  public void testGetLogicalVersion_7() {
+    testGetLogicalVersion(7);
+  }
+
+  @Test
+  public void testGetLogicalVersion_8() {
+    testGetLogicalVersion(8);
+  }
+
+  @Test
+  public void testGetLogicalVersion_9() {
+    testGetLogicalVersion(9);
+  }
+
+  private void testGetDot(final int order) {
+    // Get the version instance
+    V instance = getVersion(order);
+
+    // Get the timestamp which has the expected values
+    Map<K, Integer> timestamp = getTimestamp(order);
+
+    // For each key, check that the expected value is given
+    for (int i = 0; i <= 3; i++) {
+      K id = getKey(i);
+      Integer expectedValue = timestamp.get(id);
+
+      if (expectedValue == null) {
+        // Exception should be thrown if version has not been initialised
+        try {
+          instance.getDot(id);
+          fail("IllegalArgumentException should have been thrown.");
+        } catch (IllegalArgumentException ex) {
+          // Do nothing, this is what is expected.
+        }
+      } else {
+        Dot<K, Integer> expectedDot = new Dot(id, instance.getLogicalVersion(id));
+
+        Dot<K, Integer> dot = instance.getDot(id);
+        assertEquals(expectedDot, dot);
+
+        if (mutable) {
+          // Test that the dot affects the version vector and vice-versa.
+          dot.increment();
+          expectedValue++;
+          assertEquals(expectedValue, dot.get());
+          assertEquals(expectedValue, instance.get(id));
+
+          instance.increment(id);
+          expectedValue++;
+          assertEquals(expectedValue, dot.get());
+          assertEquals(expectedValue, instance.get(id));
+        } else {
+          try {
+            dot.increment();
+            fail("UnsupportedOperationException should have been thrown.");
+          } catch (UnsupportedOperationException ex) {
+            // Do nothing, this is what is expected.
+          }
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testGetDot_0() {
+    testGetDot(0);
+  }
+
+  @Test
+  public void testGetDot_1() {
+    testGetDot(1);
+  }
+
+  @Test
+  public void testGetDot_2() {
+    testGetDot(2);
+  }
+
+  @Test
+  public void testGetDot_3() {
+    testGetDot(3);
+  }
+
+  @Test
+  public void testGetDot_4() {
+    testGetDot(4);
+  }
+
+  @Test
+  public void testGetDot_5() {
+    testGetDot(5);
+  }
+
+  @Test
+  public void testGetDot_6() {
+    testGetDot(6);
+  }
+
+  @Test
+  public void testGetDot_7() {
+    testGetDot(7);
+  }
+
+  @Test
+  public void testGetDot_8() {
+    testGetDot(8);
+  }
+
+  @Test
+  public void testGetDot_9() {
+    testGetDot(9);
   }
 
   private void testGetIdentifiers(final int order) {
@@ -511,6 +715,149 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
   @Test
   public void testIncrement_9() {
     testIncrement(9);
+  }
+
+  private void testSuccessor_K(final int order) {
+    for (int i = 0; i < 3; i++) {
+      V instance = getVersion(order);
+
+      K id = getKey(i);
+
+      Map<K, Integer> successor = instance.successor(id);
+
+      Map<K, Integer> expected = instance.get();
+      LogicalVersion<Integer> successive = new IntegerVersion();
+      successive.sync(instance.get(id));
+      successive.increment();
+
+      expected.put(id, successive.get());
+
+      assertEquals(expected, successor);
+    }
+  }
+
+  @Test
+  public void testSuccessor_K_0() {
+    testSuccessor_K(0);
+  }
+
+  @Test
+  public void testSuccessor_K_1() {
+    testSuccessor_K(1);
+  }
+
+  @Test
+  public void testSuccessor_K_2() {
+    testSuccessor_K(2);
+  }
+
+  @Test
+  public void testSuccessor_K_3() {
+    testSuccessor_K(3);
+  }
+
+  @Test
+  public void testSuccessor_K_4() {
+    testSuccessor_K(4);
+  }
+
+  @Test
+  public void testSuccessor_K_5() {
+    testSuccessor_K(5);
+  }
+
+  @Test
+  public void testSuccessor_K_6() {
+    testSuccessor_K(6);
+  }
+
+  @Test
+  public void testSuccessor_K_7() {
+    testSuccessor_K(7);
+  }
+
+  @Test
+  public void testSuccessor_K_8() {
+    testSuccessor_K(8);
+  }
+
+  @Test
+  public void testSuccessor_K_9() {
+    testSuccessor_K(9);
+  }
+
+  private void testSync_Dot(final int order) {
+    for (int i = 0; i < VERSION_MAX_ORDER; i++) {
+      V other = getVersion(i);
+
+      for (int j = 0; j < 3; j++) {
+        K id = getKey(j);
+
+        if (other.getIdentifiers().contains(id)) {
+          // Sync with the dot
+          V instance = getVersion(order);
+          Dot<K, Integer> dot = other.getDot(id);
+          instance.sync(dot);
+
+          // Make a comparison of the effective result of thre dot sync
+          V comparison = getVersion(order);
+          comparison.sync(id, other.get(id));
+
+          assertTrue("Instance should be identical to comparison after sync",
+              instance.identical(comparison));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testSync_Dot_0() {
+    testSync_Dot(0);
+  }
+
+  @Test
+  public void testSync_Dot_1() {
+    testSync_Dot(1);
+  }
+
+  @Test
+  public void testSync_Dot_2() {
+    testSync_Dot(2);
+  }
+
+  @Test
+  public void testSync_Dot_3() {
+    testSync_Dot(3);
+  }
+
+  @Test
+  public void testSync_Dot_4() {
+    testSync_Dot(4);
+  }
+
+  @Test
+  public void testSync_Dot_5() {
+    testSync_Dot(5);
+  }
+
+  @Test
+  public void testSync_Dot_6() {
+    testSync_Dot(6);
+  }
+
+  @Test
+  public void testSync_Dot_7() {
+    testSync_Dot(7);
+  }
+
+  @Test
+  public void testSync_Dot_8() {
+    testSync_Dot(8);
+  }
+
+  @Test
+  public void testSync_Dot_9() {
+    testSync_Dot(9);
   }
 
   /**
@@ -953,6 +1300,74 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
     assertEquals(false, instance.happenedBefore(getVersion("c3")));
     assertEquals(false, instance.happenedBefore(getVersion("c4")));
     assertEquals(false, instance.happenedBefore(getVersion("c5")));
+  }
+
+  private void testHappenedBefore_Dot(final int order) {
+    V instance = getVersion(order);
+
+    for (int i = 0; i < VERSION_MAX_ORDER; i++) {
+      V other = getVersion(i);
+
+      for (int j = 0; j < 3; j++) {
+        K id = getKey(j);
+
+        if (other.getIdentifiers().contains(id)) {
+          Dot<K, Integer> dot = other.getDot(id);
+
+          assertEquals(instance.get(id) < other.get(id), instance.happenedBefore(dot));
+        }
+      }
+    }
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_0() {
+    testHappenedBefore_Dot(0);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_1() {
+    testHappenedBefore_Dot(1);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_2() {
+    testHappenedBefore_Dot(2);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_3() {
+    testHappenedBefore_Dot(3);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_4() {
+    testHappenedBefore_Dot(4);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_5() {
+    testHappenedBefore_Dot(5);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_6() {
+    testHappenedBefore_Dot(6);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_7() {
+    testHappenedBefore_Dot(7);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_8() {
+    testHappenedBefore_Dot(8);
+  }
+
+  @Test
+  public void testHappenedBefore_Dot_9() {
+    testHappenedBefore_Dot(9);
   }
 
   @Override

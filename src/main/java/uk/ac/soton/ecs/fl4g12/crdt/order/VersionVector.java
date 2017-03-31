@@ -70,6 +70,16 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   LogicalVersion<T> getLogicalVersion(K id);
 
   /**
+   * Get the dot for the given identifier. The dot is tied to this version vector and so changes to
+   * the {@link Dot} will affect the state of this {@linkplain Version}. To get an independent dot,
+   * call {@link Dot#copy()}.
+   *
+   * @param id the identifier to create a dot for.
+   * @return the dot for the given version.
+   */
+  Dot<K, T> getDot(K id);
+
+  /**
    * Gets a set of initialised identifiers contained within this vector.
    *
    * @return the set of identifiers which this vector contains.
@@ -99,7 +109,8 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
    * The the state of the {@linkplain VersionVector} with given id incremented. This method does not
    * change the state of the {@linkplain VersionVector} and represents a successor of this
    * {@linkplain VersionVector}. The {@link Map} returned is the same as the one which would be
-   * returned by {@link #get()} with the given {@code id} incremented.
+   * returned by {@link #get()} with the given {@code id} incremented. If the given identifier is
+   * not initialised, its implicit zero value should be used.
    *
    * @param id the id of the node who's timestamp would be incremented.
    * @return a map of the current state with the given id incremented.
@@ -118,6 +129,14 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   void sync(K id, T value);
 
   /**
+   * Synchronise this {@linkplain VersionVector} with the given {@linkplain Dot}. Synchronised the
+   * version for the node with the identifier matching that which is found in the {@link Dot}.
+   *
+   * @param dot the {@link Dot} to synchronise with.
+   */
+  void sync(Dot<K, T> dot);
+
+  /**
    * Determine if this version is concurrent with the provided one. Useful for distinguishing
    * between vectors that are equal or concurrent.
    *
@@ -128,7 +147,18 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   boolean concurrentWith(VersionVector<K, T> other);
 
   /**
-   * Compares this version vector to another provided version vector.
+   * Determine if this {@linkplain VersionVector} happened-before the given {@linkplain Dot}.
+   * Compares the {@link Dot} with this {@linkplain VersionVector}'s timestamp for the same
+   * identifier that the {@link Dot} is for.
+   *
+   * @param dot the {@link Dot} to compare to.
+   * @return {@code true} if this {@linkplain Version} happened-before the provided {@link Dot},
+   *         {@code false} otherwise.
+   */
+  public boolean happenedBefore(Dot<K, T> dot);
+
+  /**
+   * Compares this {@linkplain VersionVector} to another provided {@linkplain VersionVector}.
    *
    * @param other the version vector to compare to.
    * @return {@code 0} if this {@link VersionVector} and the {@code other} {@link VersionVector} are
@@ -137,15 +167,6 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
    */
   @Override
   int compareTo(Version<Map<K, T>> other);
-
-  /**
-   * Determine if this version vector will be treated as a dotted version vector for the purposes of
-   * incrementing and synchronisation.
-   *
-   * @return {@code true} if the vector should be treated as a dotted version vector, {@code false}
-   *         otherwise.
-   */
-  boolean isDotted();
 
   @Override
   VersionVector<K, T> copy();

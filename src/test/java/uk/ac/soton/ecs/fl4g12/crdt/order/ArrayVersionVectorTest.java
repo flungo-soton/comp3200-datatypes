@@ -27,16 +27,20 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 public class ArrayVersionVectorTest
     extends VersionVectorAbstractTest<Integer, ArrayVersionVector<Integer>> {
 
+  public ArrayVersionVectorTest() {
+    super(true);
+  }
+
   @Override
   public ArrayVersionVector<Integer> getVersion(int order) {
-    ArrayVersionVector<Integer> version = new ArrayVersionVector<>(new IntegerVersion(), false);
+    ArrayVersionVector<Integer> version = new ArrayVersionVector<>(new IntegerVersion());
     version.sync(getTimestamp(order));
     return version;
   }
 
   @Override
   protected ArrayVersionVector<Integer> getVersion(String id) {
-    ArrayVersionVector<Integer> version = new ArrayVersionVector<>(new IntegerVersion(), false);
+    ArrayVersionVector<Integer> version = new ArrayVersionVector<>(new IntegerVersion());
     version.sync(getTimestamp(id));
     return version;
   }

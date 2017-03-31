@@ -27,18 +27,20 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 public class HashVersionVectorTest
     extends VersionVectorAbstractTest<Integer, HashVersionVector<Integer, Integer>> {
 
+  public HashVersionVectorTest() {
+    super(true);
+  }
+
   @Override
   public HashVersionVector<Integer, Integer> getVersion(int order) {
-    HashVersionVector<Integer, Integer> version =
-        new HashVersionVector<>(new IntegerVersion(), false);
+    HashVersionVector<Integer, Integer> version = new HashVersionVector<>(new IntegerVersion());
     version.sync(getTimestamp(order));
     return version;
   }
 
   @Override
   public HashVersionVector<Integer, Integer> getVersion(String id) {
-    HashVersionVector<Integer, Integer> version =
-        new HashVersionVector<>(new IntegerVersion(), false);
+    HashVersionVector<Integer, Integer> version = new HashVersionVector<>(new IntegerVersion());
     version.sync(getTimestamp(id));
     return version;
   }

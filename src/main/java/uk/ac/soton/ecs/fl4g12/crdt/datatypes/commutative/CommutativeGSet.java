@@ -78,7 +78,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
    */
   public CommutativeGSet(LogicalVersion<T> zero, K identifier,
       CausalDeliveryChannel<K, T, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
-    this(new HashVersionVector<K, T>(zero, false), identifier, deliveryChannel);
+    this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
   @Override

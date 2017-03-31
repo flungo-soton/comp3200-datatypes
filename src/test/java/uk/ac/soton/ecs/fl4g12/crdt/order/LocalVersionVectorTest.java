@@ -232,18 +232,6 @@ public class LocalVersionVectorTest {
   }
 
   /**
-   * Test of isDotted method, of class LocalVersionVector.
-   */
-  @Test
-  public void testIsDotted() {
-    LOGGER.log(Level.INFO, "isDotted");
-    Mockito.reset(version);
-    instance.isDotted();
-    Mockito.verify(version).isDotted();
-    Mockito.verifyNoMoreInteractions(version);
-  }
-
-  /**
    * Test of identical method, of class LocalVersionVector.
    */
   @Test

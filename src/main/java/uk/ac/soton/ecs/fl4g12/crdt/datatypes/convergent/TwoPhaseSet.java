@@ -83,7 +83,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
    */
   public TwoPhaseSet(LogicalVersion<T> zero, K identifier,
       DeliveryChannel<K, TwoPhaseSetState<E, K, T>> deliveryChannel) {
-    this(new HashVersionVector<K, T>(zero, false), identifier, deliveryChannel);
+    this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
   @Override

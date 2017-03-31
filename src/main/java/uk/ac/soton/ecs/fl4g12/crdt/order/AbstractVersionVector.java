@@ -39,7 +39,6 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
   private final T zero;
   private final LogicalVersion<T> zeroVersion;
-  private final boolean dotted;
 
   /**
    * Construct an {@linkplain AbstractVersionVector}.
@@ -47,12 +46,10 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
    * The {@code zero} timestamp provided should be immutable or ensured to never be mutated.
    *
    * @param zero the timestamp that represents zero.
-   * @param dotted whether or not this is a dotted {@link VersionVector}.
    */
-  public AbstractVersionVector(LogicalVersion<T> zero, boolean dotted) {
+  public AbstractVersionVector(LogicalVersion<T> zero) {
     this.zeroVersion = zero.copy();
     this.zero = zero.get();
-    this.dotted = dotted;
   }
 
   @Override
@@ -68,6 +65,16 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
       map.put(id, get(id));
     }
     return map;
+  }
+
+  @Override
+  public Dot<K, T> getDot(K id) {
+    LogicalVersion<T> version = getLogicalVersion(id);
+    if (version == null) {
+      throw new IllegalArgumentException(
+          "Provided ID has not been initialised as part of the vector: " + id);
+    }
+    return new Dot<>(id, version);
   }
 
   @Override
@@ -105,6 +112,11 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
+  public void sync(Dot<K, T> dot) {
+    sync(dot.getIdentifier(), dot.get());
+  }
+
+  @Override
   public boolean happenedBefore(Version<Map<K, T>> version) {
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
@@ -135,6 +147,11 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     }
 
     return !this.identical(version);
+  }
+
+  @Override
+  public boolean happenedBefore(Dot<K, T> dot) {
+    return get(dot.getIdentifier()).compareTo(dot.get()) < 0;
   }
 
   private T successor(T timestamp) {
@@ -192,7 +209,6 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
     Map<K, T> other = version.get();
-    // TODO: Implement support for dotted vectors
 
     // Merge all identifiers together
     Set<K> identifiers = new HashSet(local.keySet());
@@ -246,16 +262,10 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public boolean isDotted() {
-    return dotted;
-  }
-
-  @Override
   public boolean identical(Version<Map<K, T>> version) {
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
     Map<K, T> other = version.get();
-    // TODO: Implement support for dotted vectors
 
     // Merge all identifiers together
     Set<K> identifiers = new HashSet(local.keySet());

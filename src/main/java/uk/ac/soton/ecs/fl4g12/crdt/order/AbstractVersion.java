@@ -69,7 +69,7 @@ public abstract class AbstractVersion<T> implements Version<T> {
 
   @Override
   public String toString() {
-    return "Version{" + get() + '}';
+    return getClass().getSimpleName() + "{" + get() + '}';
   }
 
   @Override

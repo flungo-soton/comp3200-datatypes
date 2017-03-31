@@ -229,7 +229,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
     final PNCounter<Integer, Object> counter = getCounter();
 
     final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
 
     PNCounterState<Integer, Object> state = counter.snapshot();
 
@@ -256,7 +256,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
     final PNCounter<Integer, Object> counter = getCounter();
 
     final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(counter.getIdentifier());
     expectedVersionVector.increment(counter.getIdentifier());
 

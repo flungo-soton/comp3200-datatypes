@@ -67,7 +67,7 @@ public class AbstractVersionedUpdatableTest {
   public void testGetVersion_Zero() {
     LOGGER.log(Level.INFO,
         "testGetVersion_Zero: Test getVersion when initialised with a zero vector.");
-    testGetVersion(new HashVersionVector(new IntegerVersion(), false));
+    testGetVersion(new HashVersionVector(new IntegerVersion()));
   }
 
   /**
@@ -77,7 +77,7 @@ public class AbstractVersionedUpdatableTest {
   public void testGetVersion_NonZero() {
     LOGGER.log(Level.INFO,
         "testGetVersion_Zero: Test getVersion when initialised with a non-zero vector.");
-    VersionVector version = new HashVersionVector(new IntegerVersion(), false);
+    VersionVector version = new HashVersionVector(new IntegerVersion());
     Object identifier = new Object();
     version.init(identifier);
     version.increment(identifier);

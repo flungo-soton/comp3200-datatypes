@@ -73,7 +73,7 @@ public final class GSet<E, K, T extends Comparable<T>>
    */
   public GSet(LogicalVersion<T> zero, K identifier,
       DeliveryChannel<K, GSetState<E, K, T>> deliveryChannel) {
-    this(new HashVersionVector<K, T>(zero, false), identifier, deliveryChannel);
+    this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
   @Override

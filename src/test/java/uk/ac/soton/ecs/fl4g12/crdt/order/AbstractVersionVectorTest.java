@@ -29,9 +29,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.*;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 /**
@@ -42,17 +40,18 @@ public class AbstractVersionVectorTest
 
   private static final Logger LOGGER = Logger.getLogger(AbstractVersionTest.class.getName());
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
+  public AbstractVersionVectorTest() {
+    super(false);
+  }
 
   @Override
   protected VersionVector<Integer, Integer> getVersion(String id) {
-    return new ImmutableMapVersionVector<>(getTimestamp(id), new IntegerVersion(), false);
+    return new ImmutableMapVersionVector<>(getTimestamp(id), new IntegerVersion());
   }
 
   @Override
   public VersionVector<Integer, Integer> getVersion(int order) {
-    return new ImmutableMapVersionVector<>(getTimestamp(order), new IntegerVersion(), false);
+    return new ImmutableMapVersionVector<>(getTimestamp(order), new IntegerVersion());
   }
 
   @Override
@@ -265,9 +264,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -307,9 +306,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -349,9 +348,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = true;
@@ -391,9 +390,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = true;
@@ -433,9 +432,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = true;
@@ -475,9 +474,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = true;
@@ -513,9 +512,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -551,9 +550,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = true;
@@ -593,9 +592,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -635,9 +634,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = true;
@@ -677,9 +676,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -719,9 +718,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -761,9 +760,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -803,9 +802,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -841,9 +840,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -879,9 +878,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     boolean expResult = false;
@@ -920,9 +919,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = 0;
@@ -961,9 +960,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = 0;
@@ -1003,9 +1002,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = -1;
@@ -1045,9 +1044,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = -2;
@@ -1087,9 +1086,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = -3;
@@ -1129,9 +1128,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = -3;
@@ -1167,9 +1166,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = 0;
@@ -1205,9 +1204,9 @@ public class AbstractVersionVectorTest
 
     // Setup the Vectors
     AbstractVersionVector<Object, Integer> abstractVersionVector1 =
-        new ImmutableMapVersionVector<>(vector1, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector1, new IntegerVersion());
     AbstractVersionVector<Object, Integer> abstractVersionVector2 =
-        new ImmutableMapVersionVector<>(vector2, new IntegerVersion(), false);
+        new ImmutableMapVersionVector<>(vector2, new IntegerVersion());
 
     // Compare
     int expResult = 1;
@@ -1219,39 +1218,10 @@ public class AbstractVersionVectorTest
     assertEquals(-expResult, result2);
   }
 
-  /**
-   * Test if a vector constructed as dotted, is dotted.
-   */
-  @Test
-  public void testIsDotted_True() {
-    LOGGER.log(Level.INFO, "testIsDotted_True: Test if a vector constructed as dotted, is dotted");
-
-    AbstractVersionVector<Object, Integer> instance = new TestVersionVector(true);
-
-    assertTrue("Vector constructed as dotted, should be dotted.", instance.isDotted());
-  }
-
-  /**
-   * Test if a vector constructed as not dotted, is not dotted.
-   */
-  @Test
-  public void testIsDotted_False() {
-    LOGGER.log(Level.INFO,
-        "testIsDotted_True: Test if a vector constructed as not dotted, is not dotted");
-
-    AbstractVersionVector<Object, Integer> instance = new TestVersionVector(false);
-
-    assertFalse("Vector constructed as not dotted, should not be dotted.", instance.isDotted());
-  }
-
   public static class TestVersionVector extends AbstractVersionVector<Object, Integer> {
 
-    public TestVersionVector(boolean dotted) {
-      super(new IntegerVersion(), dotted);
-    }
-
     public TestVersionVector() {
-      this(false);
+      super(new IntegerVersion());
     }
 
     @Override
@@ -1284,12 +1254,12 @@ public class AbstractVersionVectorTest
       extends AbstractVersionVector<K, T> {
 
     private final Map<K, T> vector;
-    private final T zero;
+    private final LogicalVersion<T> zero;
 
-    public ImmutableMapVersionVector(Map<K, T> vector, LogicalVersion<T> zero, boolean dotted) {
-      super(zero, dotted);
+    public ImmutableMapVersionVector(Map<K, T> vector, LogicalVersion<T> zero) {
+      super(zero);
       this.vector = new HashMap<>(vector);
-      this.zero = zero.get();
+      this.zero = zero.copy();
     }
 
     @Override
@@ -1321,7 +1291,9 @@ public class AbstractVersionVectorTest
 
         @Override
         public T successor() {
-          throw new UnsupportedOperationException("Out of test scope.");
+          LogicalVersion<T> successor = zero.copy();
+          successor.sync(vector.get(id));
+          return successor.successor();
         }
       };
     }
@@ -1411,6 +1383,36 @@ public class AbstractVersionVectorTest
 
   @Override
   public void testSync_Timestamp_9() {}
+
+  @Override
+  public void testSync_Dot_0() {}
+
+  @Override
+  public void testSync_Dot_1() {}
+
+  @Override
+  public void testSync_Dot_2() {}
+
+  @Override
+  public void testSync_Dot_3() {}
+
+  @Override
+  public void testSync_Dot_4() {}
+
+  @Override
+  public void testSync_Dot_5() {}
+
+  @Override
+  public void testSync_Dot_6() {}
+
+  @Override
+  public void testSync_Dot_7() {}
+
+  @Override
+  public void testSync_Dot_8() {}
+
+  @Override
+  public void testSync_Dot_9() {}
 
   @Override
   public void testCopy_0() {}

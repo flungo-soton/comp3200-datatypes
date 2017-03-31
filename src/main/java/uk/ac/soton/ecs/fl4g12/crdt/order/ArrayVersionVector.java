@@ -48,10 +48,9 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
    *
    * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
    *        timestamps.
-   * @param dotted whether or not this is a dotted {@link VersionVector}.
    */
-  public ArrayVersionVector(LogicalVersion<T> zero, boolean dotted) {
-    this(zero, dotted, new ArrayList<LogicalVersion<T>>(), new HashSet<Integer>());
+  public ArrayVersionVector(LogicalVersion<T> zero) {
+    this(zero, new ArrayList<LogicalVersion<T>>(), new HashSet<Integer>());
   }
 
   /**
@@ -59,13 +58,12 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
    *
    * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
    *        timestamps.
-   * @param dotted whether or not this is a dotted {@link VersionVector}.
    * @param vector the vector to initialise with. This value is not copied.
    * @param identifiers the set of identifiers to initialise with. This value is not copied.
    */
-  private ArrayVersionVector(LogicalVersion<T> zero, boolean dotted, List<LogicalVersion<T>> vector,
+  private ArrayVersionVector(LogicalVersion<T> zero, List<LogicalVersion<T>> vector,
       Set<Integer> identifiers) {
-    super(zero, dotted);
+    super(zero);
     this.zero = zero.copy();
     this.vector = vector;
     this.identifiers = identifiers;
@@ -115,7 +113,7 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
 
   @Override
   public ArrayVersionVector<T> copy() {
-    ArrayVersionVector<T> copy = new ArrayVersionVector<>(zero, isDotted());
+    ArrayVersionVector<T> copy = new ArrayVersionVector<>(zero);
     copy.sync(this);
     return copy;
   }

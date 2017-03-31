@@ -78,7 +78,7 @@ public class GCounterTest
     final GCounter<Integer, Object> counter = getCounter();
 
     final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(counter.getIdentifier());
     expectedVersionVector.increment(counter.getIdentifier());
     final DeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
@@ -107,7 +107,7 @@ public class GCounterTest
     final GCounter<Integer, Object> counter = getCounter();
 
     final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
 
     GCounterState<Integer, Object> state = counter.snapshot();
 
@@ -134,7 +134,7 @@ public class GCounterTest
     final GCounter<Integer, Object> counter = getCounter();
 
     final VersionVector<Object, Integer> expectedVersionVector =
-        new HashVersionVector<>(new IntegerVersion(), false);
+        new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(counter.getIdentifier());
     expectedVersionVector.increment(counter.getIdentifier());
 

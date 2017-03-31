@@ -122,7 +122,7 @@ public final class PNCounter<E extends Comparable<E>, K>
   public static <K> PNCounter<Integer, K> newIntegerPNCounter(
       DeliveryChannel<K, PNCounterState<Integer, K>> deliveryChannel) {
     return new PNCounter<>(IntegerArithmetic.getInstance(),
-        new HashVersionVector<K, Integer>(new IntegerVersion(), false), null, deliveryChannel);
+        new HashVersionVector<K, Integer>(new IntegerVersion()), null, deliveryChannel);
   }
 
   /**
@@ -137,6 +137,6 @@ public final class PNCounter<E extends Comparable<E>, K>
   public static <K> PNCounter<Long, K> newLongPNCounter(
       DeliveryChannel<K, PNCounterState<Long, K>> deliveryChannel) {
     return new PNCounter<>(LongArithmetic.getInstance(),
-        new HashVersionVector<K, Long>(new LongVersion(), false), null, deliveryChannel);
+        new HashVersionVector<K, Long>(new LongVersion()), null, deliveryChannel);
   }
 }

@@ -112,7 +112,7 @@ public final class GCounter<E extends Comparable<E>, K>
   public static <K> GCounter<Integer, K> newIntegerGCounter(
       DeliveryChannel<K, GCounterState<Integer, K>> deliveryChannel) {
     return new GCounter<>(IntegerArithmetic.getInstance(),
-        new HashVersionVector<K, Integer>(new IntegerVersion(), false), null, deliveryChannel);
+        new HashVersionVector<K, Integer>(new IntegerVersion()), null, deliveryChannel);
   }
 
   /**
@@ -127,6 +127,6 @@ public final class GCounter<E extends Comparable<E>, K>
   public static <K> GCounter<Long, K> newLongGCounter(
       DeliveryChannel<K, GCounterState<Long, K>> deliveryChannel) {
     return new GCounter<>(LongArithmetic.getInstance(),
-        new HashVersionVector<K, Long>(new LongVersion(), false), null, deliveryChannel);
+        new HashVersionVector<K, Long>(new LongVersion()), null, deliveryChannel);
   }
 }

@@ -34,11 +34,31 @@ public interface Version<T> extends Comparable<Version<T>> {
   /**
    * Gets a usable representation of the timestamp for this {@linkplain Version}. The returned value
    * should either be immutable or a clone of the internal value to ensure no modifications can be
-   * made to this version.
+   * made to this {@linkplain Version}.
    *
    * @return the timestamp for this {@linkplain Version}.
    */
   T get();
+
+  /**
+   * Synchronise the local {@linkplain Version} with another {@linkplain Version}. A synchronisation
+   * updates the local state of this {@linkplain Version} to include everything in the provided
+   * {@linkplain Version}. Performing the sync will ensure that
+   *
+   * Only this {@linkplain Version} is mutated and so to perform a two way merge,
+   * {@code a.sync(b); b.sync(a);} must be performed.
+   *
+   * @param version the {@linkplain Version} to synchronise with.
+   */
+  void sync(Version<T> version);
+
+  /**
+   * Synchronise the local version with the given timestamp.
+   *
+   * @param timestamp the timestamp to synchronise with.
+   * @see #sync(Version) for more detail on synchronisation.
+   */
+  void sync(T timestamp);
 
   /**
    * Determine if this {@linkplain Version} happened before the provided one. If they are equal,
@@ -46,7 +66,7 @@ public interface Version<T> extends Comparable<Version<T>> {
    * {@code a.happenedBefore(b) == true}.
    *
    * @param version the {@linkplain Version} to compare with.
-   * @return {@code true} if this {@linkplain Version} is concurrent with the provided
+   * @return {@code true} if this {@linkplain Version} happened-before the provided
    *         {@linkplain Version}, {@code false} otherwise.
    */
   boolean happenedBefore(Version<T> version);
@@ -63,26 +83,6 @@ public interface Version<T> extends Comparable<Version<T>> {
    *         otherwise.
    */
   boolean precedes(Version<T> version);
-
-  /**
-   * Synchronise the local {@linkplain Version} with another {@linkplain Version}. A synchronisation
-   * updates the local state of the version to include everything in the provided version.
-   * Performing the sync will ensure that
-   *
-   * Only the local version is mutated and so to perform a two way merge,
-   * {@code a.sync(b); b.sync(a);} must be performed.
-   *
-   * @param version the {@linkplain Version} to synchronise with.
-   */
-  void sync(Version<T> version);
-
-  /**
-   * Synchronise the local version with the given timestamp.
-   *
-   * @param timestamp the timestamp to synchronise with.
-   * @see #sync(Version) for more detail on synchronisation.
-   */
-  void sync(T timestamp);
 
   /**
    * Checks if two versions are identical. This method compares the state of the two versions and
@@ -114,7 +114,7 @@ public interface Version<T> extends Comparable<Version<T>> {
   boolean equals(Object obj);
 
   /**
-   * Make a copy of the version with the same state.
+   * Make a copy of the {@linkplain Version} with the same state.
    *
    * @return the cloned version.
    */

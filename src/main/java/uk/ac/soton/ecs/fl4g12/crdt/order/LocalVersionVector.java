@@ -90,6 +90,11 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
+  public Dot<K, T> getDot(K id) {
+    return versionVector.getDot(id);
+  }
+
+  @Override
   public Set<K> getIdentifiers() {
     return versionVector.getIdentifiers();
   }
@@ -135,8 +140,18 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
+  public void sync(Dot<K, T> dot) {
+    versionVector.sync(dot);
+  }
+
+  @Override
   public boolean happenedBefore(Version<Map<K, T>> version) {
     return versionVector.happenedBefore(version);
+  }
+
+  @Override
+  public boolean happenedBefore(Dot<K, T> dot) {
+    return versionVector.happenedBefore(dot);
   }
 
   @Override
@@ -152,11 +167,6 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   @Override
   public int compareTo(Version<Map<K, T>> other) {
     return versionVector.compareTo(other);
-  }
-
-  @Override
-  public boolean isDotted() {
-    return versionVector.isDotted();
   }
 
   @Override
