@@ -24,6 +24,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -82,7 +83,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     LogicalVersion<T> internalVersion = getLogicalVersion(id);
     if (internalVersion == null) {
       throw new IllegalArgumentException(
-          "Provided ID has not been initialised as part of the vector.");
+          "Provided ID has not been initialised as part of the vector: " + id);
     }
     internalVersion.increment();
   }
@@ -94,9 +95,19 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
       Map<K, T> snapshot = get();
       LogicalVersion<T> localVersion = getLogicalVersion(id);
 
+      T localVersionValue = null;
+      if (localVersion != null) {
+        localVersionValue = localVersion.get();
+      }
+
       // Retry if the localVersion is different since when the snapshot was taken.
-      if (!snapshot.get(id).equals(localVersion.get())) {
+      if (!Objects.equals(snapshot.get(id), localVersionValue)) {
         continue;
+      }
+
+      // If not initialised, treat as zero
+      if (localVersion == null) {
+        localVersion = zeroVersion.copy();
       }
 
       snapshot.put(id, localVersion.successor());
