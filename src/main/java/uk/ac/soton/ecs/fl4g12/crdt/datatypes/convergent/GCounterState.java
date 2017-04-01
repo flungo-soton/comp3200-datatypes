@@ -44,4 +44,10 @@ public final class GCounterState<E extends Comparable<E>, K>
     super(identifier, versionVector);
   }
 
+  @Override
+  public String toString() {
+    return "GCounterState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
+        + '}';
+  }
+
 }

@@ -43,6 +43,7 @@ public abstract class AbstractSetUpdateMessage<E, K, T extends Comparable<T>>
    *
    * @param identifier the identifier of the instance that was updated.
    * @param versionVector the version as a result of the update.
+   * @param operation the {@link Operation} performed by the update.
    * @param elements the elements that were added to the set. The set will not be copied.
    */
   public AbstractSetUpdateMessage(K identifier, VersionVector<K, T> versionVector,
@@ -51,8 +52,17 @@ public abstract class AbstractSetUpdateMessage<E, K, T extends Comparable<T>>
     this.operation = operation;
   }
 
+  @Override
   public Operation getOperation() {
     return operation;
   }
+
+  @Override
+  public String toString() {
+    return "AbstractSetUpdateMessage{" + "identifier=" + getIdentifier() + ", version="
+        + getVersionVector() + ", operation=" + operation + ", elements=" + getElements() + '}';
+  }
+
+
 
 }

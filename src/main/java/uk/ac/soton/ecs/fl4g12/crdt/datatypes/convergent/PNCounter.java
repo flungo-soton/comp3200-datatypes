@@ -110,6 +110,11 @@ public final class PNCounter<E extends Comparable<E>, K>
     return new PNCounterState<>(getIdentifier(), version, p, n);
   }
 
+  @Override
+  public String toString() {
+    return "PNCounter{" + value() + '}';
+  }
+
   /**
    * Construct a new {@linkplain Integer} value {@linkplain PNCounter}. It is expected that the
    * {@link DeliveryChannel} provided will assign the instance its identifier.

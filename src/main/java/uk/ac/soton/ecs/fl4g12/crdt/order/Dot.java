@@ -186,4 +186,11 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> 
     return true;
   }
 
+  @Override
+  public String toString() {
+    return "Dot{" + "identifier=" + identifier + ", version=" + logicalVersion + '}';
+  }
+
+
+
 }

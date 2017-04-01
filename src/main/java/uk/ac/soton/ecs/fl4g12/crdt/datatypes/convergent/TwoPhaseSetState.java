@@ -110,4 +110,10 @@ public final class TwoPhaseSetState<E, K, T extends Comparable<T>>
     return true;
   }
 
+  @Override
+  public String toString() {
+    return "TwoPhaseSetState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
+        + ", additions=" + additions + ", removals=" + removals + '}';
+  }
+
 }

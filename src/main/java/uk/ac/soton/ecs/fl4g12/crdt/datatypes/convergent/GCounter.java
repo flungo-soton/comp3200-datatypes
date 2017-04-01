@@ -100,6 +100,11 @@ public final class GCounter<E extends Comparable<E>, K>
     return new GCounterState<>(getIdentifier(), version);
   }
 
+  @Override
+  public String toString() {
+    return "GCounter{" + value() + '}';
+  }
+
   /**
    * Construct a new {@linkplain Integer} value {@linkplain GCounter}. It is expected that the
    * {@link DeliveryChannel} provided will assign the instance its identifier.
@@ -129,4 +134,5 @@ public final class GCounter<E extends Comparable<E>, K>
     return new GCounter<>(LongArithmetic.getInstance(),
         new HashVersionVector<K, Long>(new LongVersion()), null, deliveryChannel);
   }
+
 }

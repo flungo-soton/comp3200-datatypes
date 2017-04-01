@@ -157,6 +157,11 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
     return new LWWRegisterState<>(getIdentifier(), version, element.get());
   }
 
+  @Override
+  public String toString() {
+    return "LWWRegister{" + value() + '}';
+  }
+
   /**
    * A timestamped element wrapper. Contains an element and the time that the value was assigned.
    *

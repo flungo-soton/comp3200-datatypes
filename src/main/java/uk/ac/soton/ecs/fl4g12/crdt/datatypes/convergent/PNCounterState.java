@@ -72,4 +72,10 @@ public final class PNCounterState<E extends Comparable<E>, K>
     return n.copy();
   }
 
+  @Override
+  public String toString() {
+    return "PNCounterState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
+        + ", p=" + p + ", n=" + n + '}';
+  }
+
 }

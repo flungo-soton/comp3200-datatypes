@@ -79,6 +79,10 @@ public final class GSetState<E, K, T extends Comparable<T>>
     return true;
   }
 
-
+  @Override
+  public String toString() {
+    return "GSetState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
+        + ", state=" + state + '}';
+  }
 
 }

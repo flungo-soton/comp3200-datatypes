@@ -58,4 +58,10 @@ public abstract class AbstractGrowOnlySetUpdateMessage<E, K, T extends Comparabl
     return new HashSet<>(elements);
   }
 
+  @Override
+  public String toString() {
+    return "CommutativeGSetUpdate{" + "identifier=" + getIdentifier() + ", version="
+        + getVersionVector() + ", elements=" + getElements() + '}';
+  }
+
 }
