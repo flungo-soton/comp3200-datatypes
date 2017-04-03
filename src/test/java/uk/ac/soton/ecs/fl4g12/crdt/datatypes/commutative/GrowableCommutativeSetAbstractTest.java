@@ -41,10 +41,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
+public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends GrowableSetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
     extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
 
-  public static <E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, ? extends Version<T, ?, ?>>> void assertElementsMatch(
+  public static <E, K, T extends Comparable<T>, U extends GrowableSetUpdateMessage<E, K, ? extends Version<T, ?, ?>>> void assertElementsMatch(
       Set<E> elements, U updateMessage) {
     assertEquals("Update element set should consist only of the new element(s)", elements,
         updateMessage.getElements());

@@ -33,7 +33,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  * @param <V> the type of {@link Version} use in this {@link SetUpdateMessage}.
  */
 public interface SetUpdateMessage<E, K, V extends Version<?, ? super V, V>>
-    extends GrowOnlySetUpdateMessage<E, K, V> {
+    extends GrowableSetUpdateMessage<E, K, V> {
 
   /**
    * Get the {@linkplain Operation} which was performed with the elements contained in this

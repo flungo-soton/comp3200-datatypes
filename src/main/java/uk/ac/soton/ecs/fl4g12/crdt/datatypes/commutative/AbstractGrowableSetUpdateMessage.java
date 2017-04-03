@@ -28,7 +28,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * Abstract {@link GrowOnlySetUpdateMessage} to be extended for use with grow-only
+ * Abstract {@link GrowableSetUpdateMessage} to be extended for use with grow-only
  * {@linkplain CmRDT} {@linkplain Set}s. Contains a {@link Set} of elements that were involved in
  * the operation.
  *
@@ -36,18 +36,18 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp stored in the {@link Version}
  */
-public abstract class AbstractGrowOnlySetUpdateMessage<E, K, T extends Comparable<T>>
-    extends AbstractDottedUpdateMessage<K, T> implements GrowOnlySetUpdateMessage<E, K, Dot<K, T>> {
+public abstract class AbstractGrowableSetUpdateMessage<E, K, T extends Comparable<T>>
+    extends AbstractDottedUpdateMessage<K, T> implements GrowableSetUpdateMessage<E, K, Dot<K, T>> {
 
   protected final Set<? extends E> elements;
 
   /**
-   * Construct an {@link AbstractGrowOnlySetUpdateMessage} with a list of elements that were added.
+   * Construct an {@link AbstractGrowableSetUpdateMessage} with a list of elements that were added.
    *
    * @param dot the {@link Dot} for the update.
    * @param elements the elements that were added to the set. The set will not be copied.
    */
-  public AbstractGrowOnlySetUpdateMessage(Dot<K, T> dot, Set<? extends E> elements) {
+  public AbstractGrowableSetUpdateMessage(Dot<K, T> dot, Set<? extends E> elements) {
     super(dot);
     this.elements = elements;
   }

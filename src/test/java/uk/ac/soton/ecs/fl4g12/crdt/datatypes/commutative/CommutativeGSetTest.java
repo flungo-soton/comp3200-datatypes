@@ -23,7 +23,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
 import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowOnlySetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
@@ -34,7 +34,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
  * Tests the {@linkplain CommutativeGSetUpdate} implementation as a {@linkplain Set}.
  */
 public final class CommutativeGSetTest
-    extends GrowOnlySetAbstractTest<Integer, CommutativeGSet<Integer, Integer, Integer>> {
+    extends GrowableSetAbstractTest<Integer, CommutativeGSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();

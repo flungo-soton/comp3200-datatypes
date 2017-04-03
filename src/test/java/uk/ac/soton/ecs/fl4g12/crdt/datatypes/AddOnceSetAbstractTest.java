@@ -39,7 +39,7 @@ import org.junit.Test;
  * @param <S> the type of the set being tested.
  */
 public abstract class AddOnceSetAbstractTest<E, S extends Set<E>>
-    extends GrowOnlySetAbstractTest<E, S> {
+    extends GrowableSetAbstractTest<E, S> {
 
   private static final Logger LOGGER = Logger.getLogger(AddOnceSetAbstractTest.class.getName());
 

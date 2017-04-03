@@ -36,7 +36,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public final class CommutativeGSetUpdate<E, K, T extends Comparable<T>>
-    extends AbstractGrowOnlySetUpdateMessage<E, K, T> {
+    extends AbstractGrowableSetUpdateMessage<E, K, T> {
 
   /**
    * Construct a {@link CommutativeGSetUpdate} with a list of elements that were added.

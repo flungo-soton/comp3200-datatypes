@@ -23,7 +23,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Set;
 import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowOnlySetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
@@ -32,7 +32,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 /**
  * Tests the {@linkplain GSet} implementation as a {@linkplain Set}.
  */
-public class GSetTest extends GrowOnlySetAbstractTest<Integer, GSet<Integer, Integer, Integer>> {
+public class GSetTest extends GrowableSetAbstractTest<Integer, GSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();

@@ -46,10 +46,10 @@ import org.junit.rules.ExpectedException;
  * @param <E> the type of set value that the test uses.
  * @param <S> the type of the set being tested.
  */
-public abstract class GrowOnlySetAbstractTest<E, S extends Set<E>>
+public abstract class GrowableSetAbstractTest<E, S extends Set<E>>
     implements SetTestInterface<E, S> {
 
-  private static final Logger LOGGER = Logger.getLogger(GrowOnlySetAbstractTest.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(GrowableSetAbstractTest.class.getName());
 
   public static final int MAX_OPERATIONS = 10;
 
@@ -59,7 +59,7 @@ public abstract class GrowOnlySetAbstractTest<E, S extends Set<E>>
   private final Class<E> elementClass;
   private final Class<E[]> elementArrayClass;
 
-  public GrowOnlySetAbstractTest(Class<E> elementClass, Class<E[]> elementArrayClass) {
+  public GrowableSetAbstractTest(Class<E> elementClass, Class<E[]> elementArrayClass) {
     this.elementClass = elementClass;
     this.elementArrayClass = elementArrayClass;
   }

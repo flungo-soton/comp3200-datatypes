@@ -35,7 +35,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public abstract class AbstractSetUpdateMessage<E, K, T extends Comparable<T>>
-    extends AbstractGrowOnlySetUpdateMessage<E, K, T> implements SetUpdateMessage<E, K, Dot<K, T>> {
+    extends AbstractGrowableSetUpdateMessage<E, K, T> implements SetUpdateMessage<E, K, Dot<K, T>> {
 
   private final Operation operation;
 

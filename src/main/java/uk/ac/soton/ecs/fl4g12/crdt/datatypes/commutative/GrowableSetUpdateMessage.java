@@ -31,9 +31,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <V> the type of {@link Version} use in this {@link GrowOnlySetUpdateMessage}.
+ * @param <V> the type of {@link Version} use in this {@link GrowableSetUpdateMessage}.
  */
-public interface GrowOnlySetUpdateMessage<E, K, V extends Version>
+public interface GrowableSetUpdateMessage<E, K, V extends Version>
     extends VersionedUpdateMessage<K, V> {
 
   /**
