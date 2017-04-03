@@ -47,7 +47,7 @@ public final class GCounterState<E extends Comparable<E>, K>
 
   @Override
   public String toString() {
-    return "GCounterState{" + "identifier=" + getIdentifier() + ", version=" + getVersion() + '}';
+    return "GCounterState{" + "identifier=" + identifier + ", version=" + version + '}';
   }
 
 }

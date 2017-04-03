@@ -34,8 +34,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 public abstract class AbstractVersionedUpdateMessage<K, V extends Version<?, ? super V, V>>
     implements VersionedUpdateMessage<K, V> {
 
-  private final K identifier;
-  private final V version;
+  protected final K identifier;
+  protected final V version;
 
   /**
    * Instantiate the {@linkplain AbstractVersionedUpdateMessage}.

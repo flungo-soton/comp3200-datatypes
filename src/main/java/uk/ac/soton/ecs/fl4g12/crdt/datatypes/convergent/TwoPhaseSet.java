@@ -103,7 +103,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
 
   @Override
   public synchronized TwoPhaseSetState<E, K, T> snapshot() {
-    return new TwoPhaseSetState<>(getIdentifier(), version, additions, removals);
+    return new TwoPhaseSetState<>(identifier, version, additions, removals);
   }
 
   @Override

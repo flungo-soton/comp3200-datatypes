@@ -75,8 +75,8 @@ public final class PNCounter<E extends Comparable<E>, K>
       DeliveryChannel<K, PNCounterState<E, K>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
     this.arithmetic = arithmetic;
-    this.p = new LocalVersionVector<>(initialVersion.copy(), getIdentifier());
-    this.n = new LocalVersionVector<>(initialVersion.copy(), getIdentifier());
+    this.p = new LocalVersionVector<>(initialVersion.copy(), this.identifier);
+    this.n = new LocalVersionVector<>(initialVersion.copy(), this.identifier);
   }
 
   @Override
@@ -107,7 +107,7 @@ public final class PNCounter<E extends Comparable<E>, K>
 
   @Override
   public synchronized PNCounterState<E, K> snapshot() {
-    return new PNCounterState<>(getIdentifier(), version, p, n);
+    return new PNCounterState<>(identifier, version, p, n);
   }
 
   @Override

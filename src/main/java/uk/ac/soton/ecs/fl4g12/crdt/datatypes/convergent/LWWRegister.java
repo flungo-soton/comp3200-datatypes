@@ -86,7 +86,7 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
   @Override
   public synchronized void assign(E value) {
     version.increment();
-    assign(new Element<>(value), getIdentifier());
+    assign(new Element<>(value), identifier);
     getDeliveryChannel().publish(snapshot());
   }
 
@@ -111,7 +111,7 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
         // If a very fast local re-assignment is taking place, wait a 100 nanoseconds and retry
         // Sleep theoretically caps the max recursion depth at 10
         // Blocking is required to ensure the correctness of programs using this datatype.
-        if (getIdentifier().equals(id)) {
+        if (identifier.equals(id)) {
           try {
             Thread.sleep(0, 100);
           } catch (InterruptedException ex) {
@@ -124,7 +124,7 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
           return;
         }
         // Only continue to assigment if the new ID is less than the current ID
-        if (getIdentifier().compareTo(id) > 0) {
+        if (identifier.compareTo(id) > 0) {
           return;
         }
       }
@@ -154,7 +154,7 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
 
   @Override
   public synchronized LWWRegisterState<E, K, T> snapshot() {
-    return new LWWRegisterState<>(getIdentifier(), version, element.get());
+    return new LWWRegisterState<>(identifier, version, element.get());
   }
 
   @Override

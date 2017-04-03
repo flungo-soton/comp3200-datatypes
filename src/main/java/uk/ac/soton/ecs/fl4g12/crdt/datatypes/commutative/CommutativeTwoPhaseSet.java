@@ -113,7 +113,7 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
 
   private CommutativeTwoPhaseSetUpdate<E, K, T> createUpdateMessage(Operation operation,
       Set<? extends E> elements) {
-    return new CommutativeTwoPhaseSetUpdate<E, K, T>(version.getDot(getIdentifier()), operation,
+    return new CommutativeTwoPhaseSetUpdate<E, K, T>(version.getDot(identifier), operation,
         elements);
   }
 

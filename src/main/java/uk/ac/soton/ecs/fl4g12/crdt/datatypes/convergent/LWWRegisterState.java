@@ -64,8 +64,8 @@ public final class LWWRegisterState<E extends Serializable, K extends Comparable
 
   @Override
   public String toString() {
-    return "LWWRegisterState{" + "identifier=" + getIdentifier() + ", version=" + getVersion()
-        + ", element=" + element + '}';
+    return "LWWRegisterState{" + "identifier=" + identifier + ", version=" + version + ", element="
+        + element + '}';
   }
 
 

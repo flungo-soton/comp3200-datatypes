@@ -103,7 +103,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
   }
 
   private CommutativeGSetUpdate<E, K, T> createUpdateMessage(Set<E> elements) {
-    return new CommutativeGSetUpdate<>(version.getDot(getIdentifier()), elements);
+    return new CommutativeGSetUpdate<>(version.getDot(identifier), elements);
   }
 
   @Override

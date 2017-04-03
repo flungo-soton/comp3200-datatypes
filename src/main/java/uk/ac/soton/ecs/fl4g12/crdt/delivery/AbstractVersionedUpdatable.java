@@ -57,7 +57,7 @@ public abstract class AbstractVersionedUpdatable<K, T extends Comparable<T>, U e
   public AbstractVersionedUpdatable(VersionVector<K, T> initialVersion, K identifier,
       DeliveryChannel<K, U> deliveryChannel) {
     super(identifier, deliveryChannel);
-    this.version = new LocalVersionVector<>(initialVersion.copy(), getIdentifier());
+    this.version = new LocalVersionVector<>(initialVersion.copy(), this.identifier);
   }
 
   @Override

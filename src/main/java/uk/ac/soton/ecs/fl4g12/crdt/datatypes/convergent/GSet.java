@@ -91,7 +91,7 @@ public final class GSet<E, K, T extends Comparable<T>>
 
   @Override
   public synchronized GSetState<E, K, T> snapshot() {
-    return new GSetState<>(getIdentifier(), version, state);
+    return new GSetState<>(identifier, version, state);
   }
 
   @Override

@@ -39,7 +39,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 public abstract class AbstractGrowOnlySetUpdateMessage<E, K, T extends Comparable<T>>
     extends AbstractDottedUpdateMessage<K, T> implements GrowOnlySetUpdateMessage<E, K, Dot<K, T>> {
 
-  private final Set<? extends E> elements;
+  protected final Set<? extends E> elements;
 
   /**
    * Construct an {@link AbstractGrowOnlySetUpdateMessage} with a list of elements that were added.
@@ -59,8 +59,8 @@ public abstract class AbstractGrowOnlySetUpdateMessage<E, K, T extends Comparabl
 
   @Override
   public String toString() {
-    return "CommutativeGSetUpdate{" + "identifier=" + getIdentifier() + ", version=" + getVersion()
-        + ", elements=" + getElements() + '}';
+    return "CommutativeGSetUpdate{" + "identifier=" + identifier + ", version=" + version
+        + ", elements=" + elements + '}';
   }
 
 }

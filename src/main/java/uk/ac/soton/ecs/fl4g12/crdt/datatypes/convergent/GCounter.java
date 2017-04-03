@@ -97,7 +97,7 @@ public final class GCounter<E extends Comparable<E>, K>
 
   @Override
   public synchronized GCounterState<E, K> snapshot() {
-    return new GCounterState<>(getIdentifier(), version);
+    return new GCounterState<>(identifier, version);
   }
 
   @Override

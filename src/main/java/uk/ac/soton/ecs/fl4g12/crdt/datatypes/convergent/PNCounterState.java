@@ -75,8 +75,8 @@ public final class PNCounterState<E extends Comparable<E>, K>
 
   @Override
   public String toString() {
-    return "PNCounterState{" + "identifier=" + getIdentifier() + ", version=" + getVersion()
-        + ", p=" + p + ", n=" + n + '}';
+    return "PNCounterState{" + "identifier=" + identifier + ", version=" + version + ", p=" + p
+        + ", n=" + n + '}';
   }
 
 }

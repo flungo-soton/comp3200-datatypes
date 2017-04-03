@@ -31,8 +31,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
     implements Updatable<K, U> {
 
-  private final K identifier;
-  private final DeliveryChannel<K, U> deliveryChannel;
+  protected final K identifier;
+  protected final DeliveryChannel<K, U> deliveryChannel;
 
   /**
    * Instantiate the {@linkplain AbstractUpdatable} with the provided {@linkplain DeliveryChannel}.

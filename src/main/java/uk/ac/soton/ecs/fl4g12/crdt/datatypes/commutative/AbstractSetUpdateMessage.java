@@ -58,8 +58,8 @@ public abstract class AbstractSetUpdateMessage<E, K, T extends Comparable<T>>
 
   @Override
   public String toString() {
-    return "AbstractSetUpdateMessage{" + "identifier=" + getIdentifier() + ", version="
-        + getVersion() + ", operation=" + operation + ", elements=" + getElements() + '}';
+    return "AbstractSetUpdateMessage{" + "identifier=" + identifier + ", version=" + version
+        + ", operation=" + operation + ", elements=" + elements + '}';
   }
 
 
