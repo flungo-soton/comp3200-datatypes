@@ -48,15 +48,15 @@ public final class CommutativeTwoPhaseCommutativeSetTest extends
   protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getAddUpdate(
       CommutativeTwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
       VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeTwoPhaseSetUpdate<>(identifier, version, SetUpdateMessage.Operation.ADD,
-        new HashSet<>(elements));
+    return new CommutativeTwoPhaseSetUpdate<>(version.getDot(identifier),
+        SetUpdateMessage.Operation.ADD, new HashSet<>(elements));
   }
 
   @Override
   protected CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer> getRemoveUpdate(
       CommutativeTwoPhaseSet<Integer, Integer, Integer> set, Integer identifier,
       VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeTwoPhaseSetUpdate<>(identifier, version,
+    return new CommutativeTwoPhaseSetUpdate<>(version.getDot(identifier),
         SetUpdateMessage.Operation.REMOVE, new HashSet<>(elements));
   }
 

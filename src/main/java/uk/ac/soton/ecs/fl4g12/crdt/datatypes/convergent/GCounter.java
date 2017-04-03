@@ -51,7 +51,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.util.LongArithmetic;
     pages = {"14", "15"})
 public final class GCounter<E extends Comparable<E>, K>
     extends AbstractVersionedUpdatable<K, E, GCounterState<E, K>>
-    implements CvRDT<K, E, GCounterState<E, K>>, Counter<E> {
+    implements CvRDT<K, VersionVector<K, E>, GCounterState<E, K>>, Counter<E> {
 
   private final Arithmetic<E> arithmetic;
 
@@ -92,7 +92,7 @@ public final class GCounter<E extends Comparable<E>, K>
 
   @Override
   public synchronized void update(GCounterState<E, K> message) throws DeliveryUpdateException {
-    version.sync(message.getVersionVector());
+    version.sync(message.getVersion());
   }
 
   @Override

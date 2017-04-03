@@ -61,7 +61,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
     pages = {"17", "18", "19"})
 public final class LWWRegister<E extends Serializable, K extends Comparable<K>, T extends Comparable<T>>
     extends AbstractVersionedUpdatable<K, T, LWWRegisterState<E, K, T>>
-    implements CvRDT<K, T, LWWRegisterState<E, K, T>>, Register<E> {
+    implements CvRDT<K, VersionVector<K, T>, LWWRegisterState<E, K, T>>, Register<E> {
 
   private static final Logger LOGGER = Logger.getLogger(LWWRegister.class.getName());
 
@@ -137,12 +137,12 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
   @Override
   public synchronized void update(LWWRegisterState<E, K, T> message)
       throws DeliveryUpdateException {
-    if (message.getVersionVector().happenedBefore(version)) {
+    if (message.getVersion().happenedBefore(version)) {
       return;
     }
     // If message is either concurrent on in future (not identical) perform assignment
-    if (!message.getVersionVector().identical(version)) {
-      version.sync(message.getVersionVector());
+    if (!message.getVersion().identical(version)) {
+      version.sync(message.getVersion());
       assign(message.getElement(), message.getIdentifier());
     }
   }

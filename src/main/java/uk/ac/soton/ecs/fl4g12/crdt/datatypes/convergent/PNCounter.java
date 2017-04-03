@@ -52,7 +52,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.util.LongArithmetic;
     pages = {"15", "16"})
 public final class PNCounter<E extends Comparable<E>, K>
     extends AbstractVersionedUpdatable<K, E, PNCounterState<E, K>>
-    implements CvRDT<K, E, PNCounterState<E, K>>, Counter<E> {
+    implements CvRDT<K, VersionVector<K, E>, PNCounterState<E, K>>, Counter<E> {
 
   private final Arithmetic<E> arithmetic;
   private final LocalVersionVector<K, E> p;
@@ -100,7 +100,7 @@ public final class PNCounter<E extends Comparable<E>, K>
 
   @Override
   public synchronized void update(PNCounterState<E, K> message) throws DeliveryUpdateException {
-    version.sync(message.getVersionVector());
+    version.sync(message.getVersion());
     p.sync(message.getP());
     n.sync(message.getN());
   }

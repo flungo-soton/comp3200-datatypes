@@ -36,10 +36,11 @@ import java.util.Set;
  * @param <T> the type of the version.
  */
 public abstract class AbstractVersionVector<K, T extends Comparable<T>>
-    extends AbstractVersion<Map<K, T>> implements VersionVector<K, T> {
+    extends AbstractVersion<Map<K, T>, VersionVector<K, T>, VersionVector<K, T>>
+    implements VersionVector<K, T> {
 
   private final T zero;
-  private final LogicalVersion<T> zeroVersion;
+  private final LogicalVersion<T, ?> zeroVersion;
 
   /**
    * Construct an {@linkplain AbstractVersionVector}.
@@ -48,14 +49,14 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
    *
    * @param zero the timestamp that represents zero.
    */
-  public AbstractVersionVector(LogicalVersion<T> zero) {
+  public AbstractVersionVector(LogicalVersion<T, ?> zero) {
     this.zeroVersion = zero.copy();
     this.zero = zero.get();
   }
 
   @Override
   public T get(K id) {
-    LogicalVersion<T> internalVersion = getLogicalVersion(id);
+    LogicalVersion<T, ?> internalVersion = getLogicalVersion(id);
     return internalVersion == null ? zero : internalVersion.get();
   }
 
@@ -70,7 +71,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
   @Override
   public Dot<K, T> getDot(K id) {
-    LogicalVersion<T> version = getLogicalVersion(id);
+    LogicalVersion<T, ?> version = getLogicalVersion(id);
     if (version == null) {
       throw new IllegalArgumentException(
           "Provided ID has not been initialised as part of the vector: " + id);
@@ -80,7 +81,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
 
   @Override
   public void increment(K id) {
-    LogicalVersion<T> internalVersion = getLogicalVersion(id);
+    LogicalVersion<T, ?> internalVersion = getLogicalVersion(id);
     if (internalVersion == null) {
       throw new IllegalArgumentException(
           "Provided ID has not been initialised as part of the vector: " + id);
@@ -93,7 +94,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     // Loop to ensure the successor is the true successor from the snapshot created by `get()`
     while (true) {
       Map<K, T> snapshot = get();
-      LogicalVersion<T> localVersion = getLogicalVersion(id);
+      LogicalVersion<T, ?> localVersion = getLogicalVersion(id);
 
       T localVersionValue = null;
       if (localVersion != null) {
@@ -128,7 +129,7 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public boolean happenedBefore(Version<Map<K, T>> version) {
+  public boolean happenedBefore(VersionVector<K, T> version) {
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
     Map<K, T> other = version.get();
@@ -166,13 +167,13 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   }
 
   private T successor(T timestamp) {
-    LogicalVersion<T> version = zeroVersion.copy();
+    LogicalVersion<T, ?> version = zeroVersion.copy();
     version.sync(timestamp);
     return version.successor();
   }
 
   @Override
-  public boolean precedes(Version<Map<K, T>> version) {
+  public boolean precedes(VersionVector<K, T> version) {
     Map<K, T> local = get();
     Map<K, T> other = version.get();
 
@@ -214,9 +215,16 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     return precedes;
   }
 
+  @Override
+  public boolean precedes(Dot<K, T> dot) {
+    LogicalVersion<T, ?> logicalVersion = getLogicalVersion(dot.getIdentifier());
+    if (logicalVersion == null) {
+      logicalVersion = zeroVersion;
+    }
+    return logicalVersion.precedes(dot.getLogicalVersion());
+  }
 
-
-  private Integer compareToInternal(Version<Map<K, T>> version) {
+  private Integer compareToInternal(VersionVector<K, T> version) {
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
     Map<K, T> other = version.get();
@@ -267,13 +275,13 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public int compareTo(Version<Map<K, T>> version) {
+  public int compareTo(VersionVector<K, T> version) {
     Integer comparison = compareToInternal(version);
     return comparison == null ? 0 : compareToInternal(version);
   }
 
   @Override
-  public boolean identical(Version<Map<K, T>> version) {
+  public boolean identical(VersionVector<K, T> version) {
     // Get snapshot of each vector to work with
     Map<K, T> local = get();
     Map<K, T> other = version.get();
@@ -300,6 +308,11 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
       }
     }
     return true;
+  }
+
+  @Override
+  public boolean identical(Dot<K, T> dot) {
+    return getLogicalVersion(dot.getIdentifier()).identical(dot.getLogicalVersion());
   }
 
   @Override

@@ -25,25 +25,37 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
  * Abstract {@linkplain LogicalVersion} that can be extended by other {@linkplain LogicalVersion}
  * implementations.
  *
- * {@link #compareTo(uk.ac.soton.ecs.fl4g12.crdt.order.Version)} compares the values of the
- * timestamps.
+ * {@link #compareTo(LogicalVersion)} compares the values of the timestamps.
  *
  * @param <T> the type of the timestamp.
+ * @param <V> the type of {@linkplain LogicalVersion} which this {@linkplain LogicalVersion} can
+ *        perform operations with.
  */
-public abstract class AbstractLogicalVersion<T extends Comparable<T>> extends AbstractVersion<T>
-    implements LogicalVersion<T> {
+public abstract class AbstractLogicalVersion<T extends Comparable<T>, V extends LogicalVersion<T, V>>
+    extends AbstractVersion<T, LogicalVersion<T, ?>, V> implements LogicalVersion<T, V> {
+
+  private final V zero;
+
+  public AbstractLogicalVersion(V zero) {
+    this.zero = zero;
+  }
 
   @Override
-  public boolean precedes(Version<T> version) {
+  public boolean precedes(LogicalVersion<T, ?> version) {
     return successor().equals(version.get());
   }
 
   @Override
-  public int compareTo(Version<T> version) {
+  public int compareTo(LogicalVersion<T, ?> version) {
     return get().compareTo(version.get());
   }
 
   @Override
-  public abstract AbstractLogicalVersion<T> copy();
+  public abstract V copy();
+
+  @Override
+  public V getZero() {
+    return zero;
+  }
 
 }

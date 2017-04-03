@@ -127,11 +127,11 @@ public final class DotTest {
    * Test precedes method of {@linkplain Dot} which takes a {@linkplain Version}.
    */
   @Test
-  public void testPrecedes_Version() {
+  public void testPrecedes_LogicalVersion() {
     LOGGER.log(Level.INFO, "testPrecedes_Version: Testing precedes method with a Version");
 
     Dot dot = getDot();
-    Version version = Mockito.mock(Version.class);
+    LogicalVersion version = Mockito.mock(LogicalVersion.class);
     boolean precedes = true;
     Mockito.doReturn(precedes).when(dot.getLogicalVersion()).precedes(version);
 
@@ -174,7 +174,7 @@ public final class DotTest {
     LOGGER.log(Level.INFO, "testIdentical: Testing identical method");
 
     Dot dot = getDot();
-    Version version = Mockito.mock(Version.class);
+    LogicalVersion version = Mockito.mock(LogicalVersion.class);
     boolean identical = true;
     Mockito.doReturn(identical).when(dot.getLogicalVersion()).identical(version);
 
@@ -193,7 +193,7 @@ public final class DotTest {
     LOGGER.log(Level.INFO, "testHappenedBefore: Testing happenedBefore_Version method");
 
     Dot dot = getDot();
-    Version version = Mockito.mock(Version.class);
+    LogicalVersion version = Mockito.mock(LogicalVersion.class);
     boolean happenedBefore = true;
     Mockito.doReturn(happenedBefore).when(dot.getLogicalVersion()).happenedBefore(version);
 
@@ -251,7 +251,7 @@ public final class DotTest {
     LOGGER.log(Level.INFO, "testSync_Version: Testing sync method with a Version");
 
     Dot dot = getDot();
-    Version version = Mockito.mock(Version.class);
+    LogicalVersion version = Mockito.mock(LogicalVersion.class);
 
     dot.sync(version);
 
@@ -285,7 +285,7 @@ public final class DotTest {
     LOGGER.log(Level.INFO, "testCompareTo: Testing compareTo");
 
     Dot dot = getDot();
-    Version version = Mockito.mock(Version.class);
+    LogicalVersion version = Mockito.mock(LogicalVersion.class);
     int comparison = -123;
     Mockito.doReturn(comparison).when(dot.getLogicalVersion()).compareTo(version);
 

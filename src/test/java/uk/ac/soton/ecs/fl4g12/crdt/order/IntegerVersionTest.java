@@ -35,7 +35,7 @@ import org.junit.rules.ExpectedException;
 /**
  * Tests for the {@linkplain IntegerVersion} class.
  */
-public class IntegerVersionTest extends VersionAbstractTest<Integer, IntegerVersion> {
+public class IntegerVersionTest extends LamportTimestampAbstractTest<Integer> {
 
   private static final Logger LOGGER = Logger.getLogger(IntegerVersionTest.class.getName());
 

@@ -35,9 +35,9 @@ import java.util.Set;
  */
 public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersionVector<Integer, T> {
 
-  private final LogicalVersion<T> zero;
+  private final LogicalVersion<T, ?> zero;
 
-  private final List<LogicalVersion<T>> vector;
+  private final List<LogicalVersion<T, ?>> vector;
   private final Set<Integer> identifiers;
 
   private int size;
@@ -49,8 +49,8 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
    * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
    *        timestamps.
    */
-  public ArrayVersionVector(LogicalVersion<T> zero) {
-    this(zero, new ArrayList<LogicalVersion<T>>(), new HashSet<Integer>());
+  public ArrayVersionVector(LogicalVersion<T, ?> zero) {
+    this(zero, new ArrayList<LogicalVersion<T, ?>>(), new HashSet<Integer>());
   }
 
   /**
@@ -61,7 +61,7 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
    * @param vector the vector to initialise with. This value is not copied.
    * @param identifiers the set of identifiers to initialise with. This value is not copied.
    */
-  private ArrayVersionVector(LogicalVersion<T> zero, List<LogicalVersion<T>> vector,
+  private ArrayVersionVector(LogicalVersion<T, ?> zero, List<LogicalVersion<T, ?>> vector,
       Set<Integer> identifiers) {
     super(zero);
     this.zero = zero.copy();
@@ -71,7 +71,7 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
   }
 
   @Override
-  public LogicalVersion<T> getLogicalVersion(Integer id) {
+  public LogicalVersion<T, ?> getLogicalVersion(Integer id) {
     try {
       return vector.get(id);
     } catch (IndexOutOfBoundsException ex) {
@@ -85,11 +85,11 @@ public class ArrayVersionVector<T extends Comparable<T>> extends AbstractVersion
   }
 
   @Override
-  public synchronized LogicalVersion<T> init(Integer id) {
+  public synchronized LogicalVersion<T, ?> init(Integer id) {
     if (identifiers.contains(id)) {
       return vector.get(id);
     }
-    LogicalVersion<T> version = zero.copy();
+    LogicalVersion<T, ?> version = zero.copy();
     if (id > size - 1) {
       for (int i = size; i < id; i++) {
         vector.add(i, null);

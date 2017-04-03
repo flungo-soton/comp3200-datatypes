@@ -23,19 +23,20 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CRDT;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * Interface for Convergent Replicated Data Types. {@linkplain CvRDT}s are based on {@link StatefulUpdatable}s
- * and use {@link StateSnapshot}s to communicate changes made.
+ * Interface for Convergent Replicated Data Types. {@linkplain CvRDT}s are based on
+ * {@link StatefulUpdatable}s and use {@link StateSnapshot}s to communicate changes made.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of timestamps which are used by each node.
+ * @param <V> the type of the {@link Version}.
  * @param <S> the type of the {@link StateSnapshot} which is taken and used as the
  *        {@link UpdateMessage}.
  */
-public interface CvRDT<K, T extends Comparable<T>, S extends StateSnapshot<K, T>>
-    extends CRDT<K, S>, StatefulUpdatable<K, T, S> {
+public interface CvRDT<K, V extends Version, S extends StateSnapshot<K, V>>
+    extends CRDT<K, S>, StatefulUpdatable<K, V, S> {
 
 }

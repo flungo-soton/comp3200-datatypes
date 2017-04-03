@@ -23,18 +23,17 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Interface for {@linkplain Set} {@linkplain UpdateMessage}s.
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <V> the type of {@link Version} use in this {@link SetUpdateMessage}.
  */
-public interface SetUpdateMessage<E, K, T extends Comparable<T>>
-    extends GrowOnlySetUpdateMessage<E, K, T> {
-
+public interface SetUpdateMessage<E, K, V extends Version<?, ? super V, V>>
+    extends GrowOnlySetUpdateMessage<E, K, V> {
 
   /**
    * Get the {@linkplain Operation} which was performed with the elements contained in this

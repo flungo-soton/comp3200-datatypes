@@ -34,7 +34,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public final class GSetState<E, K, T extends Comparable<T>>
-    extends AbstractVersionedUpdateMessage<K, T> implements SetState<E, K, T> {
+    extends AbstractVersionedUpdateMessage<K, VersionVector<K, T>>
+    implements SetState<E, K, VersionVector<K, T>> {
 
   private final Set<E> state;
 
@@ -81,8 +82,8 @@ public final class GSetState<E, K, T extends Comparable<T>>
 
   @Override
   public String toString() {
-    return "GSetState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
-        + ", state=" + state + '}';
+    return "GSetState{" + "identifier=" + getIdentifier() + ", version=" + getVersion() + ", state="
+        + state + '}';
   }
 
 }

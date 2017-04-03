@@ -37,7 +37,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
     extends ConflictFreeSetAbstractTest<E, K, T, U, S> {
 
   /**

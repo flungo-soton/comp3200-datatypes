@@ -32,7 +32,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <K> the type of identifier used to identify nodes.
  */
 public final class GCounterState<E extends Comparable<E>, K>
-    extends AbstractVersionedUpdateMessage<K, E> implements StateSnapshot<K, E> {
+    extends AbstractVersionedUpdateMessage<K, VersionVector<K, E>>
+    implements StateSnapshot<K, VersionVector<K, E>> {
 
   /**
    * Instantiate a new {@linkplain GCounterState}.
@@ -46,8 +47,7 @@ public final class GCounterState<E extends Comparable<E>, K>
 
   @Override
   public String toString() {
-    return "GCounterState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
-        + '}';
+    return "GCounterState{" + "identifier=" + getIdentifier() + ", version=" + getVersion() + '}';
   }
 
 }

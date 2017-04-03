@@ -37,16 +37,16 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowableConvergentSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+public abstract class GrowableConvergentSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
     extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
 
-  public static <E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>> void assertSetStateContains(
+  public static <E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>> void assertSetStateContains(
       U setState, E element) {
     assertTrue("The set state should contain the element that was added",
         setState.getState().contains(element));
   }
 
-  public static <E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>> void assertSetStateContainsAll(
+  public static <E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>> void assertSetStateContainsAll(
       U setState, Collection<E> elements) {
     assertTrue("The set state should contain the elements that were added",
         setState.getState().containsAll(elements));

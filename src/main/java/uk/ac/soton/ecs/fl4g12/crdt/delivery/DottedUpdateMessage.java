@@ -19,36 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.order;
+package uk.ac.soton.ecs.fl4g12.crdt.delivery;
+
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.CmRDT;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * A {@linkplain LogicalVersion} is a simple {@linkplain Version} which can be incremented. The type
- * of the timestamp is comparable and the ordering of the timestamp values provides the partial
- * order of the timestamps.
+ * An {@linkplain UpdateMessage} which uses a {@linkplain Dot} as the {@linkplain Version}. This is
+ * typically used as part of {@link CmRDT}s.
  *
+ * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
- * @param <V> the type of {@linkplain LogicalVersion} which this {@linkplain LogicalVersion} can
- *        perform operations with.
  */
-public interface LogicalVersion<T, V extends LogicalVersion<T, V>>
-    extends Version<T, LogicalVersion<T, ?>, V> {
+public interface DottedUpdateMessage<K, T extends Comparable<T>>
+    extends UpdateMessage<K, VersionedUpdateMessage<K, Dot<K, T>>> {
 
-  /**
-   * Increment the {@linkplain LogicalVersion}'s timestamp. Typically increments should be of the
-   * same amount each time and of the smallest incrementable amount.
-   *
-   * @throws ArithmeticException when incremented beyond the maximum value for the version.
-   */
-  void increment() throws ArithmeticException;
-
-  /**
-   * Get what the value of the {@linkplain LogicalVersion} would be after an increment. Does not
-   * alter the state of the {@linkplain LogicalVersion}.
-   *
-   * @return the value of the {@linkplain LogicalVersion} after an increment.
-   */
-  T successor();
-
-  V getZero();
+  Dot<K, T> getDot();
 
 }

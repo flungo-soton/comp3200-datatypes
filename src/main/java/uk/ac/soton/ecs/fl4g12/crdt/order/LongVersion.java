@@ -28,7 +28,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.datatypes.SafeAtomicLong;
  * A simple {@linkplain LogicalVersion} where the timestamp is an incrementing integer. Uses an
  * {@link AtomicLong} to ensure the thread safety of the version.
  */
-public class LongVersion extends AbstractLogicalVersion<Long> {
+public class LongVersion extends AbstractLamportTimestamp<Long> {
+
+  private static final LongVersion ZERO = new LongVersion();
 
   private final SafeAtomicLong timestamp;
 
@@ -36,6 +38,7 @@ public class LongVersion extends AbstractLogicalVersion<Long> {
    * Construct a zero-initialised {@linkplain LongVersion}.
    */
   public LongVersion() {
+    super(ZERO);
     timestamp = new SafeAtomicLong();
   }
 
@@ -46,6 +49,7 @@ public class LongVersion extends AbstractLogicalVersion<Long> {
    * @param timestamp the initial value of the {@linkplain LongVersion}.
    */
   LongVersion(long timestamp) {
+    super(ZERO);
     this.timestamp = new SafeAtomicLong(timestamp);
   }
 

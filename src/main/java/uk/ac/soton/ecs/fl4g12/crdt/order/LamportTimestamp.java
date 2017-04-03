@@ -22,33 +22,11 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * A {@linkplain LogicalVersion} is a simple {@linkplain Version} which can be incremented. The type
- * of the timestamp is comparable and the ordering of the timestamp values provides the partial
- * order of the timestamps.
+ * {@linkplain LamportTimestamp}s are the main implementation of {@linkplain LogicalVersion}. This
+ * is a pure implementation, with no additional functionality.
  *
  * @param <T> the type of the timestamp.
- * @param <V> the type of {@linkplain LogicalVersion} which this {@linkplain LogicalVersion} can
- *        perform operations with.
  */
-public interface LogicalVersion<T, V extends LogicalVersion<T, V>>
-    extends Version<T, LogicalVersion<T, ?>, V> {
-
-  /**
-   * Increment the {@linkplain LogicalVersion}'s timestamp. Typically increments should be of the
-   * same amount each time and of the smallest incrementable amount.
-   *
-   * @throws ArithmeticException when incremented beyond the maximum value for the version.
-   */
-  void increment() throws ArithmeticException;
-
-  /**
-   * Get what the value of the {@linkplain LogicalVersion} would be after an increment. Does not
-   * alter the state of the {@linkplain LogicalVersion}.
-   *
-   * @return the value of the {@linkplain LogicalVersion} after an increment.
-   */
-  T successor();
-
-  V getZero();
+public interface LamportTimestamp<T> extends LogicalVersion<T, LamportTimestamp<T>> {
 
 }

@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -46,7 +47,7 @@ public class AbstractVersionedUpdatableTest {
     assertNotSame("The given vector should have been cloned", version, result1);
 
     // Changing the initial version should not change the one inside the AbstractVersionedUpdatable
-    VersionVector originalVersion = version.copy();
+    Version originalVersion = version.copy();
     Object identifier = new Object();
     version.init(identifier);
     version.increment(identifier);

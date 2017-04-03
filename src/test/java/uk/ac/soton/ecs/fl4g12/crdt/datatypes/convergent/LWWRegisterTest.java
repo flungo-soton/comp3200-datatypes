@@ -110,7 +110,7 @@ public class LWWRegisterTest
       assertEquals("Update message identifier should be the same as the set's",
           register.getIdentifier(), updateMessage.getIdentifier());
       assertTrue("Update version should be as expected",
-          updateMessage.getVersionVector().identical(expectedVersionVector));
+          updateMessage.getVersion().identical(expectedVersionVector));
       assertEquals("Element value should equal the assigned value", value,
           updateMessage.getElement().getValue());
       assertFalse("Timestamp shouldn't be earlier than before the call was made",
@@ -136,7 +136,7 @@ public class LWWRegisterTest
     assertEquals("state identifier should be the same as the register", register.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
     assertNull("Initial value should be null", state.getElement().getValue());
     assertEquals("Initial timestamp should be 0", 0l, state.getElement().getTimestamp());
 
@@ -146,7 +146,7 @@ public class LWWRegisterTest
     assertEquals("state identifier should be the same as the register", register.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
     assertNull("State value should still be null", state.getElement().getValue());
     assertEquals("State timestamp should still be 0", 0l, state.getElement().getTimestamp());
   }
@@ -165,7 +165,7 @@ public class LWWRegisterTest
 
     LWWRegisterState<Integer, Integer, Integer> previousState = register.snapshot();
 
-    VersionVector<Integer, Integer> previousVersion = previousState.getVersionVector();
+    VersionVector<Integer, Integer> previousVersion = previousState.getVersion();
     Integer previousValue = previousState.getElement().getValue();
     long previousTimestamp = previousState.getElement().getTimestamp();
 
@@ -188,7 +188,7 @@ public class LWWRegisterTest
       assertEquals("state identifier should be the same as the register", register.getIdentifier(),
           state.getIdentifier());
       assertTrue("The VersionVector should match the expectation",
-          state.getVersionVector().identical(expectedVersionVector));
+          state.getVersion().identical(expectedVersionVector));
       assertEquals("The value should be the one assigned", value, state.getElement().getValue());
       long timestamp = state.getElement().getTimestamp();
       assertFalse("Timestamp should not be before assignment was made",
@@ -199,7 +199,7 @@ public class LWWRegisterTest
       assertEquals("state identifier should be the same as the register", register.getIdentifier(),
           previousState.getIdentifier());
       assertTrue("The VersionVector should still match the expectation",
-          previousState.getVersionVector().identical(previousVersion));
+          previousState.getVersion().identical(previousVersion));
       assertEquals("The value should be the one assigned", previousValue,
           previousState.getElement().getValue());
       assertEquals("State timestamp should not have changed", previousTimestamp,

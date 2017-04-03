@@ -21,7 +21,7 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Tagging interface for {@link DeliveryChannel}s which implement causal ordering. Causal delivery
@@ -32,10 +32,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * messages are applied on an exactly once basis.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <V> the type of the {@link Version}
  * @param <U> The type of updates sent via the delivery channel.
  */
-public interface CausalDeliveryChannel<K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>>
+public interface CausalDeliveryChannel<K, V extends Version, U extends VersionedUpdateMessage<K, V>>
     extends DeliveryChannel<K, U> {
 
 }

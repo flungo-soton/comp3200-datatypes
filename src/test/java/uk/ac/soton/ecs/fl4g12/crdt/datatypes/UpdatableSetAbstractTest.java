@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -35,6 +34,7 @@ import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableUpdatableSetAbstract
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -46,7 +46,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
+public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
     extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
 
   private static final Logger LOGGER = Logger.getLogger(UpdatableSetAbstractTest.class.getName());
@@ -250,10 +250,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
       U updateMessage = updateMessageCaptor.getValue();
-      assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
-          updateMessage.getIdentifier());
-      assertTrue("Update version should be as expected",
-          updateMessage.getVersionVector().identical(expectedVersionVector));
+      assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
 
       assertRemoveAll_Multiple(set, elements, updateMessage);
     }

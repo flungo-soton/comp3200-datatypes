@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Test for the {@linkplain AbstractVersionedUpdateMessage} class.
@@ -39,24 +39,24 @@ public class AbstractVersionedUpdateMessageTest {
       Logger.getLogger(AbstractVersionedUpdateMessageTest.class.getName());
 
   private Object identifier;
-  private VersionVector versionVector;
-  private VersionVector versionVectorCopy;
+  private Version version;
+  private Version versionCopy;
   private AbstractVersionedUpdateMessage instance;
 
   @Before
   public void setUp() {
     identifier = Mockito.spy(new Object());
-    versionVector = Mockito.mock(VersionVector.class);
-    versionVectorCopy = Mockito.mock(VersionVector.class);
-    Mockito.doReturn(versionVectorCopy).when(versionVector).copy();
-    instance = new AbstractVersionedUpdatableImpl(identifier, versionVector);
+    version = Mockito.mock(Version.class);
+    versionCopy = Mockito.mock(Version.class);
+    Mockito.doReturn(versionCopy).when(version).copy();
+    instance = new AbstractVersionedUpdatableImpl(identifier, version);
   }
 
   @After
   public void tearDown() {
     identifier = null;
-    versionVector = null;
-    versionVectorCopy = null;
+    version = null;
+    versionCopy = null;
     instance = null;
   }
 
@@ -69,8 +69,8 @@ public class AbstractVersionedUpdateMessageTest {
         "testInstantiate: Test the constructors interaction with the provided arguments.");
 
     Mockito.verifyZeroInteractions(identifier);
-    Mockito.verify(versionVector).copy();
-    Mockito.verifyNoMoreInteractions(versionVector);
+    Mockito.verify(version).copy();
+    Mockito.verifyNoMoreInteractions(version);
   }
 
   /**
@@ -87,26 +87,26 @@ public class AbstractVersionedUpdateMessageTest {
   }
 
   /**
-   * Test that testGetVersionVector returns the same object as constructed with.
+   * Test that getVersion returns the same object as constructed with.
    */
   @Test
-  public void testGetVersionVector() {
-    LOGGER.log(Level.INFO, "testGetVersionVector: "
-        + "Test that testGetVersionVector returns the same object as constructed with.");
+  public void testGetVersion() {
+    LOGGER.log(Level.INFO, "testGetVersion: "
+        + "Test that testGetVersion returns the same object as constructed with.");
 
-    final VersionVector expected = Mockito.mock(VersionVector.class);
-    Mockito.doReturn(expected).when(versionVectorCopy).copy();
-    final VersionVector result = instance.getVersionVector();
+    final Version expected = Mockito.mock(Version.class);
+    Mockito.doReturn(expected).when(versionCopy).copy();
+    final Version result = instance.getVersion();
 
-    Mockito.verify(versionVectorCopy).copy();
-    Mockito.verifyNoMoreInteractions(versionVectorCopy);
+    Mockito.verify(versionCopy).copy();
+    Mockito.verifyNoMoreInteractions(versionCopy);
 
     assertSame(
-        "testGetVersionVector should return a copy of the object the instance was constructed with",
+        "testGetVersion should return a copy of the object the instance was constructed with",
         expected, result);
     assertNotSame(
-        "testGetVersionVector should return a copy of the object the instance was constructed with",
-        versionVectorCopy, result);
+        "testGetVersion should return a copy of the object the instance was constructed with",
+        versionCopy, result);
   }
 
   /**
@@ -116,27 +116,27 @@ public class AbstractVersionedUpdateMessageTest {
   public void testCompareTo() {
     LOGGER.log(Level.INFO,
         "testCompareTo: " + "Test that compareTo compares the internal version vectors.");
-    VersionVector otherVersion = Mockito.mock(VersionVector.class);
+    Version otherVersion = Mockito.mock(Version.class);
     VersionedUpdateMessage otherMessage = Mockito.mock(VersionedUpdateMessage.class);
-    Mockito.doReturn(otherVersion).when(otherMessage).getVersionVector();
+    Mockito.doReturn(otherVersion).when(otherMessage).getVersion();
 
     final int expected = 123;
-    Mockito.doReturn(expected).when(versionVectorCopy).compareTo(otherVersion);
+    Mockito.doReturn(expected).when(versionCopy).compareTo(otherVersion);
 
     int result = instance.compareTo(otherMessage);
 
-    Mockito.verify(otherMessage).getVersionVector();
+    Mockito.verify(otherMessage).getVersion();
     Mockito.verifyNoMoreInteractions(otherMessage);
-    Mockito.verify(versionVectorCopy).compareTo(otherVersion);
-    Mockito.verifyNoMoreInteractions(versionVectorCopy);
+    Mockito.verify(versionCopy).compareTo(otherVersion);
+    Mockito.verifyNoMoreInteractions(versionCopy);
 
     assertEquals(expected, result);
   }
 
   public class AbstractVersionedUpdatableImpl extends AbstractVersionedUpdateMessage {
 
-    public AbstractVersionedUpdatableImpl(Object identifier, VersionVector versionVector) {
-      super(identifier, versionVector);
+    public AbstractVersionedUpdatableImpl(Object identifier, Version version) {
+      super(identifier, version);
     }
 
   }

@@ -19,36 +19,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.order;
+package uk.ac.soton.ecs.fl4g12.crdt.delivery;
+
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
+import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 
 /**
- * A {@linkplain LogicalVersion} is a simple {@linkplain Version} which can be incremented. The type
- * of the timestamp is comparable and the ordering of the timestamp values provides the partial
- * order of the timestamps.
+ * Abstract implementation of {@linkplain DottedUpdateMessage}.
  *
+ * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
- * @param <V> the type of {@linkplain LogicalVersion} which this {@linkplain LogicalVersion} can
- *        perform operations with.
  */
-public interface LogicalVersion<T, V extends LogicalVersion<T, V>>
-    extends Version<T, LogicalVersion<T, ?>, V> {
+public class AbstractDottedUpdateMessage<K, T extends Comparable<T>>
+    extends AbstractVersionedUpdateMessage<K, Dot<K, T>> implements DottedUpdateMessage<K, T> {
 
   /**
-   * Increment the {@linkplain LogicalVersion}'s timestamp. Typically increments should be of the
-   * same amount each time and of the smallest incrementable amount.
+   * Instantiate a {@linkplain AbstractDottedUpdateMessage} with the given {@linkplain Dot} as the
+   * version. The {@link UpdateMessage} identifier will be captured from the {@link Dot} using
+   * {@link Dot#getIdentifier()}.
    *
-   * @throws ArithmeticException when incremented beyond the maximum value for the version.
+   * @param dot the {@link Dot} for the update.
    */
-  void increment() throws ArithmeticException;
+  public AbstractDottedUpdateMessage(Dot<K, T> dot) {
+    super(dot.getIdentifier(), dot);
+  }
 
   /**
-   * Get what the value of the {@linkplain LogicalVersion} would be after an increment. Does not
-   * alter the state of the {@linkplain LogicalVersion}.
+   * Gets the {@linkplain LogicalVersion}, cast to a {@linkplain Dot}.
    *
-   * @return the value of the {@linkplain LogicalVersion} after an increment.
+   * @return the {@link LogicalVersion}, cast to a {@link Dot}.
    */
-  T successor();
-
-  V getZero();
+  public Dot<K, T> getDot() {
+    return (Dot<K, T>) getVersion();
+  }
 
 }

@@ -21,31 +21,31 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * Abstract implementation of {@linkplain VersionedUpdateMessage}. Contains the
- * {@link VersionVector} of the {@link Updatable} at the time of the update and the identifier of
- * the instance that was updated.
+ * Abstract implementation of {@linkplain VersionedUpdateMessage}. Contains the {@link Version} of
+ * the {@link Updatable} at the time of the update and the identifier of the instance that was
+ * updated.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp within the {@link VersionVector}.
+ * @param <V> the type of {@link Version} use in this {@link VersionedUpdateMessage}.
  */
-public abstract class AbstractVersionedUpdateMessage<K, T extends Comparable<T>>
-    implements VersionedUpdateMessage<K, T> {
+public abstract class AbstractVersionedUpdateMessage<K, V extends Version<?, ? super V, V>>
+    implements VersionedUpdateMessage<K, V> {
 
   private final K identifier;
-  private final VersionVector<K, T> versionVector;
+  private final V version;
 
   /**
    * Instantiate the {@linkplain AbstractVersionedUpdateMessage}.
    *
    * @param identifier the identifier of the instance that was updated.
-   * @param versionVector the version as a result of the update.
+   * @param version the version as a result of the update.
    */
-  public AbstractVersionedUpdateMessage(K identifier, VersionVector<K, T> versionVector) {
+  public AbstractVersionedUpdateMessage(K identifier, V version) {
     this.identifier = identifier;
-    this.versionVector = versionVector.copy();
+    this.version = version.copy();
   }
 
   @Override
@@ -54,20 +54,20 @@ public abstract class AbstractVersionedUpdateMessage<K, T extends Comparable<T>>
   }
 
   @Override
-  public final VersionVector<K, T> getVersionVector() {
-    return versionVector.copy();
+  public final V getVersion() {
+    return version.copy();
   }
 
   @Override
-  public final int compareTo(VersionedUpdateMessage<K, T> o) {
-    return versionVector.compareTo(o.getVersionVector());
+  public final int compareTo(VersionedUpdateMessage<K, V> o) {
+    return version.compareTo(o.getVersion());
   }
 
   @Override
   public int hashCode() {
     int hash = 7;
     hash = 97 * hash + this.identifier.hashCode();
-    hash = 97 * hash + this.versionVector.hashCode();
+    hash = 97 * hash + this.version.hashCode();
     return hash;
   }
 
@@ -86,7 +86,7 @@ public abstract class AbstractVersionedUpdateMessage<K, T extends Comparable<T>>
     if (!this.identifier.equals(other.identifier)) {
       return false;
     }
-    if (!this.versionVector.equals(other.versionVector)) {
+    if (!this.version.equals(other.version)) {
       return false;
     }
     return true;

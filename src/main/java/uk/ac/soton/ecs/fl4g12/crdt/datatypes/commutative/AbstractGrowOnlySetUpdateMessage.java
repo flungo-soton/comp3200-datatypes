@@ -23,8 +23,9 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.HashSet;
 import java.util.Set;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractDottedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Abstract {@link GrowOnlySetUpdateMessage} to be extended for use with grow-only
@@ -33,23 +34,21 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  *
  * @param <E> the type of values stored in the {@linkplain CmRDT} {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp stored in the {@link VersionVector}
+ * @param <T> the type of the timestamp stored in the {@link Version}
  */
 public abstract class AbstractGrowOnlySetUpdateMessage<E, K, T extends Comparable<T>>
-    extends AbstractVersionedUpdateMessage<K, T> implements GrowOnlySetUpdateMessage<E, K, T> {
+    extends AbstractDottedUpdateMessage<K, T> implements GrowOnlySetUpdateMessage<E, K, Dot<K, T>> {
 
   private final Set<? extends E> elements;
 
   /**
    * Construct an {@link AbstractGrowOnlySetUpdateMessage} with a list of elements that were added.
    *
-   * @param identifier the identifier of the instance that was updated.
-   * @param versionVector the version as a result of the update.
+   * @param dot the {@link Dot} for the update.
    * @param elements the elements that were added to the set. The set will not be copied.
    */
-  public AbstractGrowOnlySetUpdateMessage(K identifier, VersionVector<K, T> versionVector,
-      Set<? extends E> elements) {
-    super(identifier, versionVector);
+  public AbstractGrowOnlySetUpdateMessage(Dot<K, T> dot, Set<? extends E> elements) {
+    super(dot);
     this.elements = elements;
   }
 
@@ -60,8 +59,8 @@ public abstract class AbstractGrowOnlySetUpdateMessage<E, K, T extends Comparabl
 
   @Override
   public String toString() {
-    return "CommutativeGSetUpdate{" + "identifier=" + getIdentifier() + ", version="
-        + getVersionVector() + ", elements=" + getElements() + '}';
+    return "CommutativeGSetUpdate{" + "identifier=" + getIdentifier() + ", version=" + getVersion()
+        + ", elements=" + getElements() + '}';
   }
 
 }

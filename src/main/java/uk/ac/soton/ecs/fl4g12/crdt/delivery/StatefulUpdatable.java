@@ -21,7 +21,7 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Interface for {@link Updatable}s which have a snapshotable state. A {@link StateSnapshot} can be
@@ -29,11 +29,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * to update other {@link StatefulUpdatable}s of the same type.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <V> the type of the {@link Version}
  * @param <S> the type of snapshot made from this state.
  */
-public interface StatefulUpdatable<K, T extends Comparable<T>, S extends StateSnapshot<K, T>>
-    extends VersionedUpdatable<K, T, S> {
+public interface StatefulUpdatable<K, V extends Version, S extends StateSnapshot<K, V>>
+    extends VersionedUpdatable<K, V, S> {
 
   /**
    * Creates a snapshot of the state which can be used as an {@linkplain UpdateMessage}. The

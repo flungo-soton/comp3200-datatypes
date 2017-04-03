@@ -23,6 +23,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.SetUpdateMessage.Operation;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -34,21 +35,19 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public abstract class AbstractSetUpdateMessage<E, K, T extends Comparable<T>>
-    extends AbstractGrowOnlySetUpdateMessage<E, K, T> implements SetUpdateMessage<E, K, T> {
+    extends AbstractGrowOnlySetUpdateMessage<E, K, T> implements SetUpdateMessage<E, K, Dot<K, T>> {
 
   private final Operation operation;
 
   /**
    * Construct an {@link AbstractSetUpdateMessage} with a list of elements that were added.
    *
-   * @param identifier the identifier of the instance that was updated.
-   * @param versionVector the version as a result of the update.
+   * @param dot the {@link Dot} for the update.
    * @param operation the {@link Operation} performed by the update.
    * @param elements the elements that were added to the set. The set will not be copied.
    */
-  public AbstractSetUpdateMessage(K identifier, VersionVector<K, T> versionVector,
-      Operation operation, Set<? extends E> elements) {
-    super(identifier, versionVector, elements);
+  public AbstractSetUpdateMessage(Dot<K, T> dot, Operation operation, Set<? extends E> elements) {
+    super(dot, elements);
     this.operation = operation;
   }
 
@@ -60,7 +59,7 @@ public abstract class AbstractSetUpdateMessage<E, K, T extends Comparable<T>>
   @Override
   public String toString() {
     return "AbstractSetUpdateMessage{" + "identifier=" + getIdentifier() + ", version="
-        + getVersionVector() + ", operation=" + operation + ", elements=" + getElements() + '}';
+        + getVersion() + ", operation=" + operation + ", elements=" + getElements() + '}';
   }
 
 

@@ -33,12 +33,11 @@ import java.util.Set;
  * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
  */
-public final class LocalVersionVector<K, T extends Comparable<T>>
-    implements VersionVector<K, T>, LogicalVersion<Map<K, T>> {
+public final class LocalVersionVector<K, T extends Comparable<T>> implements VersionVector<K, T> {
 
   private final VersionVector<K, T> versionVector;
   private final K identifier;
-  private final LogicalVersion<T> localVersion;
+  private final LogicalVersion<T, ?> localVersion;
 
   /**
    * Wrap a given {@link VersionVector} as a {@link LocalVersionVector}. If the provided id is not
@@ -75,7 +74,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public LogicalVersion<T> getLogicalVersion(K id) {
+  public LogicalVersion<T, ?> getLogicalVersion(K id) {
     return versionVector.getLogicalVersion(id);
   }
 
@@ -100,7 +99,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public LogicalVersion<T> init(K id) {
+  public LogicalVersion<T, ?> init(K id) {
     return versionVector.init(id);
   }
 
@@ -109,7 +108,6 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
     versionVector.increment(id);
   }
 
-  @Override
   public void increment() throws ArithmeticException {
     localVersion.increment();
   }
@@ -119,7 +117,6 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
     return versionVector.successor(id);
   }
 
-  @Override
   public Map<K, T> successor() {
     return versionVector.successor(identifier);
   }
@@ -130,7 +127,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public void sync(Version<Map<K, T>> version) {
+  public void sync(VersionVector<K, T> version) {
     versionVector.sync(version);
   }
 
@@ -145,7 +142,7 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public boolean happenedBefore(Version<Map<K, T>> version) {
+  public boolean happenedBefore(VersionVector<K, T> version) {
     return versionVector.happenedBefore(version);
   }
 
@@ -155,8 +152,13 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public boolean precedes(Version<Map<K, T>> version) {
+  public boolean precedes(VersionVector<K, T> version) {
     return versionVector.precedes(version);
+  }
+
+  @Override
+  public boolean precedes(Dot<K, T> dot) {
+    return versionVector.precedes(dot);
   }
 
   @Override
@@ -165,13 +167,18 @@ public final class LocalVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public int compareTo(Version<Map<K, T>> other) {
+  public int compareTo(VersionVector<K, T> other) {
     return versionVector.compareTo(other);
   }
 
   @Override
-  public boolean identical(Version<Map<K, T>> version) {
+  public boolean identical(VersionVector<K, T> version) {
     return versionVector.identical(version);
+  }
+
+  @Override
+  public boolean identical(Dot<K, T> dot) {
+    return versionVector.identical(dot);
   }
 
   @Override

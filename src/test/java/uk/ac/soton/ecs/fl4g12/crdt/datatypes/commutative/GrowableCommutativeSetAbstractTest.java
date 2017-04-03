@@ -25,8 +25,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableUpdatableSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -34,17 +37,27 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <T> the type of the timestamp within the {@link VersionVector}.
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
+public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
     extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
 
-  public static <E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, T>> void assertElementsMatch(
+  public static <E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, ? extends Version<T, ?, ?>>> void assertElementsMatch(
       Set<E> elements, U updateMessage) {
     assertEquals("Update element set should consist only of the new element(s)", elements,
         updateMessage.getElements());
+  }
+
+  @Override
+  protected void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
+      U updateMessage) {
+    // Overridden to support Dot vs Vector comparisons,
+    assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
+        updateMessage.getIdentifier());
+    assertTrue("Update version should be as expected",
+        updateMessage.getVersion().identical(expectedVersion));
   }
 
   @Override

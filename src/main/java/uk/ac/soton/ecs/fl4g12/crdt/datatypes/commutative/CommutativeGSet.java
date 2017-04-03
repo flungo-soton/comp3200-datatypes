@@ -28,6 +28,7 @@ import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSet;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -62,7 +63,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeGSet(VersionVector<K, T> initialVersion, K identifier,
-      CausalDeliveryChannel<K, T, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
+      CausalDeliveryChannel<K, Dot<K, T>, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -76,8 +77,8 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
    * @param deliveryChannel the {@link DeliveryChannel} which this object should communicate changes
    *        over.
    */
-  public CommutativeGSet(LogicalVersion<T> zero, K identifier,
-      CausalDeliveryChannel<K, T, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
+  public CommutativeGSet(LogicalVersion<T, ?> zero, K identifier,
+      CausalDeliveryChannel<K, Dot<K, T>, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
@@ -95,7 +96,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
   }
 
   private CommutativeGSetUpdate<E, K, T> createUpdateMessage(Set<E> elements) {
-    return new CommutativeGSetUpdate<>(getIdentifier(), version, elements);
+    return new CommutativeGSetUpdate<>(version.getDot(getIdentifier()), elements);
   }
 
   @Override

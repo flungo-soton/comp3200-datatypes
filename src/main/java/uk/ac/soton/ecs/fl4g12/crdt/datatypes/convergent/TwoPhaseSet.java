@@ -50,7 +50,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  */
 public final class TwoPhaseSet<E, K, T extends Comparable<T>>
     extends AbstractVersionedUpdatable<K, T, TwoPhaseSetState<E, K, T>>
-    implements CvRDT<K, T, TwoPhaseSetState<E, K, T>>, Set<E> {
+    implements CvRDT<K, VersionVector<K, T>, TwoPhaseSetState<E, K, T>>, Set<E> {
 
   private final Set<E> additions = new HashSet<>();
   private final Set<E> removals = new HashSet<>();
@@ -81,7 +81,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
    * @param deliveryChannel the {@link DeliveryChannel} which this object should communicate changes
    *        over.
    */
-  public TwoPhaseSet(LogicalVersion<T> zero, K identifier,
+  public TwoPhaseSet(LogicalVersion<T, ?> zero, K identifier,
       DeliveryChannel<K, TwoPhaseSetState<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
@@ -91,7 +91,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
       throws DeliveryUpdateException {
     additions.addAll(message.getAdditions());
     removals.addAll(message.getRemovals());
-    version.sync(message.getVersionVector());
+    version.sync(message.getVersion());
   }
 
   @Override

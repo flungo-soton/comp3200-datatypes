@@ -35,7 +35,7 @@ import org.junit.rules.ExpectedException;
 /**
  * Tests for the {@link LongVersion} class.
  */
-public class LongVersionTest extends VersionAbstractTest<Long, LongVersion> {
+public class LongVersionTest extends LamportTimestampAbstractTest<Long> {
 
   private static final Logger LOGGER = Logger.getLogger(LongVersionTest.class.getName());
 

@@ -40,6 +40,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -51,7 +52,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
+public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
     implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER =
@@ -101,12 +102,12 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
    * @param expectedVersion the expected {@link VersionVector} to compare with.
    * @param updateMessage the update message to make the assertions against.
    */
-  protected final void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
+  protected void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
       U updateMessage) {
     assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
         updateMessage.getIdentifier());
     assertTrue("Update version should be as expected",
-        updateMessage.getVersionVector().identical(expectedVersion));
+        updateMessage.getVersion().identical(expectedVersion));
   }
 
   /**

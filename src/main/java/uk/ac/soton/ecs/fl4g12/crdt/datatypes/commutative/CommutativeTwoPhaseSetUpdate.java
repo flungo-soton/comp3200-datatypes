@@ -24,6 +24,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.SetUpdateMessage.Operation;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -41,14 +42,13 @@ public final class CommutativeTwoPhaseSetUpdate<E, K, T extends Comparable<T>>
   /**
    * Construct a {@link CommutativeTwoPhaseSetUpdate} with a list of elements that were added.
    *
-   * @param identifier the identifier of the instance that was updated.
-   * @param versionVector the version as a result of the update.
+   * @param dot the {@link Dot} for the update.
    * @param operation the {@link Operation} that triggered the message.
    * @param elements the elements that were added to the set. The set will not be copied.
    */
-  public CommutativeTwoPhaseSetUpdate(K identifier, VersionVector<K, T> versionVector,
-      Operation operation, Set<? extends E> elements) {
-    super(identifier, versionVector, operation, elements);
+  public CommutativeTwoPhaseSetUpdate(Dot<K, T> dot, Operation operation,
+      Set<? extends E> elements) {
+    super(dot, operation, elements);
   }
 
 }

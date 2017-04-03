@@ -95,7 +95,7 @@ public class GCounterTest
     assertEquals("Update message identifier should be the same as the set's",
         counter.getIdentifier(), updateMessage.getIdentifier());
     assertTrue("Update version should be as expected",
-        updateMessage.getVersionVector().identical(expectedVersionVector));
+        updateMessage.getVersion().identical(expectedVersionVector));
   }
 
   /**
@@ -114,7 +114,7 @@ public class GCounterTest
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
 
     // Check that the state snapshot is immutable by changes to the counter.
     counter.increment();
@@ -122,7 +122,7 @@ public class GCounterTest
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
   }
 
   /**
@@ -144,7 +144,7 @@ public class GCounterTest
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
 
     // Check that the state snapshot is immutable by changes to the counter.
     counter.increment();
@@ -152,7 +152,7 @@ public class GCounterTest
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
   }
 
   /**

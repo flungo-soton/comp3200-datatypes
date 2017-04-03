@@ -23,6 +23,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -40,13 +41,11 @@ public final class CommutativeGSetUpdate<E, K, T extends Comparable<T>>
   /**
    * Construct a {@link CommutativeGSetUpdate} with a list of elements that were added.
    *
-   * @param identifier the identifier of the instance that was updated.
-   * @param versionVector the version as a result of the update.
+   * @param dot the {@link Dot} for the update.
    * @param elements the elements that were added to the set. The set will not be copied.
    */
-  public CommutativeGSetUpdate(K identifier, VersionVector<K, T> versionVector,
-      Set<? extends E> elements) {
-    super(identifier, versionVector, elements);
+  public CommutativeGSetUpdate(Dot<K, T> dot, Set<? extends E> elements) {
+    super(dot, elements);
   }
 
 }

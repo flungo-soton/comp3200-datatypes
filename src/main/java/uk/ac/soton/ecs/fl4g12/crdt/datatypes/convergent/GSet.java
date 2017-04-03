@@ -41,7 +41,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  */
 public final class GSet<E, K, T extends Comparable<T>>
     extends AbstractVersionedUpdatable<K, T, GSetState<E, K, T>>
-    implements CvRDT<K, T, GSetState<E, K, T>>, Set<E> {
+    implements CvRDT<K, VersionVector<K, T>, GSetState<E, K, T>>, Set<E> {
 
   private final Set<E> state = new HashSet<>();
 
@@ -71,7 +71,7 @@ public final class GSet<E, K, T extends Comparable<T>>
    * @param deliveryChannel the {@link DeliveryChannel} which this object should communicate changes
    *        over.
    */
-  public GSet(LogicalVersion<T> zero, K identifier,
+  public GSet(LogicalVersion<T, ?> zero, K identifier,
       DeliveryChannel<K, GSetState<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
@@ -79,7 +79,7 @@ public final class GSet<E, K, T extends Comparable<T>>
   @Override
   public synchronized void update(GSetState<E, K, T> message) throws DeliveryUpdateException {
     state.addAll(message.getState());
-    version.sync(message.getVersionVector());
+    version.sync(message.getVersion());
   }
 
   @Override

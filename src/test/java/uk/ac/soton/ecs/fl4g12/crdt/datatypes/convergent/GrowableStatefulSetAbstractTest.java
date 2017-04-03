@@ -41,7 +41,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
     implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER =
@@ -62,7 +62,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
     assertTrue("The state should be empty", state.getState().isEmpty());
 
     // Check that the state snapshot is immutable by changes to the set.
@@ -71,7 +71,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
     assertTrue("The state should still be empty", state.getState().isEmpty());
   }
 
@@ -92,7 +92,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
 
     // Check that the state snapshot is immutable by changes to the set.
     set.add(getElement(1));
@@ -100,7 +100,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
   }
 
   /**
@@ -120,7 +120,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
 
     // Check that the state snapshot is immutable by changes to the set.
     set.addAll(Arrays.asList(getElement(3), getElement(4), getElement(5)));
@@ -128,6 +128,6 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
     assertTrue("The VersionVector should still match the expectation",
-        state.getVersionVector().identical(expectedVersionVector));
+        state.getVersion().identical(expectedVersionVector));
   }
 }

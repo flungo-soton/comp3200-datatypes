@@ -26,21 +26,25 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
  * take advantage of the abstract methods provided by this class.
  *
  * @param <T> the type of the timestamp.
+ * @param <V1> the type of {@linkplain Version}s which this {@linkplain Version} can perform
+ *        operations with.
+ * @param <V2> the specific type of {@link Version} which is returned when cloning.
  */
-public abstract class AbstractVersion<T> implements Version<T> {
+public abstract class AbstractVersion<T, V1 extends Version<T, V1, ?>, V2 extends V1>
+    implements Version<T, V1, V2> {
 
   @Override
-  public boolean happenedBefore(Version<T> version) {
+  public boolean happenedBefore(V1 version) {
     return this.compareTo(version) < 0;
   }
 
   @Override
-  public void sync(Version<T> other) {
+  public void sync(V1 other) {
     sync(other.get());
   }
 
   @Override
-  public boolean identical(Version<T> version) {
+  public boolean identical(V1 version) {
     return this.get().equals(version.get());
   }
 
@@ -71,8 +75,5 @@ public abstract class AbstractVersion<T> implements Version<T> {
   public String toString() {
     return getClass().getSimpleName() + "{" + get() + '}';
   }
-
-  @Override
-  public abstract AbstractVersion<T> copy();
 
 }

@@ -22,33 +22,18 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 /**
- * A {@linkplain LogicalVersion} is a simple {@linkplain Version} which can be incremented. The type
- * of the timestamp is comparable and the ordering of the timestamp values provides the partial
- * order of the timestamps.
+ * Interface for objects that have a {@linkplain Version}.
  *
- * @param <T> the type of the timestamp.
- * @param <V> the type of {@linkplain LogicalVersion} which this {@linkplain LogicalVersion} can
- *        perform operations with.
+ * @param <V> the type of the {@link Version}
  */
-public interface LogicalVersion<T, V extends LogicalVersion<T, V>>
-    extends Version<T, LogicalVersion<T, ?>, V> {
+public interface Versioned<V extends Version> {
 
   /**
-   * Increment the {@linkplain LogicalVersion}'s timestamp. Typically increments should be of the
-   * same amount each time and of the smallest incrementable amount.
+   * Get the {@linkplain Version} of the object. If the object is mutable then this represents the
+   * current {@link Version} of the object, otherwise, for immutable objects, this represents the
+   * version at the time of creation.
    *
-   * @throws ArithmeticException when incremented beyond the maximum value for the version.
+   * @return the {@link Version} of the object.
    */
-  void increment() throws ArithmeticException;
-
-  /**
-   * Get what the value of the {@linkplain LogicalVersion} would be after an increment. Does not
-   * alter the state of the {@linkplain LogicalVersion}.
-   *
-   * @return the value of the {@linkplain LogicalVersion} after an increment.
-   */
-  T successor();
-
-  V getZero();
-
+  V getVersion();
 }

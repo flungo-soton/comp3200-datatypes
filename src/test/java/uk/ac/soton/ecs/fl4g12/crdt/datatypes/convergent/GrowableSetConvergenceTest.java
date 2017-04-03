@@ -36,10 +36,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, T>, S extends Set<E> & StatefulUpdatable<K, T, U>>
+public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
     extends GrowableConflictFreeSetAbstractTest<E, K, T, U, S> {
 
-  public static <K, T extends Comparable<T>, U extends SetState<?, K, T>, S extends StatefulUpdatable<K, T, U>> void updateSet(
+  public static <K, T extends Comparable<T>, U extends SetState<?, K, VersionVector<K, T>>, S extends StatefulUpdatable<K, VersionVector<K, T>, U>> void updateSet(
       S destination, S source) throws Exception {
     destination.update(source.snapshot());
   }

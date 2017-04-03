@@ -24,8 +24,9 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUpdateException;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DottedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -35,8 +36,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of timestamps which are used by each node.
  * @param <U> the type of updates which this object can be updated by.
  */
-public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, T>>
-    extends AbstractVersionedUpdatable<K, T, U> implements CmRDT<K, T, U> {
+public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends DottedUpdateMessage<K, T>>
+    extends AbstractVersionedUpdatable<K, T, U> implements CmRDT<K, T, Dot<K, T>, U> {
 
   public AbstractCmRDT(VersionVector<K, T> initialVersion, K identifier,
       DeliveryChannel<K, U> deliveryChannel) {
@@ -46,20 +47,19 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends Versio
   @Override
   public synchronized final void update(U message) throws DeliveryUpdateException {
     // Has the message already been delivered?
-    if (message.getVersionVector().happenedBefore(version)
-        || message.getVersionVector().identical(version)) {
+    if (message.getDot().happenedBefore(version) || message.getDot().identical(version)) {
       // Nothing to do, update message is in the past.
       return;
     }
 
     // Is this the next message?
-    if (!version.precedes(message.getVersionVector())) {
+    if (!version.precedes(message.getDot())) {
       throw new DeliveryUpdateException(this, message, "Out of order delivery");
     }
 
     // Apply the update
     applyUpdate(message);
-    version.sync(message.getVersionVector());
+    version.sync(message.getDot());
   }
 
   /**

@@ -31,6 +31,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.SetUpdateMessage.Operat
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSet;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -39,6 +40,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * A commutative grow-only set. As a commutative implementation, the update messages only contain
  * the new elements lowering the network overhead of updates but it requires a
  * {@linkplain CausalDeliveryChannel}.
+ *
+ * When a concurrent add/remove occurs, this implementation is designed as a remove-wins
+ * implementation.
  *
  * The ordering enforced by the {@link AbstractCmRDT} ensures that the state of the local object
  * cannot be changed by an update message that is out of order for the node it is being delivered
@@ -66,7 +70,7 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeTwoPhaseSet(VersionVector<K, T> initialVersion, K identifier,
-      CausalDeliveryChannel<K, T, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
+      CausalDeliveryChannel<K, Dot<K, T>, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -80,8 +84,8 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
    * @param deliveryChannel the {@link DeliveryChannel} which this object should communicate changes
    *        over.
    */
-  public CommutativeTwoPhaseSet(LogicalVersion<T> zero, K identifier,
-      CausalDeliveryChannel<K, T, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
+  public CommutativeTwoPhaseSet(LogicalVersion<T, ?> zero, K identifier,
+      CausalDeliveryChannel<K, Dot<K, T>, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
@@ -102,7 +106,8 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
 
   private CommutativeTwoPhaseSetUpdate<E, K, T> createUpdateMessage(Operation operation,
       Set<? extends E> elements) {
-    return new CommutativeTwoPhaseSetUpdate<E, K, T>(getIdentifier(), version, operation, elements);
+    return new CommutativeTwoPhaseSetUpdate<E, K, T>(version.getDot(getIdentifier()), operation,
+        elements);
   }
 
   @Override
@@ -302,7 +307,6 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
   public String toString() {
     return getElements().toString();
   }
-
 
   /**
    * Wrapper for a {@linkplain Set} {@link Iterator} for grow-only set implementations.

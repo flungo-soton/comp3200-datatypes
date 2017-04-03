@@ -21,15 +21,15 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * An immutable snapshot of of a {@linkplain StatefulUpdatable}. A {@linkplain StateSnapshot} can be
  * used as an {@link UpdateMessage} for other {@linkplain StatefulUpdatable}s.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <V> the type of the {@link Version}.
  */
-public interface StateSnapshot<K, T extends Comparable<T>> extends VersionedUpdateMessage<K, T> {
+public interface StateSnapshot<K, V extends Version> extends VersionedUpdateMessage<K, V> {
 
 }

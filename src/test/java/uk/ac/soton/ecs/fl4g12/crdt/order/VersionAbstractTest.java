@@ -30,9 +30,9 @@ import org.junit.Test;
  * Abstract test for implementations of {@linkplain Version}.
  *
  * @param <T> the type of the timestamp in the {@link Version} being tested.
- * @param <V> the type of the {@link Version} being tested.
+ * @param <V1> the type of {@link Version}s that the {@link Version} being tested can interact with.
  */
-public abstract class VersionAbstractTest<T, V extends Version<T>> {
+public abstract class VersionAbstractTest<T, V1 extends Version<T, V1, ?>, V2 extends V1> {
 
   protected final int VERSION_MAX_ORDER = 9;
 
@@ -47,7 +47,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
    * @return the version with order {@code order} relative to other versions from this method.
    * @see #getTimestamp(int) to get the expected value of the version.
    */
-  public abstract V getVersion(int order);
+  public abstract V1 getVersion(int order);
 
   /**
    * Get the timestamp of the version with the given order.
@@ -63,7 +63,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
 
   private void testGet(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    V1 instance = getVersion(order);
 
     // Get the instance value
     T result = instance.get();
@@ -154,7 +154,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
 
   private void testHappenedBefore(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    V1 instance = getVersion(order);
 
     for (int i = 0; i <= VERSION_MAX_ORDER; i++) {
       // Verify the happensBefore relation
@@ -256,7 +256,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
 
   private void testPrecedes(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    V1 instance = getVersion(order);
 
     for (int i = 0; i <= VERSION_MAX_ORDER; i++) {
       // Verify the happensBefore relation
@@ -358,7 +358,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
   private void testSync_Version(final int order) {
     for (int i = 0; i <= VERSION_MAX_ORDER; i++) {
       // Get the version instance
-      V vector = getVersion(order);
+      V1 vector = getVersion(order);
       vector.sync(getVersion(i));
 
       // Verify the happensBefore relation
@@ -449,7 +449,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
   private void testSync_Timestamp(final int order) {
     for (int i = 0; i <= VERSION_MAX_ORDER; i++) {
       // Get the version instance
-      V vector = getVersion(order);
+      V1 vector = getVersion(order);
       vector.sync(getTimestamp(i));
 
       // Verify the happensBefore relation
@@ -539,7 +539,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
 
   private void testIdentical(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    V1 instance = getVersion(order);
 
     for (int i = 0; i <= VERSION_MAX_ORDER; i++) {
       // Verify the happensBefore relation
@@ -629,7 +629,7 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
 
   private void testEquals(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    V1 instance = getVersion(order);
 
     for (int i = 0; i <= VERSION_MAX_ORDER; i++) {
       // Verify the happensBefore relation
@@ -719,10 +719,10 @@ public abstract class VersionAbstractTest<T, V extends Version<T>> {
 
   private void testCopy(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    V1 instance = getVersion(order);
 
     // Copy it
-    Version<T> copy = instance.copy();
+    V1 copy = instance.copy();
 
     // Make assertions
     assertEquals(instance, copy);

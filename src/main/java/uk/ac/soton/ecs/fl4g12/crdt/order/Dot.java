@@ -32,12 +32,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.CmRDT;
  * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
  */
-public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> {
+public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T, Dot<K, T>> {
 
   private final K identifier;
-  private final LogicalVersion<T> logicalVersion;
+  private final LogicalVersion<T, ?> logicalVersion;
 
-  public Dot(K identifier, LogicalVersion<T> version) {
+  public Dot(K identifier, LogicalVersion<T, ?> version) {
     this.identifier = identifier;
     this.logicalVersion = version;
   }
@@ -58,7 +58,7 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> 
    *
    * @return the {@link LogicalVersion} that this {@link Dot} wraps.
    */
-  public LogicalVersion<T> getLogicalVersion() {
+  public LogicalVersion<T, ?> getLogicalVersion() {
     return logicalVersion;
   }
 
@@ -78,7 +78,7 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> 
   }
 
   @Override
-  public boolean precedes(Version<T> version) {
+  public boolean precedes(LogicalVersion<T, ?> version) {
     return logicalVersion.precedes(version);
   }
 
@@ -95,16 +95,36 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> 
    *         identifier that this {@linkplain Dot} represents, {@code false} otherwise.
    */
   public boolean precedes(VersionVector<K, T> vector) {
-    return logicalVersion.precedes(vector.getLogicalVersion(identifier));
+    LogicalVersion<T, ?> otherVersion = vector.getLogicalVersion(identifier);
+    // If null, can't hapen before a zero vector
+    return otherVersion == null ? false : logicalVersion.precedes(otherVersion);
   }
 
   @Override
-  public boolean identical(Version<T> version) {
+  public boolean identical(LogicalVersion<T, ?> version) {
     return logicalVersion.identical(version);
   }
 
+  /**
+   * Checks if this {@linkplain Dot} is identical to the provided {@linkplain VersionVector} for the
+   * identifier which this {@linkplain Dot} represents. This method compares the timestamp of the
+   * identifier which this {@link Dot} represents with the corresponding timestamp in the provided
+   * {@linkplain VersionVector}.
+   *
+   * @param vector the {@link VersionVector} to compare with.
+   * @return whether the provided {@link VersionVector} is identical to the value with the same
+   *         identifier as this {@linkplain Dot}.
+   */
+  public boolean identical(VersionVector<K, T> vector) {
+    LogicalVersion<T, ?> other = vector.getLogicalVersion(identifier);
+    if (other == null) {
+      other = logicalVersion.getZero();
+    }
+    return logicalVersion.identical(other);
+  }
+
   @Override
-  public boolean happenedBefore(Version<T> version) {
+  public boolean happenedBefore(LogicalVersion<T, ?> version) {
     return logicalVersion.happenedBefore(version);
   }
 
@@ -119,7 +139,8 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> 
    *         {@linkplain Version}, {@code false} otherwise.
    */
   public boolean happenedBefore(VersionVector<K, T> vector) {
-    LogicalVersion<T> otherVersion = vector.getLogicalVersion(identifier);
+    LogicalVersion<T, ?> otherVersion = vector.getLogicalVersion(identifier);
+    // If null, can't hapen before a zero vector
     return otherVersion == null ? false : logicalVersion.happenedBefore(otherVersion);
   }
 
@@ -129,7 +150,7 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> 
   }
 
   @Override
-  public void sync(Version<T> version) {
+  public void sync(LogicalVersion<T, ?> version) {
     logicalVersion.sync(version);
   }
 
@@ -148,13 +169,18 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T> 
   }
 
   @Override
-  public int compareTo(Version<T> o) {
+  public int compareTo(LogicalVersion<T, ?> o) {
     return logicalVersion.compareTo(o);
   }
 
   @Override
   public Dot<K, T> copy() {
     return new Dot<>(identifier, logicalVersion.copy());
+  }
+
+  @Override
+  public Dot<K, T> getZero() {
+    return new Dot<>(identifier, logicalVersion.getZero().copy());
   }
 
   @Override

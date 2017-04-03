@@ -35,7 +35,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
  */
 public abstract class AbstractVersionedUpdatable<K, T extends Comparable<T>, U extends UpdateMessage<K, ?>>
-    extends AbstractUpdatable<K, U> implements VersionedUpdatable<K, T, U> {
+    extends AbstractUpdatable<K, U> implements VersionedUpdatable<K, VersionVector<K, T>, U> {
 
   /**
    * The version used by the {@linkplain Updatable}. This should be used instead of

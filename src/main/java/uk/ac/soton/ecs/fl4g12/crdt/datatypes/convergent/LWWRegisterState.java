@@ -35,7 +35,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public final class LWWRegisterState<E extends Serializable, K extends Comparable<K>, T extends Comparable<T>>
-    extends AbstractVersionedUpdateMessage<K, T> implements StateSnapshot<K, T> {
+    extends AbstractVersionedUpdateMessage<K, VersionVector<K, T>>
+    implements StateSnapshot<K, VersionVector<K, T>> {
 
   private final LWWRegister.Element<E> element;
 
@@ -63,7 +64,7 @@ public final class LWWRegisterState<E extends Serializable, K extends Comparable
 
   @Override
   public String toString() {
-    return "LWWRegisterState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
+    return "LWWRegisterState{" + "identifier=" + getIdentifier() + ", version=" + getVersion()
         + ", element=" + element + '}';
   }
 

@@ -35,7 +35,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
 public final class TwoPhaseSetState<E, K, T extends Comparable<T>>
-    extends AbstractVersionedUpdateMessage<K, T> implements SetState<E, K, T> {
+    extends AbstractVersionedUpdateMessage<K, VersionVector<K, T>>
+    implements SetState<E, K, VersionVector<K, T>> {
 
   private final Set<E> additions;
   private final Set<E> removals;
@@ -112,7 +113,7 @@ public final class TwoPhaseSetState<E, K, T extends Comparable<T>>
 
   @Override
   public String toString() {
-    return "TwoPhaseSetState{" + "identifier=" + getIdentifier() + ", version=" + getVersionVector()
+    return "TwoPhaseSetState{" + "identifier=" + getIdentifier() + ", version=" + getVersion()
         + ", additions=" + additions + ", removals=" + removals + '}';
   }
 

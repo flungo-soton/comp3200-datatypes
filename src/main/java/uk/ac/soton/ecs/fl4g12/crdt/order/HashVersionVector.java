@@ -36,9 +36,9 @@ import java.util.Set;
 public final class HashVersionVector<K, T extends Comparable<T>>
     extends AbstractVersionVector<K, T> {
 
-  private final LogicalVersion<T> zero;
+  private final LogicalVersion<T, ?> zero;
 
-  private final HashMap<K, LogicalVersion<T>> vector;
+  private final HashMap<K, LogicalVersion<T, ?>> vector;
 
   /**
    * Construct a {@linkplain HashVersionVector}. The {@link LogicalVersion} provided as {@code zero}
@@ -47,8 +47,8 @@ public final class HashVersionVector<K, T extends Comparable<T>>
    * @param zero a {@link LogicalVersion} representing the zero value of the type wanted for the
    *        timestamps.
    */
-  public HashVersionVector(LogicalVersion<T> zero) {
-    this(zero, new HashMap<K, LogicalVersion<T>>());
+  public HashVersionVector(LogicalVersion<T, ?> zero) {
+    this(zero, new HashMap<K, LogicalVersion<T, ?>>());
   }
 
   /**
@@ -58,14 +58,14 @@ public final class HashVersionVector<K, T extends Comparable<T>>
    *        timestamps.
    * @param vector the vector to initialise with. This value is not copied.
    */
-  private HashVersionVector(LogicalVersion<T> zero, HashMap<K, LogicalVersion<T>> vector) {
+  private HashVersionVector(LogicalVersion<T, ?> zero, HashMap<K, LogicalVersion<T, ?>> vector) {
     super(zero);
     this.zero = zero.copy();
     this.vector = vector;
   }
 
   @Override
-  public LogicalVersion<T> getLogicalVersion(K id) {
+  public LogicalVersion<T, ?> getLogicalVersion(K id) {
     return vector.get(id);
   }
 
@@ -75,11 +75,11 @@ public final class HashVersionVector<K, T extends Comparable<T>>
   }
 
   @Override
-  public synchronized LogicalVersion<T> init(K id) {
+  public synchronized LogicalVersion<T, ?> init(K id) {
     if (vector.containsKey(id)) {
       return vector.get(id);
     }
-    LogicalVersion<T> version = zero.copy();
+    LogicalVersion<T, ?> version = zero.copy();
     vector.put(id, version);
     return version;
   }

@@ -173,7 +173,7 @@ public class LocalVersionVectorTest {
   public void testSync_Version() {
     LOGGER.log(Level.INFO, "sync_Version");
     Mockito.reset(version);
-    Version syncVersion = Mockito.mock(Version.class);
+    VersionVector syncVersion = Mockito.mock(VersionVector.class);
     instance.sync(syncVersion);
     Mockito.verify(version).sync(syncVersion);
     Mockito.verifyNoMoreInteractions(version);
@@ -238,7 +238,7 @@ public class LocalVersionVectorTest {
   public void testIdentical() {
     LOGGER.log(Level.INFO, "identical");
     Mockito.reset(version);
-    Version vector = Mockito.mock(Version.class);
+    VersionVector vector = Mockito.mock(VersionVector.class);
     instance.identical(vector);
     Mockito.verify(version).identical(vector);
     Mockito.verifyNoMoreInteractions(version);

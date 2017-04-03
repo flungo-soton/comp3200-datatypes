@@ -26,8 +26,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -39,8 +41,18 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends SetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
+public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends SetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
     extends UpdatableSetAbstractTest<E, K, T, U, S> {
+
+  @Override
+  protected void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
+      U updateMessage) {
+    // Overridden to support Dot vs Vector comparisons,
+    assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
+        updateMessage.getIdentifier());
+    assertTrue("Update version should be as expected",
+        updateMessage.getVersion().identical(expectedVersion));
+  }
 
   protected void assertUpdateOperation(SetUpdateMessage.Operation expected, U updateMessage) {
     assertEquals("Update message should be an " + expected + " operation", expected,

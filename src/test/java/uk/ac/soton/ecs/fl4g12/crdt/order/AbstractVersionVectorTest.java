@@ -1225,7 +1225,7 @@ public class AbstractVersionVectorTest
     }
 
     @Override
-    public LogicalVersion<Integer> getLogicalVersion(Object id) {
+    public LogicalVersion<Integer, ?> getLogicalVersion(Object id) {
       throw new UnsupportedOperationException("Out of test scope.");
     }
 
@@ -1240,7 +1240,7 @@ public class AbstractVersionVectorTest
     }
 
     @Override
-    public LogicalVersion<Integer> init(Object id) {
+    public LogicalVersion<Integer, ?> init(Object id) {
       throw new UnsupportedOperationException("Out of test scope.");
     }
 
@@ -1254,22 +1254,22 @@ public class AbstractVersionVectorTest
       extends AbstractVersionVector<K, T> {
 
     private final Map<K, T> vector;
-    private final LogicalVersion<T> zero;
+    private final LamportTimestamp<T> zero;
 
-    public ImmutableMapVersionVector(Map<K, T> vector, LogicalVersion<T> zero) {
+    public ImmutableMapVersionVector(Map<K, T> vector, LamportTimestamp<T> zero) {
       super(zero);
       this.vector = new HashMap<>(vector);
       this.zero = zero.copy();
     }
 
     @Override
-    public LogicalVersion<T> getLogicalVersion(final K id) {
+    public LogicalVersion<T, ?> getLogicalVersion(final K id) {
       if (!vector.containsKey(id)) {
         return null;
       }
-      return new AbstractLogicalVersion<T>() {
+      return new AbstractLamportTimestamp<T>(zero) {
         @Override
-        public AbstractLogicalVersion<T> copy() {
+        public LamportTimestamp<T> copy() {
           // This is immutable, just use the same object.
           return this;
         }
@@ -1291,7 +1291,7 @@ public class AbstractVersionVectorTest
 
         @Override
         public T successor() {
-          LogicalVersion<T> successor = zero.copy();
+          LogicalVersion<T, ?> successor = zero.copy();
           successor.sync(vector.get(id));
           return successor.successor();
         }
@@ -1310,7 +1310,7 @@ public class AbstractVersionVectorTest
     }
 
     @Override
-    public LogicalVersion<T> init(K id) {
+    public LogicalVersion<T, ?> init(K id) {
       throw new UnsupportedOperationException("Cannot be mutated.");
     }
 

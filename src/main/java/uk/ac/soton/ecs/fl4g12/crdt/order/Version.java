@@ -28,8 +28,11 @@ package uk.ac.soton.ecs.fl4g12.crdt.order;
  * happened-before relationship between them which can be used to determine causal order.
  *
  * @param <T> the type of the timestamp.
+ * @param <V1> the type of {@linkplain Version}s which this {@linkplain Version} can perform
+ *        operations with.
+ * @param <V2> the specific type of {@link Version} which is returned when cloning.
  */
-public interface Version<T> extends Comparable<Version<T>> {
+public interface Version<T, V1 extends Version<T, V1, ?>, V2 extends V1> extends Comparable<V1> {
 
   /**
    * Gets a usable representation of the timestamp for this {@linkplain Version}. The returned value
@@ -50,7 +53,7 @@ public interface Version<T> extends Comparable<Version<T>> {
    *
    * @param version the {@linkplain Version} to synchronise with.
    */
-  void sync(Version<T> version);
+  void sync(V1 version);
 
   /**
    * Synchronise the local version with the given timestamp.
@@ -69,33 +72,30 @@ public interface Version<T> extends Comparable<Version<T>> {
    * @return {@code true} if this {@linkplain Version} happened-before the provided
    *         {@linkplain Version}, {@code false} otherwise.
    */
-  boolean happenedBefore(Version<T> version);
+  boolean happenedBefore(V1 version);
 
   /**
    * Determine if this {@linkplain Version} happens exactly one increment before the provided one.
    * If this returns true, then there should exist no version which happened-before this version but
    * happened-after the provided one.
    *
-   * @param version the version to compare against.
+   * @param version the {@linkplain Version} to compare against.
    * @return {@code true} if this {@linkplain Version} directly proceeds the provided
    *         {@linkplain Version} such that no other {@linkplain Version} exists which
    *         happened-before this version but happened-after the provided one, {@code false}
    *         otherwise.
    */
-  boolean precedes(Version<T> version);
+  boolean precedes(V1 version);
 
   /**
-   * Checks if two versions are identical. This method compares the state of the two versions and
-   * will allow implicitly identical versions and versions of different implementations (unlike the
-   * {@link #equals(java.lang.Object)} method).
+   * Checks if two {@linkplain Version}s are identical. This method compares the state of the two
+   * {@linkplain Version}s and will allow implicitly identical versions and versions of different
+   * implementations (unlike the {@link #equals(Object)} method).
    *
-   * Due to the allowance of implicitly identical versions, this method may not be symmetric if the
-   * two versions do not implement the same implicit semantics.
-   *
-   * @param version the version to compare with.
+   * @param version the {@linkplain Version} to compare with.
    * @return whether the provided version is identical to this version.
    */
-  boolean identical(Version<T> version);
+  boolean identical(V1 version);
 
   /**
    * Checks if the {@linkplain Version} is strictly identical and of the same type to the provided
@@ -118,6 +118,6 @@ public interface Version<T> extends Comparable<Version<T>> {
    *
    * @return the cloned version.
    */
-  Version<T> copy();
+  V2 copy();
 
 }

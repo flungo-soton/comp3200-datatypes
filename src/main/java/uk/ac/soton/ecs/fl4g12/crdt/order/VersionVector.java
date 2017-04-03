@@ -35,7 +35,8 @@ import java.util.Set;
  * @param <K> the type of the identifier.
  * @param <T> the type of the timestamp.
  */
-public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K, T>> {
+public interface VersionVector<K, T extends Comparable<T>>
+    extends Version<Map<K, T>, VersionVector<K, T>, VersionVector<K, T>> {
 
   /**
    * Returns a map that represents the version vector. The map will be created and changes to the
@@ -67,7 +68,7 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
    * @param id the identifier which the {@link LogicalVersion} should be returned for.
    * @return the timestamp from the vector for the specified identifier.
    */
-  LogicalVersion<T> getLogicalVersion(K id);
+  LogicalVersion<T, ?> getLogicalVersion(K id);
 
   /**
    * Get the dot for the given identifier. The dot is tied to this version vector and so changes to
@@ -95,7 +96,7 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
    * @param id the id to initialise.
    * @return the initialised {@linkplain LogicalVersion} for the given identifier.
    */
-  LogicalVersion<T> init(K id);
+  LogicalVersion<T, ?> init(K id);
 
   /**
    * Increments the timestamp for the node represented by the given identifier. Only the local id
@@ -141,8 +142,8 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
    * between vectors that are equal or concurrent.
    *
    * @param other the vector to compare with.
-   * @return {@code true} if this {@link VersionVector} is concurrent with the {@code other}
-   *         {@link VersionVector}, {@code false} otherwise.
+   * @return {@code true} if this {@linkplain VersionVector} is concurrent with the {@code other}
+   *         {@linkplain VersionVector}, {@code false} otherwise.
    */
   boolean concurrentWith(VersionVector<K, T> other);
 
@@ -158,16 +159,40 @@ public interface VersionVector<K, T extends Comparable<T>> extends Version<Map<K
   public boolean happenedBefore(Dot<K, T> dot);
 
   /**
+   * Determine if this {@linkplain VersionVector} happens exactly one increment before the
+   * {@linkplain Dot} provided for the identifier which the {@linkplain Dot} is used for. If this
+   * returns true, then there should exist no version which happened-before this version but
+   * happened-after the provided one for the identifier that the {@link Dot} represents.
+   *
+   * @param dot the {@link Dot} to compare against.
+   * @return {@code true} if this {@linkplain VersionVector} directly proceeds the provided
+   *         {@linkplain Dot} such that no other {@linkplain Dot} exists which happened-before this
+   *         version but happened-after the provided one for the identifier that the {@link Dot}
+   *         represents, {@code false} otherwise.
+   */
+  public boolean precedes(Dot<K, T> dot);
+
+  /**
+   * Checks if this {@linkplain VersionVector} is identical to the provided {@linkplain Dot} for the
+   * identifier which the {@linkplain Dot} represents. This method compares the timestamp of the
+   * identifier which the {@link Dot} representsin this {@linkplain VersionVector}.
+   *
+   * @param dot the {@link Dot} to compare with.
+   * @return whether the provided {@link Dot} is identical to the value with the same identifier in
+   *         this {@linkplain VersionVector}.
+   */
+  public boolean identical(Dot<K, T> dot);
+
+  /**
    * Compares this {@linkplain VersionVector} to another provided {@linkplain VersionVector}.
    *
    * @param other the version vector to compare to.
-   * @return {@code 0} if this {@link VersionVector} and the {@code other} {@link VersionVector} are
-   *         identical or concurrent, negative if this {@link VersionVector} happened before and
-   *         positive if the {@code other} {@link VersionVector} happened before.
+   * @return {@code 0} if this {@linkplain VersionVector} and the {@code other}
+   *         {@linkplain VersionVector} are identical or concurrent, negative if this
+   *         {@linkplain VersionVector} happened before and positive if the {@code other}
+   *         {@linkplain VersionVector} happened before.
    */
   @Override
-  int compareTo(Version<Map<K, T>> other);
+  int compareTo(VersionVector<K, T> other);
 
-  @Override
-  VersionVector<K, T> copy();
 }

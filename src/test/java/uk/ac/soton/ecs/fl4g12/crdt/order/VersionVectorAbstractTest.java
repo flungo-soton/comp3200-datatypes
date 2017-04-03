@@ -39,8 +39,8 @@ import org.junit.rules.ExpectedException;
  * @param <K> the type of the key being used in the {@link VersionVector}s.
  * @param <V> the type of the version being tested.
  */
-public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, Integer>>
-    extends VersionAbstractTest<Map<K, Integer>, V> {
+public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, Integer>> extends
+    VersionAbstractTest<Map<K, Integer>, VersionVector<K, Integer>, VersionVector<K, Integer>> {
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -202,7 +202,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testGet_K(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    VersionVector<K, Integer> instance = getVersion(order);
 
     // Get the timestamp which has the expected values
     Map<K, Integer> timestamp = getTimestamp(order);
@@ -273,7 +273,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testGetLogicalVersion(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    VersionVector<K, Integer> instance = getVersion(order);
 
     // Get the timestamp which has the expected values
     Map<K, Integer> timestamp = getTimestamp(order);
@@ -283,7 +283,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
       K id = getKey(i);
       Integer expectedValue = timestamp.get(id);
 
-      LogicalVersion<Integer> logicalVersion = instance.getLogicalVersion(id);
+      LogicalVersion<Integer, ?> logicalVersion = instance.getLogicalVersion(id);
       if (expectedValue == null) {
         Assert.assertNull(logicalVersion);
       } else {
@@ -366,7 +366,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testGetDot(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    VersionVector<K, Integer> instance = getVersion(order);
 
     // Get the timestamp which has the expected values
     Map<K, Integer> timestamp = getTimestamp(order);
@@ -465,7 +465,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testGetIdentifiers(final int order) {
     // Get the version instance
-    V instance = getVersion(order);
+    VersionVector<K, Integer> instance = getVersion(order);
 
     // Get the instance value
     Set<K> result = instance.getIdentifiers();
@@ -526,7 +526,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testInit(final int order) {
     // Setup the mock (for cummulative testing)
-    V instance = getVersion(order);
+    VersionVector<K, Integer> instance = getVersion(order);
 
     // Get the timestamp which has the expected values (for cummulative testing)
     Map<K, Integer> timestamp = getTimestamp(order);
@@ -536,13 +536,13 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
       // Test init on the initial version
       // Get a fresh version to test on
-      V initialInitted = getVersion(order);
+      VersionVector<K, Integer> initialInitted = getVersion(order);
       Map<K, Integer> expectedTimestamp = getTimestamp(order);
       if (!expectedTimestamp.containsKey(id)) {
         expectedTimestamp.put(id, 0);
       }
 
-      LogicalVersion<Integer> initialVersion = initialInitted.init(id);
+      LogicalVersion<Integer, ?> initialVersion = initialInitted.init(id);
       assertEquals("The LogicalVersion should have a 0 value", expectedTimestamp.get(id),
           initialVersion.get());
 
@@ -563,7 +563,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
         timestamp.put(id, 0);
       }
 
-      LogicalVersion<Integer> logicalVersion = instance.init(id);
+      LogicalVersion<Integer, ?> logicalVersion = instance.init(id);
       assertEquals("The LogicalVersion should have a 0 value", expectedTimestamp.get(id),
           logicalVersion.get());
 
@@ -631,7 +631,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testIncrement(final int order) {
     // Setup the mock
-    V instance = getVersion(order);
+    VersionVector<K, Integer> instance = getVersion(order);
 
     // Get the timestamp which has the expected values
     Map<K, Integer> timestamp = getTimestamp(order);
@@ -643,7 +643,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
       if (timestamp.containsKey(id)) {
         // Increment initial
-        V initialIncremented = getVersion(order);
+        VersionVector<K, Integer> initialIncremented = getVersion(order);
         initialIncremented.increment(id);
         assertTrue("Initial version should have happenedBefore incremented version",
             getVersion(order).happenedBefore(initialIncremented));
@@ -719,14 +719,14 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testSuccessor_K(final int order) {
     for (int i = 0; i < 3; i++) {
-      V instance = getVersion(order);
+      VersionVector<K, Integer> instance = getVersion(order);
 
       K id = getKey(i);
 
       Map<K, Integer> successor = instance.successor(id);
 
       Map<K, Integer> expected = instance.get();
-      LogicalVersion<Integer> successive = new IntegerVersion();
+      LogicalVersion<Integer, ?> successive = new IntegerVersion();
       successive.sync(instance.get(id));
       successive.increment();
 
@@ -788,19 +788,19 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
 
   private void testSync_Dot(final int order) {
     for (int i = 0; i < VERSION_MAX_ORDER; i++) {
-      V other = getVersion(i);
+      VersionVector<K, Integer> other = getVersion(i);
 
       for (int j = 0; j < 3; j++) {
         K id = getKey(j);
 
         if (other.getIdentifiers().contains(id)) {
           // Sync with the dot
-          V instance = getVersion(order);
+          VersionVector<K, Integer> instance = getVersion(order);
           Dot<K, Integer> dot = other.getDot(id);
           instance.sync(dot);
 
           // Make a comparison of the effective result of thre dot sync
-          V comparison = getVersion(order);
+          VersionVector<K, Integer> comparison = getVersion(order);
           comparison.sync(id, other.get(id));
 
           assertTrue("Instance should be identical to comparison after sync",
@@ -865,7 +865,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_a0() {
-    V instance = getVersion("a0");
+    VersionVector<K, Integer> instance = getVersion("a0");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(true, instance.happenedBefore(getVersion("a1")));
@@ -891,7 +891,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_a1() {
-    V instance = getVersion("a1");
+    VersionVector<K, Integer> instance = getVersion("a1");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -917,7 +917,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_a2() {
-    V instance = getVersion("a2");
+    VersionVector<K, Integer> instance = getVersion("a2");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -943,7 +943,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_a3() {
-    V instance = getVersion("a3");
+    VersionVector<K, Integer> instance = getVersion("a3");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -969,7 +969,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_a4() {
-    V instance = getVersion("a4");
+    VersionVector<K, Integer> instance = getVersion("a4");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -995,7 +995,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_b0() {
-    V instance = getVersion("b0");
+    VersionVector<K, Integer> instance = getVersion("b0");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(true, instance.happenedBefore(getVersion("a1")));
@@ -1021,7 +1021,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_b1() {
-    V instance = getVersion("b1");
+    VersionVector<K, Integer> instance = getVersion("b1");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(true, instance.happenedBefore(getVersion("a1")));
@@ -1047,7 +1047,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_b2() {
-    V instance = getVersion("b2");
+    VersionVector<K, Integer> instance = getVersion("b2");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(true, instance.happenedBefore(getVersion("a1")));
@@ -1073,7 +1073,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_b3() {
-    V instance = getVersion("b3");
+    VersionVector<K, Integer> instance = getVersion("b3");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -1099,7 +1099,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_b4() {
-    V instance = getVersion("b4");
+    VersionVector<K, Integer> instance = getVersion("b4");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -1125,7 +1125,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_b5() {
-    V instance = getVersion("b5");
+    VersionVector<K, Integer> instance = getVersion("b5");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -1151,7 +1151,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_c0() {
-    V instance = getVersion("c0");
+    VersionVector<K, Integer> instance = getVersion("c0");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(true, instance.happenedBefore(getVersion("a1")));
@@ -1177,7 +1177,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_c1() {
-    V instance = getVersion("c1");
+    VersionVector<K, Integer> instance = getVersion("c1");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(true, instance.happenedBefore(getVersion("a1")));
@@ -1203,7 +1203,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_c2() {
-    V instance = getVersion("c2");
+    VersionVector<K, Integer> instance = getVersion("c2");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -1229,7 +1229,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_c3() {
-    V instance = getVersion("c3");
+    VersionVector<K, Integer> instance = getVersion("c3");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -1255,7 +1255,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_c4() {
-    V instance = getVersion("c4");
+    VersionVector<K, Integer> instance = getVersion("c4");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -1281,7 +1281,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testHappenedBefore_examples_c5() {
-    V instance = getVersion("c5");
+    VersionVector<K, Integer> instance = getVersion("c5");
 
     assertEquals(false, instance.happenedBefore(getVersion("a0")));
     assertEquals(false, instance.happenedBefore(getVersion("a1")));
@@ -1303,10 +1303,10 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
   }
 
   private void testHappenedBefore_Dot(final int order) {
-    V instance = getVersion(order);
+    VersionVector<K, Integer> instance = getVersion(order);
 
     for (int i = 0; i < VERSION_MAX_ORDER; i++) {
-      V other = getVersion(i);
+      VersionVector<K, Integer> other = getVersion(i);
 
       for (int j = 0; j < 3; j++) {
         K id = getKey(j);
@@ -1405,7 +1405,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_a0() {
-    V instance = getVersion("a0");
+    VersionVector<K, Integer> instance = getVersion("a0");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1431,7 +1431,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_a1() {
-    V instance = getVersion("a1");
+    VersionVector<K, Integer> instance = getVersion("a1");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1457,7 +1457,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_a2() {
-    V instance = getVersion("a2");
+    VersionVector<K, Integer> instance = getVersion("a2");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1483,7 +1483,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_a3() {
-    V instance = getVersion("a3");
+    VersionVector<K, Integer> instance = getVersion("a3");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1509,7 +1509,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_a4() {
-    V instance = getVersion("a4");
+    VersionVector<K, Integer> instance = getVersion("a4");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1535,7 +1535,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_b0() {
-    V instance = getVersion("b0");
+    VersionVector<K, Integer> instance = getVersion("b0");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1561,7 +1561,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_b1() {
-    V instance = getVersion("b1");
+    VersionVector<K, Integer> instance = getVersion("b1");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1587,7 +1587,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_b2() {
-    V instance = getVersion("b2");
+    VersionVector<K, Integer> instance = getVersion("b2");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1613,7 +1613,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_b3() {
-    V instance = getVersion("b3");
+    VersionVector<K, Integer> instance = getVersion("b3");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(true, instance.concurrentWith(getVersion("a1")));
@@ -1639,7 +1639,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_b4() {
-    V instance = getVersion("b4");
+    VersionVector<K, Integer> instance = getVersion("b4");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1665,7 +1665,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_b5() {
-    V instance = getVersion("b5");
+    VersionVector<K, Integer> instance = getVersion("b5");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1691,7 +1691,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_c0() {
-    V instance = getVersion("c0");
+    VersionVector<K, Integer> instance = getVersion("c0");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1717,7 +1717,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_c1() {
-    V instance = getVersion("c1");
+    VersionVector<K, Integer> instance = getVersion("c1");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1743,7 +1743,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_c2() {
-    V instance = getVersion("c2");
+    VersionVector<K, Integer> instance = getVersion("c2");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(true, instance.concurrentWith(getVersion("a1")));
@@ -1769,7 +1769,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_c3() {
-    V instance = getVersion("c3");
+    VersionVector<K, Integer> instance = getVersion("c3");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(true, instance.concurrentWith(getVersion("a1")));
@@ -1795,7 +1795,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_c4() {
-    V instance = getVersion("c4");
+    VersionVector<K, Integer> instance = getVersion("c4");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1821,7 +1821,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testConcurrentWith_examples_c5() {
-    V instance = getVersion("c5");
+    VersionVector<K, Integer> instance = getVersion("c5");
 
     assertEquals(false, instance.concurrentWith(getVersion("a0")));
     assertEquals(false, instance.concurrentWith(getVersion("a1")));
@@ -1847,7 +1847,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_a0() {
-    V instance = getVersion("a0");
+    VersionVector<K, Integer> instance = getVersion("a0");
 
     assertEquals(0, instance.compareTo(getVersion("a0")));
     assertEquals(-3, instance.compareTo(getVersion("a1")));
@@ -1873,7 +1873,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_a1() {
-    V instance = getVersion("a1");
+    VersionVector<K, Integer> instance = getVersion("a1");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(0, instance.compareTo(getVersion("a1")));
@@ -1899,7 +1899,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_a2() {
-    V instance = getVersion("a2");
+    VersionVector<K, Integer> instance = getVersion("a2");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(1, instance.compareTo(getVersion("a1")));
@@ -1925,7 +1925,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_a3() {
-    V instance = getVersion("a3");
+    VersionVector<K, Integer> instance = getVersion("a3");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(3, instance.compareTo(getVersion("a1")));
@@ -1951,7 +1951,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_a4() {
-    V instance = getVersion("a4");
+    VersionVector<K, Integer> instance = getVersion("a4");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(3, instance.compareTo(getVersion("a1")));
@@ -1977,7 +1977,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_b0() {
-    V instance = getVersion("b0");
+    VersionVector<K, Integer> instance = getVersion("b0");
 
     assertEquals(0, instance.compareTo(getVersion("a0")));
     assertEquals(-3, instance.compareTo(getVersion("a1")));
@@ -2003,7 +2003,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_b1() {
-    V instance = getVersion("b1");
+    VersionVector<K, Integer> instance = getVersion("b1");
 
     assertEquals(2, instance.compareTo(getVersion("a0")));
     assertEquals(-2, instance.compareTo(getVersion("a1")));
@@ -2029,7 +2029,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_b2() {
-    V instance = getVersion("b2");
+    VersionVector<K, Integer> instance = getVersion("b2");
 
     assertEquals(2, instance.compareTo(getVersion("a0")));
     assertEquals(-1, instance.compareTo(getVersion("a1")));
@@ -2055,7 +2055,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_b3() {
-    V instance = getVersion("b3");
+    VersionVector<K, Integer> instance = getVersion("b3");
 
     assertEquals(2, instance.compareTo(getVersion("a0")));
     assertEquals(0, instance.compareTo(getVersion("a1")));
@@ -2081,7 +2081,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_b4() {
-    V instance = getVersion("b4");
+    VersionVector<K, Integer> instance = getVersion("b4");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(2, instance.compareTo(getVersion("a1")));
@@ -2107,7 +2107,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_b5() {
-    V instance = getVersion("b5");
+    VersionVector<K, Integer> instance = getVersion("b5");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(2, instance.compareTo(getVersion("a1")));
@@ -2133,7 +2133,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_c0() {
-    V instance = getVersion("c0");
+    VersionVector<K, Integer> instance = getVersion("c0");
 
     assertEquals(0, instance.compareTo(getVersion("a0")));
     assertEquals(-3, instance.compareTo(getVersion("a1")));
@@ -2159,7 +2159,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_c1() {
-    V instance = getVersion("c1");
+    VersionVector<K, Integer> instance = getVersion("c1");
 
     assertEquals(1, instance.compareTo(getVersion("a0")));
     assertEquals(-2, instance.compareTo(getVersion("a1")));
@@ -2185,7 +2185,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_c2() {
-    V instance = getVersion("c2");
+    VersionVector<K, Integer> instance = getVersion("c2");
 
     assertEquals(2, instance.compareTo(getVersion("a0")));
     assertEquals(0, instance.compareTo(getVersion("a1")));
@@ -2211,7 +2211,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_c3() {
-    V instance = getVersion("c3");
+    VersionVector<K, Integer> instance = getVersion("c3");
 
     assertEquals(2, instance.compareTo(getVersion("a0")));
     assertEquals(0, instance.compareTo(getVersion("a1")));
@@ -2237,7 +2237,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_c4() {
-    V instance = getVersion("c4");
+    VersionVector<K, Integer> instance = getVersion("c4");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(3, instance.compareTo(getVersion("a1")));
@@ -2263,7 +2263,7 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
    */
   @Test
   public void testCompareTo_examples_c5() {
-    V instance = getVersion("c5");
+    VersionVector<K, Integer> instance = getVersion("c5");
 
     assertEquals(3, instance.compareTo(getVersion("a0")));
     assertEquals(3, instance.compareTo(getVersion("a1")));

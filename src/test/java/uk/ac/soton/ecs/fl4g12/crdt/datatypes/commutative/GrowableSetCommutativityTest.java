@@ -24,6 +24,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -36,7 +37,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <U> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableSetCommutativityTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, T>, S extends Set<E> & VersionedUpdatable<K, T, U>>
+public abstract class GrowableSetCommutativityTest<E, K, T extends Comparable<T>, U extends GrowOnlySetUpdateMessage<E, K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
     extends GrowableConflictFreeSetAbstractTest<E, K, T, U, S> {
 
 }

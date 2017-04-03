@@ -48,7 +48,7 @@ public final class CommutativeGCommutativeSetTest extends
   protected CommutativeGSetUpdate<Integer, Integer, Integer> getAddUpdate(
       CommutativeGSet<Integer, Integer, Integer> set, Integer identifier,
       VersionVector<Integer, Integer> version, Collection<Integer> elements) {
-    return new CommutativeGSetUpdate<>(identifier, version, new HashSet<>(elements));
+    return new CommutativeGSetUpdate<>(version.getDot(identifier), new HashSet<>(elements));
   }
 
 }

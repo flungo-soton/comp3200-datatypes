@@ -23,16 +23,16 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Set;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Interface for objects that represent a {@linkplain Set} state.
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp within the {@link VersionVector}
+ * @param <V> the type of the {@link Version}.
  */
-public interface SetState<E, K, T extends Comparable<T>> extends StateSnapshot<K, T> {
+public interface SetState<E, K, V extends Version> extends StateSnapshot<K, V> {
 
   /**
    * Get or compute the effective state of the {@link Set}.
