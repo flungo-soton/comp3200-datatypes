@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.openimaj.citation.annotation.Reference;
+import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IllegalInsertionException;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
@@ -48,6 +50,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
+@Reference(type = ReferenceType.Techreport,
+    author = {"Shapiro, Marc", "Preguica, Nuno", "Baquero, Carlos", "Zawirski, Marek"},
+    title = "A comprehensive study of Convergent and Commutative Replicated Data Types",
+    institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
+    pages = {"22", "23"})
 public final class TwoPhaseSet<E, K, T extends Comparable<T>>
     extends AbstractVersionedUpdatable<K, T, TwoPhaseSetState<E, K, T>>
     implements CvRDT<K, VersionVector<K, T>, TwoPhaseSetState<E, K, T>>, Set<E> {

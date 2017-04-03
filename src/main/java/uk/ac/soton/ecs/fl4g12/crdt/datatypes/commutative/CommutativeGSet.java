@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.openimaj.citation.annotation.Reference;
+import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSet;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
@@ -46,6 +48,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp stored in the {@link VersionVector}
  */
+@Reference(type = ReferenceType.Techreport,
+    author = {"Shapiro, Marc", "Preguica, Nuno", "Baquero, Carlos", "Zawirski, Marek"},
+    title = "A comprehensive study of Convergent and Commutative Replicated Data Types",
+    institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
+    pages = {"21", "22"})
 public final class CommutativeGSet<E, K, T extends Comparable<T>>
     extends AbstractCmRDT<K, T, CommutativeGSetUpdate<E, K, T>> implements Set<E> {
 
