@@ -41,7 +41,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Interface providing method for what should be tested in growable {@linkplain CRDT}
+ * Abstract tests for ensuring the conflict-free replicability in growable {@linkplain CRDT}
  * {@linkplain Set}s.
  *
  * @param <E> the type of values stored in the {@link Set}.
@@ -234,7 +234,7 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
   @Test
   public void testUpdate_BothAdd_Same() throws Exception {
     LOGGER.log(Level.INFO,
-        "testUpdate_BothSame: Test update with concurrent additions of the same element.");
+        "testUpdate_BothAdd_Same: Test update with concurrent additions of the same element.");
 
     final S set1 = getSet();
     final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
