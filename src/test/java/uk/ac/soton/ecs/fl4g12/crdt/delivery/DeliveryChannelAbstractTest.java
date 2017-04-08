@@ -79,6 +79,14 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
    */
   public abstract C getDeliveryChannel(Channel channel, int i);
 
+  public abstract void waitForDelivery(C source, C destination);
+
+  private void waitForDelivery(C source, C... destinations) {
+    for (C destination : destinations) {
+      waitForDelivery(source, destination);
+    }
+  }
+
   /**
    * Test that when an {@link Updatable} which does not have an ID is registered, that an ID is
    * assigned.
@@ -214,6 +222,9 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     U updateA0_0 = getUpdateMessage(id0, 0);
     channelA0.publish(updateA0_0);
 
+    // Wait for all messages to be delivered
+    waitForDelivery(channelA0, channelA1, channelA2, channelB0, channelB1, channelB2);
+
     // Make assertions
     Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
     Mockito.verify(updatableA1).update(updateA0_0);
@@ -225,6 +236,9 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     // Publish a message on A1
     U updateA1_0 = getUpdateMessage(id1, 0);
     channelA1.publish(updateA1_0);
+
+    // Wait for all messages to be delivered
+    waitForDelivery(channelA1, channelA0, channelA2, channelB0, channelB1, channelB2);
 
     // Make assertions
     Mockito.verify(updatableA0).update(updateA1_0);
@@ -278,18 +292,20 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     channelA0.publish(updateA0_0);
 
     // Make assertions
+    Mockito.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_0);
+    Mockito.verify(updatableA2, Mockito.timeout(1000)).update(updateA0_0);
+    Thread.sleep(1000);
     Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
-    Mockito.verify(updatableA1).update(updateA0_0);
-    Mockito.verify(updatableA2).update(updateA0_0);
 
     // Publish a message on A0
     U updateA0_1 = getUpdateMessage(id0, 1);
     channelA0.publish(updateA0_1);
 
     // Make assertions
+    Mockito.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_1);
+    Mockito.verify(updatableA2, Mockito.timeout(1000)).update(updateA0_1);
+    Thread.sleep(1000);
     Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_1);
-    Mockito.verify(updatableA1).update(updateA0_1);
-    Mockito.verify(updatableA2).update(updateA0_1);
   }
 
   /**
@@ -325,16 +341,25 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     U updateA0_3 = getUpdateMessage(id0, 3);
     U updateA0_4 = getUpdateMessage(id0, 4);
     U updateA0_5 = getUpdateMessage(id0, 5);
-    channelA0.publish(updateA0_0, updateA0_1, updateA0_2, updateA0_3, updateA0_4, updateA0_5);
+    channelA0.publish(updateA0_0);
+    channelA0.publish(updateA0_1);
+    channelA0.publish(updateA0_2);
+    channelA0.publish(updateA0_3);
+    channelA0.publish(updateA0_4);
+    channelA0.publish(updateA0_5);
+
+    // Wait for all messages to be delivered
+    waitForDelivery(channelA0, channelA1);
 
     // Make assertions
-    Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
+    // TODO: Find a better way of waiting for delivery than using a timeout
     inOrder.verify(updatableA1).update(updateA0_0);
     inOrder.verify(updatableA1).update(updateA0_1);
     inOrder.verify(updatableA1).update(updateA0_2);
     inOrder.verify(updatableA1).update(updateA0_3);
     inOrder.verify(updatableA1).update(updateA0_4);
     inOrder.verify(updatableA1).update(updateA0_5);
+    Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
   }
 
   /**
@@ -366,23 +391,37 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     // Setup inOrder
     InOrder inOrder = Mockito.inOrder(updatableA1);
 
-    // Publish a message on A0
+    // Create the updates
     U updateA0_0 = getUpdateMessage(id0, 0);
     U updateA0_1 = getUpdateMessage(id0, 1);
     U updateA0_2 = getUpdateMessage(id0, 2);
     U updateA0_3 = getUpdateMessage(id0, 3);
     U updateA0_4 = getUpdateMessage(id0, 4);
     U updateA0_5 = getUpdateMessage(id0, 5);
-    channelA0.publish(updateA0_0, updateA0_1, updateA0_2, updateA0_3, updateA0_4, updateA0_5);
+
+    // Fail when updateA0_2 is delivered
+    Mockito.doThrow(DeliveryUpdateException.class).when(updatableA1).update(updateA0_2);
+
+    // Publish messages on A0
+    channelA0.publish(updateA0_0);
+    channelA0.publish(updateA0_1);
+    channelA0.publish(updateA0_2);
+    channelA0.publish(updateA0_3);
+    channelA0.publish(updateA0_4);
+    channelA0.publish(updateA0_5);
 
     // Make assertions
-    Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
-    inOrder.verify(updatableA1).update(updateA0_0);
-    inOrder.verify(updatableA1).update(updateA0_1);
-    inOrder.verify(updatableA1).update(updateA0_2);
+    // TODO: Find a better way of waiting for delivery than using a timeout
+    inOrder.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_0);
+    inOrder.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_1);
+    inOrder.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_2);
+    Thread.sleep(1000);
     Mockito.verify(updatableA1, Mockito.times(0)).update(updateA0_3);
     Mockito.verify(updatableA1, Mockito.times(0)).update(updateA0_4);
     Mockito.verify(updatableA1, Mockito.times(0)).update(updateA0_5);
+
+    // Nothing back to self
+    Mockito.verify(updatableA0, Mockito.times(0)).update(Mockito.any(UpdateMessage.class));
   }
 
   // TODO: Test redelivery and causal ordering.
@@ -411,7 +450,7 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
 
   /**
    * {@linkplain UpdateMessage} that can be used as part of tests.
-   * 
+   *
    * @param <K> the type of identifier used to identify nodes.
    */
   public static class TestUpdateMessage<K> implements UpdateMessage<K, TestUpdateMessage<K>> {

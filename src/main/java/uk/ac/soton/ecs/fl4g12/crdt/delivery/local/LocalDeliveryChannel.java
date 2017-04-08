@@ -78,12 +78,12 @@ public class LocalDeliveryChannel<K, V extends Version, U extends VersionedUpdat
   }
 
   @Override
-  public void publish(U... messages) {
-    // Put the messages onto the queues
+  public void publish(U message) {
+    // Put the message onto the queues
     for (Updatable<K, U> updatable : objects.values()) {
       PriorityQueue<U> queue = queues.get(updatable.getIdentifier());
-      for (U message : messages) {
-        if (!message.getIdentifier().equals(updatable.getIdentifier())) {
+      if (!message.getIdentifier().equals(updatable.getIdentifier())) {
+        synchronized (queue) {
           queue.add(message);
         }
       }
