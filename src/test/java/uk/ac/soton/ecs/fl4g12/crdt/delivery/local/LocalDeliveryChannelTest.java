@@ -25,15 +25,15 @@ import java.util.EnumMap;
 import java.util.Map;
 import org.junit.After;
 import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannelAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannelAbstractTest.TestUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannelAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannelAbstractTest.CausalTestUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.LamportTimestamp;
 
 /**
  * Tests for {@link LocalDeliveryChannel}.
  */
 public final class LocalDeliveryChannelTest extends
-    DeliveryChannelAbstractTest<Integer, TestUpdateMessage<Integer>, DeliveryChannel<Integer, TestUpdateMessage<Integer>>> {
+    CausalDeliveryChannelAbstractTest<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>, LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>>> {
 
   @Override
   public Integer getIdentifier(int i) {
@@ -41,20 +41,20 @@ public final class LocalDeliveryChannelTest extends
   }
 
   @Override
-  public TestUpdateMessage<Integer> getUpdateMessage(final Integer id, final int order) {
-    return Mockito.spy(new TestUpdateMessage(id, order));
+  public CausalTestUpdateMessage<Integer> getUpdateMessage(final Integer id, final int order) {
+    return Mockito.spy(new CausalTestUpdateMessage(id, order));
   }
 
-  private final Map<Channel, DeliveryChannel<Integer, TestUpdateMessage<Integer>>> channels =
+  private final Map<Channel, LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>>> channels =
       new EnumMap<>(Channel.class);
 
   @Override
-  public synchronized DeliveryChannel<Integer, TestUpdateMessage<Integer>> getDeliveryChannel(
+  public synchronized LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>> getDeliveryChannel(
       Channel channel, int i) {
     if (channels.containsKey(channel)) {
       return channels.get(channel);
     }
-    DeliveryChannel<Integer, TestUpdateMessage<Integer>> deliveryChannel =
+    LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>> deliveryChannel =
         new LocalDeliveryChannel<>(new TestIdentifierFactory());
     channels.put(channel, deliveryChannel);
     return deliveryChannel;
