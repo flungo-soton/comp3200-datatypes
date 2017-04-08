@@ -19,29 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import org.junit.After;
 import org.junit.Before;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractIT;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.local.LocalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Test the integration of {@linkplain GSet}s and the {@linkplain LocalDeliveryChannel} for various
- * operations. Ensures that the {@link GSet} is replicated as expected over the
- * {@linkplain LocalDeliveryChannel} and that the state converges to the expected state after a
+ * Test the integration of {@linkplain CommutativeGSet}s and the {@linkplain LocalDeliveryChannel}
+ * for various operations. Ensures that the {@link CommutativeGSet} is replicated as expected over
+ * the {@linkplain LocalDeliveryChannel} and that the state converges to the expected state after a
  * series of operations.
  */
-public class GSetLocalDeliveryIT extends
-    GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
+public class CommutativeGSetLocalDeliveryIT extends
+    GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, CommutativeGSetUpdate<Integer, Integer, Integer>, CommutativeGSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  private LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, GSetState<Integer, Integer, Integer>> deliveryChannel;
+  private LocalDeliveryChannel<Integer, Dot<Integer, Integer>, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel;
 
   @Before
   public void setupDeliveryChannel() {
@@ -54,12 +54,12 @@ public class GSetLocalDeliveryIT extends
   }
 
   @Override
-  public GSet<Integer, Integer, Integer> getSet() {
-    return new GSet<>(new IntegerVersion(), null, getDeliveryChannel());
+  public CommutativeGSet<Integer, Integer, Integer> getSet() {
+    return new CommutativeGSet<>(new IntegerVersion(), null, getDeliveryChannel());
   }
 
   @Override
-  public LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, GSetState<Integer, Integer, Integer>> getDeliveryChannel() {
+  public LocalDeliveryChannel<Integer, Dot<Integer, Integer>, CommutativeGSetUpdate<Integer, Integer, Integer>> getDeliveryChannel() {
     return deliveryChannel;
   }
 
@@ -69,8 +69,8 @@ public class GSetLocalDeliveryIT extends
   }
 
   @Override
-  public void waitForDelivery(GSet<Integer, Integer, Integer> source,
-      GSet<Integer, Integer, Integer> destination) {
+  public void waitForDelivery(CommutativeGSet<Integer, Integer, Integer> source,
+      CommutativeGSet<Integer, Integer, Integer> destination) {
     // Do nothing, local delivery is synchrous.
   }
 

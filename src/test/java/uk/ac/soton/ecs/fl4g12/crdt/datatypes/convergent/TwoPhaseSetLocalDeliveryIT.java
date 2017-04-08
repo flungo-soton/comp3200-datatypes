@@ -30,18 +30,18 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Test the integration of {@linkplain GSet}s and the {@linkplain LocalDeliveryChannel} for various
- * operations. Ensures that the {@link GSet} is replicated as expected over the
+ * Test the integration of {@linkplain TwoPhaseSet}s and the {@linkplain LocalDeliveryChannel} for
+ * various operations. Ensures that the {@link TwoPhaseSet} is replicated as expected over the
  * {@linkplain LocalDeliveryChannel} and that the state converges to the expected state after a
  * series of operations.
  */
-public class GSetLocalDeliveryIT extends
-    GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
+public class TwoPhaseSetLocalDeliveryIT extends
+    GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, TwoPhaseSetState<Integer, Integer, Integer>, TwoPhaseSet<Integer, Integer, Integer>> {
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  private LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, GSetState<Integer, Integer, Integer>> deliveryChannel;
+  private LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel;
 
   @Before
   public void setupDeliveryChannel() {
@@ -54,12 +54,12 @@ public class GSetLocalDeliveryIT extends
   }
 
   @Override
-  public GSet<Integer, Integer, Integer> getSet() {
-    return new GSet<>(new IntegerVersion(), null, getDeliveryChannel());
+  public TwoPhaseSet<Integer, Integer, Integer> getSet() {
+    return new TwoPhaseSet<>(new IntegerVersion(), null, getDeliveryChannel());
   }
 
   @Override
-  public LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, GSetState<Integer, Integer, Integer>> getDeliveryChannel() {
+  public LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, TwoPhaseSetState<Integer, Integer, Integer>> getDeliveryChannel() {
     return deliveryChannel;
   }
 
@@ -69,9 +69,10 @@ public class GSetLocalDeliveryIT extends
   }
 
   @Override
-  public void waitForDelivery(GSet<Integer, Integer, Integer> source,
-      GSet<Integer, Integer, Integer> destination) {
+  public void waitForDelivery(TwoPhaseSet<Integer, Integer, Integer> source,
+      TwoPhaseSet<Integer, Integer, Integer> destination) {
     // Do nothing, local delivery is synchrous.
   }
+
 
 }
