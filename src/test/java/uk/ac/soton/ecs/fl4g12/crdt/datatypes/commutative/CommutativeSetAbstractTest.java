@@ -45,6 +45,21 @@ public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, 
     extends UpdatableSetAbstractTest<E, K, T, U, S> {
 
   @Override
+  protected boolean precedes(S updatable, U message) {
+    return updatable.getVersion().precedes(message.getVersion());
+  }
+
+  @Override
+  protected boolean precedes(U message1, U message2) {
+    return message1.getVersion().precedes(message2.getVersion());
+  }
+
+  @Override
+  protected int compare(U message1, U message2) {
+    return message1.compareTo(message2);
+  }
+
+  @Override
   protected void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
       U updateMessage) {
     // Overridden to support Dot vs Vector comparisons,

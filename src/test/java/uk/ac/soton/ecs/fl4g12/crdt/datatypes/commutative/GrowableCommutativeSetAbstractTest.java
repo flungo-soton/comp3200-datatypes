@@ -44,6 +44,21 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends GrowableSetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
     extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
 
+  @Override
+  protected boolean precedes(S updatable, U message) {
+    return updatable.getVersion().precedes(message.getVersion());
+  }
+
+  @Override
+  protected boolean precedes(U message1, U message2) {
+    return message1.getVersion().precedes(message2.getVersion());
+  }
+
+  @Override
+  protected int compare(U message1, U message2) {
+    return message1.compareTo(message2);
+  }
+
   public static <E, K, T extends Comparable<T>, U extends GrowableSetUpdateMessage<E, K, ? extends Version<T, ?, ?>>> void assertElementsMatch(
       Set<E> elements, U updateMessage) {
     assertEquals("Update element set should consist only of the new element(s)", elements,
@@ -79,4 +94,5 @@ public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Compara
   protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, U updateMessage) {
     assertElementsMatch(newElements, updateMessage);
   }
+
 }

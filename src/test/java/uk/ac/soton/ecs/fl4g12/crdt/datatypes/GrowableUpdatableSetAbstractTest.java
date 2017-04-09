@@ -26,12 +26,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
@@ -48,8 +51,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  *
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <T> the type of the timestamp within the {@link VersionVector}.
+ * @param <U> the type of {@link VersionedUpdateMessage} made from changes to the
+ *        {@link VersionedUpdatable} {@link Set}.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
 public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
@@ -58,7 +62,10 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
   private static final Logger LOGGER =
       Logger.getLogger(GrowableUpdatableSetAbstractTest.class.getName());
 
-  public static final int MAX_OPERATIONS = 10;
+  public static final int MAX_OPERATIONS = 500;
+
+  @Rule
+  public Timeout timeout = new Timeout(MAX_OPERATIONS * 10, TimeUnit.MILLISECONDS);
 
   @Captor
   public ArgumentCaptor<U> updateMessageCaptor;
@@ -67,6 +74,38 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
   public void setUpUpdateMessageCaptor() {
     MockitoAnnotations.initMocks(this);
   }
+
+  /**
+   * Test that the {@linkplain VersionedUpdatable} {@linkplain Set} precedes the
+   * {@linkplain VersionedUpdateMessage}.
+   *
+   * @param updatable the {@linkplain VersionedUpdatable} {@linkplain Set}.
+   * @param message the {@linkplain VersionedUpdateMessage}.
+   * @return {@code true} if the {@linkplain VersionedUpdatable} {@linkplain Set} precedes the
+   *         {@linkplain VersionedUpdateMessage}, {@code false} otherwise.
+   */
+  protected abstract boolean precedes(S updatable, U message);
+
+  /**
+   * Test that one {@linkplain VersionedUpdateMessage} precedes the other.
+   *
+   * @param message1 the 1st {@linkplain VersionedUpdateMessage}.
+   * @param message2 the 2nd {@linkplain VersionedUpdateMessage}.
+   * @return {@code true} if the 1st {@linkplain VersionedUpdateMessage} precedes the 2nd
+   *         {@linkplain VersionedUpdateMessage}, {@code false} otherwise.
+   */
+  protected abstract boolean precedes(U message1, U message2);
+
+  /**
+   * Compare two {@linkplain VersionedUpdateMessage} together.
+   *
+   * @param message1 the 1st {@linkplain VersionedUpdateMessage}.
+   * @param message2 the 2nd {@linkplain VersionedUpdateMessage}.
+   * @return the result of {@code message1.compareTo(message2)}.
+   * @see VersionedUpdateMessage#compareTo(Object) for the underlying comparison that should be
+   *      performed.
+   */
+  protected abstract int compare(U message1, U message2);
 
   /**
    * Get a {@link VersionedUpdateMessage} which adds the given elements to the set.
@@ -186,6 +225,48 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
    */
   protected void assertAdd_Duplicate(S set, E element) {
     // Do nothing by default
+  }
+
+  /**
+   * Check the order of the messages that are published to the {@linkplain DeliveryChannel} when
+   * using {@linkplain Set#add(Object)}.
+   */
+  @Test
+  public void testAdd_MessageOrder() {
+    LOGGER.log(Level.INFO, "testAdd_MessageOrder: "
+        + "Ensure that when an element is added, that the change is published to the DeliveryChannel.");
+    final S set = getSet();
+    final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+    final ArrayList<U> previousMessages = new ArrayList<>();
+
+    // Add initial element to generate first update message
+    set.add(getElement(0));
+    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+    U previousMessage = updateMessageCaptor.getValue();
+    previousMessages.add(previousMessage);
+
+    assertTrue("Initial message should be preceded by the the version of a new set.",
+        precedes(getSet(), previousMessage));
+
+    for (int i = 1; i < MAX_OPERATIONS; i++) {
+      set.add(getElement(i));
+      // Using times instead of resetting ensures that no async operations are taking place.
+      Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
+      U currentMessage = updateMessageCaptor.getValue();
+
+      // Compare to all previous messages
+      for (U message : previousMessages) {
+        assertEquals("Should only be preceded by previousMessage", message == previousMessage,
+            precedes(message, currentMessage));
+        assertTrue("All previous messages should come before this one",
+            compare(message, currentMessage) < 0);
+      }
+
+      // Update previousMessage(s)
+      previousMessage = currentMessage;
+      previousMessages.add(previousMessage);
+    }
   }
 
   /**
@@ -362,6 +443,48 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
    */
   protected void assertAddAll_Duplicate(S set, Collection<E> elements) {
     // Do nothing by default
+  }
+
+  /**
+   * Check the order of the messages that are published to the {@linkplain DeliveryChannel} when
+   * using {@linkplain Set#addAll(Collection)}.
+   */
+  @Test
+  public void testAddAll_MessageOrder() {
+    LOGGER.log(Level.INFO, "testAddAll_MessageOrder: "
+        + "Ensure that when element are added, that the change is published to the DeliveryChannel.");
+    final S set = getSet();
+    final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+    final ArrayList<U> previousMessages = new ArrayList<>();
+
+    // Add initial element to generate first update message
+    set.addAll(Arrays.asList(getElement(0), getElement(1), getElement(2)));
+    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+    U previousMessage = updateMessageCaptor.getValue();
+    previousMessages.add(previousMessage);
+
+    assertTrue("Initial message should be preceded by the the version of a new set.",
+        precedes(getSet(), previousMessage));
+
+    for (int i = 1; i < MAX_OPERATIONS; i++) {
+      set.addAll(Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
+      // Using times instead of resetting ensures that no async operations are taking place.
+      Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
+      U currentMessage = updateMessageCaptor.getValue();
+
+      // Compare to all previous messages
+      for (U message : previousMessages) {
+        assertEquals("Should only be preceded by previousMessage", message == previousMessage,
+            precedes(message, currentMessage));
+        assertTrue("All previous messages should come before this one",
+            compare(message, currentMessage) < 0);
+      }
+
+      // Update previousMessage(s)
+      previousMessage = currentMessage;
+      previousMessages.add(previousMessage);
+    }
   }
 
   /**

@@ -21,12 +21,14 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -169,6 +171,50 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    */
   protected void assertRemove_Duplicate(S set, E element) {
     // Do nothing by default
+  }
+
+  /**
+   * Check the order of the messages that are published to the {@linkplain DeliveryChannel} when
+   * using {@linkplain Set#remove(Object)}.
+   */
+  @Test
+  public void testRemove_MessageOrder() {
+    LOGGER.log(Level.INFO, "testRemove_MessageOrder: "
+        + "Ensure that when an element is removed, that the change is published to the DeliveryChannel.");
+    final S set = getSet();
+    final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+    // TODO: May need to add elements first to avoid problems with observed remove sets.
+
+    final ArrayList<U> previousMessages = new ArrayList<>();
+
+    // Add initial element to generate first update message
+    set.remove(getElement(0));
+    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+    U previousMessage = updateMessageCaptor.getValue();
+    previousMessages.add(previousMessage);
+
+    assertTrue("Initial message should be preceded by the the version of a new set.",
+        precedes(getSet(), previousMessage));
+
+    for (int i = 1; i < MAX_OPERATIONS; i++) {
+      set.remove(getElement(i));
+      // Using times instead of resetting ensures that no async operations are taking place.
+      Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
+      U currentMessage = updateMessageCaptor.getValue();
+
+      // Compare to all previous messages
+      for (U message : previousMessages) {
+        assertEquals("Should only be preceded by previousMessage", message == previousMessage,
+            precedes(message, currentMessage));
+        assertTrue("All previous messages should come before this one",
+            compare(message, currentMessage) < 0);
+      }
+
+      // Update previousMessage(s)
+      previousMessage = currentMessage;
+      previousMessages.add(previousMessage);
+    }
   }
 
   /**
@@ -465,6 +511,50 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    */
   protected void assertUpdate_Remove_Multiple(S set, U updateMessage) {
     // Do nothing by default
+  }
+
+  /**
+   * Check the order of the messages that are published to the {@linkplain DeliveryChannel} when
+   * using {@linkplain Set#removeAll(Collection)}.
+   */
+  @Test
+  public void testRemoveAll_MessageOrder() {
+    LOGGER.log(Level.INFO, "testRemoveAll_MessageOrder: "
+        + "Ensure that when element are removed, that the change is published to the DeliveryChannel.");
+    final S set = getSet();
+    final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+
+    // TODO: May need to add elements first to avoid problems with observed remove sets.
+
+    final ArrayList<U> previousMessages = new ArrayList<>();
+
+    // Add initial element to generate first update message
+    set.removeAll(Arrays.asList(getElement(0), getElement(1), getElement(2)));
+    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+    U previousMessage = updateMessageCaptor.getValue();
+    previousMessages.add(previousMessage);
+
+    assertTrue("Initial message should be preceded by the the version of a new set.",
+        precedes(getSet(), previousMessage));
+
+    for (int i = 1; i < MAX_OPERATIONS; i++) {
+      set.removeAll(Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
+      // Using times instead of resetting ensures that no async operations are taking place.
+      Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
+      U currentMessage = updateMessageCaptor.getValue();
+
+      // Compare to all previous messages
+      for (U message : previousMessages) {
+        assertEquals("Should only be preceded by previousMessage", message == previousMessage,
+            precedes(message, currentMessage));
+        assertTrue("All previous messages should come before this one",
+            compare(message, currentMessage) < 0);
+      }
+
+      // Update previousMessage(s)
+      previousMessage = currentMessage;
+      previousMessages.add(previousMessage);
+    }
   }
 
   // TODO: test retainAll and clear

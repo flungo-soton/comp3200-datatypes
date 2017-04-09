@@ -43,6 +43,21 @@ public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U
     extends UpdatableSetAbstractTest<E, K, T, U, S> {
 
   @Override
+  protected boolean precedes(S updatable, U message) {
+    return updatable.getVersion().precedes(message.getVersion());
+  }
+
+  @Override
+  protected boolean precedes(U message1, U message2) {
+    return message1.getVersion().precedes(message2.getVersion());
+  }
+
+  @Override
+  protected int compare(U message1, U message2) {
+    return message1.compareTo(message2);
+  }
+
+  @Override
   protected void assertAdd(S set, E element, U updateMessage) {
     assertSetStateContains(updateMessage, element);
   }
