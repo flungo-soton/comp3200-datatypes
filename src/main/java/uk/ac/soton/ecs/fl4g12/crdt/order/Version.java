@@ -75,15 +75,18 @@ public interface Version<T, V1 extends Version<T, V1, ?>, V2 extends V1> extends
   boolean happenedBefore(V1 version);
 
   /**
-   * Determine if this {@linkplain Version} happens exactly one increment before the provided one.
-   * If this returns true, then there should exist no version which happened-before this version but
-   * happened-after the provided one.
+   * Determine if this {@linkplain Version} precedes the provided one. If this {@linkplain Version}
+   * precedes the provided one, then there should exists no {@linkplain Version} which
+   * happened-after this {@linkplain Version} but happened-before the provided one.
+   *
+   * Precedence can be used to provide causal exactly-once delivery of messages providing that the
+   * version encapsulates the causality of the message, and there exists a message for every unit
+   * mutation of the {@linkplain Version}.
    *
    * @param version the {@linkplain Version} to compare against.
-   * @return {@code true} if this {@linkplain Version} directly proceeds the provided
-   *         {@linkplain Version} such that no other {@linkplain Version} exists which
-   *         happened-before this version but happened-after the provided one, {@code false}
-   *         otherwise.
+   * @return {@code true} if this {@linkplain Version} precedes the provided {@linkplain Version}
+   *         such that no other {@linkplain Version} exists which happened-after this version but
+   *         happened-before the provided one, {@code false} otherwise.
    */
   boolean precedes(V1 version);
 

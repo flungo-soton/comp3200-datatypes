@@ -166,10 +166,18 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     return get(dot.getIdentifier()).compareTo(dot.get()) < 0;
   }
 
-  private T successor(T timestamp) {
+  /**
+   * Get the {@linkplain LogicalVersion} of the given timestamp, assuming zero if null.
+   *
+   * @param timestamp the timestamp to get the {@linkplain LogicalVersion} for.
+   * @return the {@linkplain LogicalVersion} of the given timestamp.
+   */
+  private LogicalVersion<T, ?> logicalVersionOf(T timestamp) {
     LogicalVersion<T, ?> version = zeroVersion.copy();
-    version.sync(timestamp);
-    return version.successor();
+    if (timestamp != null) {
+      version.sync(timestamp);
+    }
+    return version;
   }
 
   @Override
@@ -184,22 +192,15 @@ public abstract class AbstractVersionVector<K, T extends Comparable<T>>
     boolean precedes = false;
     for (K id : identifiers) {
       // Get the local and other value for the current ID.
-      T localValue = local.get(id);
-      if (localValue == null) {
-        // If the node has not been seen locally, then its value is implicitly zero.
-        localValue = zero;
-      }
-      T otherValue = other.get(id);
-      if (otherValue == null) {
-        // If the node has not been seen by the other, then its value is implicitly zero.
-        otherValue = zero;
-      }
+      LogicalVersion<T, ?> localValue = logicalVersionOf(local.get(id));
+      LogicalVersion<T, ?> otherValue = logicalVersionOf(other.get(id));
 
-      if (localValue.equals(otherValue)) {
+      // If localValue is greater than (happened-after) or identical, continue
+      if (!localValue.happenedBefore(otherValue)) {
         continue;
       }
 
-      if (successor(localValue).equals(otherValue)) {
+      if (localValue.precedes(otherValue)) {
         if (precedes) {
           // Two elements precede, therefor the vector does not.
           return false;

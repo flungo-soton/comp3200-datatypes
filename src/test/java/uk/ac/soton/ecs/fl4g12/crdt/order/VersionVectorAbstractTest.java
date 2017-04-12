@@ -1401,6 +1401,448 @@ public abstract class VersionVectorAbstractTest<K, V extends VersionVector<K, In
   public void testHappenedBefore_9() {}
 
   /**
+   * Test precedes against a example vector a0.
+   */
+  @Test
+  public void testPrecedes_examples_a0() {
+    VersionVector<K, Integer> instance = getVersion("a0");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(true, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector a1.
+   */
+  @Test
+  public void testPrecedes_examples_a1() {
+    VersionVector<K, Integer> instance = getVersion("a1");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(true, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(true, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector a2.
+   */
+  @Test
+  public void testPrecedes_examples_a2() {
+    VersionVector<K, Integer> instance = getVersion("a2");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(true, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector a3.
+   */
+  @Test
+  public void testPrecedes_examples_a3() {
+    VersionVector<K, Integer> instance = getVersion("a3");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(true, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector a4.
+   */
+  @Test
+  public void testPrecedes_examples_a4() {
+    VersionVector<K, Integer> instance = getVersion("a4");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector b0.
+   */
+  @Test
+  public void testPrecedes_examples_b0() {
+    VersionVector<K, Integer> instance = getVersion("b0");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(true, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector b1.
+   */
+  @Test
+  public void testPrecedes_examples_b1() {
+    VersionVector<K, Integer> instance = getVersion("b1");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(true, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector b2.
+   */
+  @Test
+  public void testPrecedes_examples_b2() {
+    VersionVector<K, Integer> instance = getVersion("b2");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(true, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(true, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector b3.
+   */
+  @Test
+  public void testPrecedes_examples_b3() {
+    VersionVector<K, Integer> instance = getVersion("b3");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(true, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(true, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector b4.
+   */
+  @Test
+  public void testPrecedes_examples_b4() {
+    VersionVector<K, Integer> instance = getVersion("b4");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(true, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(true, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector b5.
+   */
+  @Test
+  public void testPrecedes_examples_b5() {
+    VersionVector<K, Integer> instance = getVersion("b5");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(true, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector c0.
+   */
+  @Test
+  public void testPrecedes_examples_c0() {
+    VersionVector<K, Integer> instance = getVersion("c0");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(true, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector c1.
+   */
+  @Test
+  public void testPrecedes_examples_c1() {
+    VersionVector<K, Integer> instance = getVersion("c1");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(true, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector c2.
+   */
+  @Test
+  public void testPrecedes_examples_c2() {
+    VersionVector<K, Integer> instance = getVersion("c2");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(true, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(true, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector c3.
+   */
+  @Test
+  public void testPrecedes_examples_c3() {
+    VersionVector<K, Integer> instance = getVersion("c3");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(true, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(false, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector c4.
+   */
+  @Test
+  public void testPrecedes_examples_c4() {
+    VersionVector<K, Integer> instance = getVersion("c4");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(true, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(true, instance.precedes(getVersion("c5")));
+  }
+
+  /**
+   * Test precedes against a example vector c5.
+   */
+  @Test
+  public void testPrecedes_examples_c5() {
+    VersionVector<K, Integer> instance = getVersion("c5");
+
+    assertEquals(false, instance.precedes(getVersion("a0")));
+    assertEquals(false, instance.precedes(getVersion("a1")));
+    assertEquals(false, instance.precedes(getVersion("a2")));
+    assertEquals(true, instance.precedes(getVersion("a3")));
+    assertEquals(false, instance.precedes(getVersion("a4")));
+    assertEquals(false, instance.precedes(getVersion("b0")));
+    assertEquals(false, instance.precedes(getVersion("b1")));
+    assertEquals(false, instance.precedes(getVersion("b2")));
+    assertEquals(false, instance.precedes(getVersion("b3")));
+    assertEquals(false, instance.precedes(getVersion("b4")));
+    assertEquals(false, instance.precedes(getVersion("b5")));
+    assertEquals(false, instance.precedes(getVersion("c0")));
+    assertEquals(false, instance.precedes(getVersion("c1")));
+    assertEquals(false, instance.precedes(getVersion("c2")));
+    assertEquals(false, instance.precedes(getVersion("c3")));
+    assertEquals(false, instance.precedes(getVersion("c4")));
+    assertEquals(false, instance.precedes(getVersion("c5")));
+  }
+
+  /**
    * Test concurrentWith against a example vector a0.
    */
   @Test
