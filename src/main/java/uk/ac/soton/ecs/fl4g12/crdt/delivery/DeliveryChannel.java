@@ -49,7 +49,12 @@ public interface DeliveryChannel<K, U extends UpdateMessage<K, ?>> {
 
   /**
    * Publish messages via this {@linkplain DeliveryChannel}. The messages will be delivered reliably
-   * in natural order to all other nodes.
+   * in natural order to all other nodes. This method should be shortlived and prepare the message
+   * for delivery asynchronously so that the caller does not block other operations.
+   *
+   * If this method throws any {@link Throwable} then the behaviour of the instance calling is
+   * undefined. If unable to deliver immediately, for any reason, the message should be reliably
+   * cached until it can be delivered.
    *
    * @param message the messages to send via the {@linkplain DeliveryChannel}.
    */

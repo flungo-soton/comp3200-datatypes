@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -24,21 +24,21 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUpdateException;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DottedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Abstract base class for {@linkplain CmRDT}s where the {@linkplain UpdateMessage} uses a
- * {@linkplain Dot}. Messages are not applied in causal order but exactly-once delivery is
- * respected.
+ * Abstract base class for {@linkplain CmRDT}s. Provides the semantics to ensure exactly-once
+ * delivery of {@link VersionedUpdateMessage}s.
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of timestamps which are used by each node.
  * @param <U> the type of updates which this object can be updated by.
  */
-public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends DottedUpdateMessage<K, T>>
+public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ?>>
     extends AbstractVersionedUpdatable<K, T, U> implements CmRDT<K, U> {
 
   public AbstractCmRDT(VersionVector<K, T> initialVersion, K identifier,
@@ -46,28 +46,66 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends Dotted
     super(initialVersion, identifier, deliveryChannel);
   }
 
+  /**
+   * Determine if the {@linkplain VersionVector} of this {@linkplain VersionedUpdatable} precedes
+   * the {@linkplain Version} in the {@linkplain VersionedUpdateMessage}.
+   *
+   * @param message the {@linkplain VersionedUpdateMessage} to check.
+   * @return {@code true} if the {@link VersionVector} of this {@linkplain VersionedUpdatable}
+   *         precedes the version in the {@link VersionedUpdateMessage}, {@code false} otherwise.
+   */
+  protected abstract boolean precedes(U message);
+
+  /**
+   * Determine if the provided {@linkplain VersionedUpdateMessage} has already been applied.
+   * Typically this would mean that the {@linkplain Version} in the
+   * {@linkplain VersionedUpdateMessage} happened-before or is identical to the
+   * {@linkplain VersionVector} of this {@linkplain VersionedUpdatable}
+   *
+   * @param message the {@linkplain VersionedUpdateMessage} to check.
+   * @return {@code true} if the {@linkplain VersionedUpdateMessage} has already been applied,
+   *         {@code false} otherwise.
+   */
+  protected abstract boolean hasBeenApplied(U message);
+
+  /**
+   * Synchronise the {@link VersionVector} of this {@linkplain VersionedUpdatable} with the
+   * {@linkplain Version} in the {@linkplain VersionedUpdateMessage}.
+   *
+   * @param message the {@linkplain VersionedUpdateMessage} to check.
+   */
+  protected abstract void sync(U message);
+
   @Override
   public synchronized final void update(U message) throws DeliveryUpdateException {
-    // Has the message already been delivered?
-    if (message.getVersion().happenedBefore(version) || message.getVersion().identical(version)) {
-      // Nothing to do, update message is in the past.
-      return;
-    }
-
     // Is this the next message?
-    if (!version.precedes(message.getVersion())) {
+    // Checking this first saves checking happenedBefore and identical for most messages
+    // Precedence implies that the message has not happened before and is not identical.
+    // a.precedes(b) -> a.happenedBefore(b) -> !b.happenedBefore(a) && !b.identical(a)
+    if (!precedes(message)) {
+      // Has the message already been applied?
+      if (hasBeenApplied(message)) {
+        // Nothing to do, update message is in the past.
+        return;
+      }
+      // The message is being delivered too early - wait for another message.
       throw new DeliveryUpdateException(this, message, "Out of order delivery");
     }
 
     // Apply the update
     applyUpdate(message);
-    version.sync(message.getVersion());
+    sync(message);
   }
 
   /**
    * Apply the update contained in the message where all preconditions relating to the order of
    * message delivery have already been checked. The version will be synchronised automatically
    * after this method returns as long as no exceptions are thrown.
+   *
+   * On success (no {@link Throwable} being thrown) the local {@link VersionVector} of this
+   * {@link VersionedUpdatable} will be synchronised with the {@link UpdateMessage}'s
+   * {@link Version}. If this fails then the state of the object should be the same as before the
+   * update was applied.
    *
    * @param message the {@link UpdateMessage} to apply.
    */

@@ -48,6 +48,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * the {@link Version} of the {@link Updatable} while synchronized to ensure that no concurrent
  * updates are applied.
  *
+ * If the delivery of a message fails for any reason, delivery should be re-attempted until
+ * successful. To handle node failure, any cached messages should be persisted such that delivery
+ * can be gracefully recovered.
+ *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
  * @param <U> The type of updates sent via the delivery channel.
  */

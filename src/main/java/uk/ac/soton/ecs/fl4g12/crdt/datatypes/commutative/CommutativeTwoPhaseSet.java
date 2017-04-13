@@ -45,7 +45,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
  * When a concurrent add/remove occurs, this implementation is designed as a remove-wins
  * implementation.
  *
- * The ordering enforced by the {@link AbstractCmRDT} ensures that the state of the local object
+ * The ordering enforced by the {@link AbstractDottedCmRDT} ensures that the state of the local object
  * cannot be changed by an update message that is out of order for the node it is being delivered
  * from and as such, that no messages have been missed.
  *
@@ -59,7 +59,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
     institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
     pages = {"22", "23"})
 public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
-    extends AbstractCmRDT<K, T, CommutativeTwoPhaseSetUpdate<E, K, T>> implements Set<E> {
+    extends AbstractDottedCmRDT<K, T, CommutativeTwoPhaseSetUpdate<E, K, T>> implements Set<E> {
 
   private final Set<E> additions = new HashSet<>();
   private final Set<E> removals = new HashSet<>();

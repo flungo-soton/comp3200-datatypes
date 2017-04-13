@@ -39,7 +39,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
  * the new elements lowering the network overhead of updates but it requires a
  * {@link ReliableDeliveryChannel}.
  *
- * The ordering enforced by the {@link AbstractCmRDT} ensures that the state of the local object
+ * The ordering enforced by the {@link AbstractDottedCmRDT} ensures that the state of the local object
  * cannot be changed by an update message that is out of order for the node it is being delivered
  * from and as such, that no messages have been missed.
  *
@@ -53,7 +53,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
     institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
     pages = {"21", "22"})
 public final class CommutativeGSet<E, K, T extends Comparable<T>>
-    extends AbstractCmRDT<K, T, CommutativeGSetUpdate<E, K, T>> implements Set<E> {
+    extends AbstractDottedCmRDT<K, T, CommutativeGSetUpdate<E, K, T>> implements Set<E> {
 
   private final Set<E> state = new HashSet<>();
 
