@@ -67,10 +67,4 @@ public class GSetLocalDeliveryIT extends
     return i;
   }
 
-  @Override
-  public void waitForDelivery(GSet<Integer, Integer, Integer> source,
-      GSet<Integer, Integer, Integer> destination) {
-    // Do nothing, local delivery is synchrous.
-  }
-
 }

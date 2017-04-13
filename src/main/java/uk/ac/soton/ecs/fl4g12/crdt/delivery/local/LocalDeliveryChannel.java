@@ -27,11 +27,11 @@ import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 
 /**
  * A delivery channel which delivers messages between local instances. This is not useful in
@@ -91,6 +91,31 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
     deliverUpdates(); // TODO: Async schedule
   }
 
+  @Override
+  public boolean hasPendingDeliveries() {
+    for (PriorityQueue<U> queue : queues.values()) {
+      synchronized (queue) {
+        if (!queue.isEmpty()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean hasPendingDeliveries(K id) {
+    PriorityQueue<U> queue = queues.get(id);
+    synchronized (queue) {
+      return !queue.isEmpty();
+    }
+  }
+
+  @Override
+  public boolean hasPendingMessages() {
+    return hasPendingDeliveries();
+  }
+
   /**
    * Deliver queued {@linkplain UpdateMessage}s to their respective {@linkplain Updatable}.
    */
@@ -107,7 +132,7 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
           } catch (Throwable ex) {
             LOGGER.log(Level.SEVERE,
                 "Throwable caught while trying to deliver message to " + updatable, ex);
-            LOGGER.log(Level.INFO, "Requeuing message for deliver later: {0}", message);
+            LOGGER.log(Level.INFO, "Requeuing message for delivery later: {0}", message);
             queue.add(message);
             LOGGER.log(Level.INFO,
                 "No further messages will be delivered to {0} in this delivery cycle", updatable);
@@ -116,6 +141,9 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
           }
         }
       }
+    }
+    synchronized (this) {
+      notifyAll();
     }
   }
 

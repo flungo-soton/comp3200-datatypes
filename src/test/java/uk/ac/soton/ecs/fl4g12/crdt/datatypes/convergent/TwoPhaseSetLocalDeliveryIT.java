@@ -67,11 +67,4 @@ public class TwoPhaseSetLocalDeliveryIT extends
     return i;
   }
 
-  @Override
-  public void waitForDelivery(TwoPhaseSet<Integer, Integer, Integer> source,
-      TwoPhaseSet<Integer, Integer, Integer> destination) {
-    // Do nothing, local delivery is synchrous.
-  }
-
-
 }

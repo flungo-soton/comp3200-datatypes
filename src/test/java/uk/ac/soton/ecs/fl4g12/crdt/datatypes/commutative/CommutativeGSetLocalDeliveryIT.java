@@ -67,10 +67,4 @@ public class CommutativeGSetLocalDeliveryIT extends
     return i;
   }
 
-  @Override
-  public void waitForDelivery(CommutativeGSet<Integer, Integer, Integer> source,
-      CommutativeGSet<Integer, Integer, Integer> destination) {
-    // Do nothing, local delivery is synchrous.
-  }
-
 }

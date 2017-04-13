@@ -68,10 +68,4 @@ public class CommutativeTwoPhaseSetLocalDeliveryIT extends
     return i;
   }
 
-  @Override
-  public void waitForDelivery(CommutativeTwoPhaseSet<Integer, Integer, Integer> source,
-      CommutativeTwoPhaseSet<Integer, Integer, Integer> destination) {
-    // Do nothing, local delivery is synchrous.
-  }
-
 }

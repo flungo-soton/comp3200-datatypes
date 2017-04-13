@@ -64,13 +64,4 @@ public final class LocalDeliveryChannelTest extends
     channels.clear();
   }
 
-  @Override
-  public void waitForDelivery(
-      LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>> source,
-      LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>> destinations) {
-    // Do nothing, local delivery is synchrous.
-  }
-
-
-
 }

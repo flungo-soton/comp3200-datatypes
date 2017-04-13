@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUtils;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
@@ -78,7 +79,10 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
    * @param source the source of updates.
    * @param destination the destination.
    */
-  public abstract void waitForDelivery(S source, S destination);
+  public final void waitForDelivery(S source, S destination) {
+    DeliveryUtils.waitForDelivery(source.getDeliveryChannel(), destination.getIdentifier());
+    DeliveryUtils.waitForUpdates(destination.getDeliveryChannel());
+  }
 
   @Test
   public void test_Add_TwoSets_OneElement() throws Exception {

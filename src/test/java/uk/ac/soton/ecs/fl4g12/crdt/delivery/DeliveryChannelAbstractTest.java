@@ -21,10 +21,12 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
+import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
@@ -40,6 +42,9 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
+
+  @Rule
+  public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
 
   /**
    * Gets an identifier. This should be a bijection such that for any unique value of {@code i}
@@ -79,11 +84,10 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
    */
   public abstract C getDeliveryChannel(Channel channel, int i);
 
-  public abstract void waitForDelivery(C source, C destination);
-
-  private void waitForDelivery(C source, C... destinations) {
+  protected void waitForDelivery(C source, C... destinations) {
+    DeliveryUtils.waitForDelivery(source);
     for (C destination : destinations) {
-      waitForDelivery(source, destination);
+      DeliveryUtils.waitForUpdates(destination);
     }
   }
 

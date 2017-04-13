@@ -56,8 +56,41 @@ public interface DeliveryChannel<K, U extends UpdateMessage<K, ?>> {
    * undefined. If unable to deliver immediately, for any reason, the message should be reliably
    * cached until it can be delivered.
    *
+   * After a successful delivery, {@link Object#notifyAll()} should be called.
+   *
    * @param message the messages to send via the {@linkplain DeliveryChannel}.
    */
   void publish(U message); // TODO: Move this to ReliableDeliveryChannel
+
+  /**
+   * Determine if there are any messages waiting to be delivered. If the
+   * {@linkplain DeliveryChannel} knows of any messages which have not been acknowledged then this
+   * method should return {@code true}.
+   *
+   * @return {@code true} if there are any messages which have not been successfully delivered to
+   *         its destination, {@code false} otherwise.
+   */
+  boolean hasPendingDeliveries();
+
+  /**
+   * Determine if there are any messages waiting to be delivered to node identified by the provided
+   * identifier. If the {@linkplain DeliveryChannel} knows of any messages which have not been
+   * acknowledged then this method should return {@code true}.
+   *
+   *
+   * @param id the identifier of the message destination.
+   * @return {@code true} if there are any messages which have not been successfully delivered to
+   *         its destination, {@code false} otherwise.
+   */
+  boolean hasPendingDeliveries(K id);
+
+  /**
+   * Determine if there are any messages not yet applied to the {@linkplain Updatable} which this
+   * {@linkplain DeliveryChannel} acts for.
+   *
+   * @return {@code true} if there are any messages which have not been successfully applied to the
+   *         {@link Updatable} which this channel acts for, {@code false} otherwise.
+   */
+  boolean hasPendingMessages();
 
 }
