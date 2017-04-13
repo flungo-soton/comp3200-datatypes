@@ -32,7 +32,6 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * A delivery channel which delivers messages between local instances. This is not useful in
@@ -42,8 +41,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
  * @param <U> The type of updates sent via the delivery channel.
  */
-public class LocalDeliveryChannel<K, V extends Version, U extends VersionedUpdateMessage<K, V>>
-    implements CausalDeliveryChannel<K, V, U> {
+public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
+    implements CausalDeliveryChannel<K, U> {
 
   private static final Logger LOGGER = Logger.getLogger(LocalDeliveryChannel.class.getName());
 

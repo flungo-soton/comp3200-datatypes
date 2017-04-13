@@ -27,13 +27,12 @@ import org.junit.After;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannelAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannelAbstractTest.CausalTestUpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LamportTimestamp;
 
 /**
  * Tests for {@link LocalDeliveryChannel}.
  */
 public final class LocalDeliveryChannelTest extends
-    CausalDeliveryChannelAbstractTest<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>, LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>>> {
+    CausalDeliveryChannelAbstractTest<Integer, CausalTestUpdateMessage<Integer>, LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>>> {
 
   @Override
   public Integer getIdentifier(int i) {
@@ -45,16 +44,16 @@ public final class LocalDeliveryChannelTest extends
     return Mockito.spy(new CausalTestUpdateMessage(id, order));
   }
 
-  private final Map<Channel, LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>>> channels =
+  private final Map<Channel, LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>>> channels =
       new EnumMap<>(Channel.class);
 
   @Override
-  public synchronized LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>> getDeliveryChannel(
+  public synchronized LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>> getDeliveryChannel(
       Channel channel, int i) {
     if (channels.containsKey(channel)) {
       return channels.get(channel);
     }
-    LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>> deliveryChannel =
+    LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>> deliveryChannel =
         new LocalDeliveryChannel<>(new TestIdentifierFactory());
     channels.put(channel, deliveryChannel);
     return deliveryChannel;
@@ -67,8 +66,8 @@ public final class LocalDeliveryChannelTest extends
 
   @Override
   public void waitForDelivery(
-      LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>> source,
-      LocalDeliveryChannel<Integer, LamportTimestamp<Integer>, CausalTestUpdateMessage<Integer>> destinations) {
+      LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>> source,
+      LocalDeliveryChannel<Integer, CausalTestUpdateMessage<Integer>> destinations) {
     // Do nothing, local delivery is synchrous.
   }
 

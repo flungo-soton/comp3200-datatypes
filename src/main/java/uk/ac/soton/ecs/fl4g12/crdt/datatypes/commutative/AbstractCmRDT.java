@@ -30,14 +30,16 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * Abstract base class for {@linkplain CmRDT}s.
+ * Abstract base class for {@linkplain CmRDT}s where the {@linkplain UpdateMessage} uses a
+ * {@linkplain Dot}. Messages are not applied in causal order but exactly-once delivery is
+ * respected.
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of timestamps which are used by each node.
  * @param <U> the type of updates which this object can be updated by.
  */
 public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends DottedUpdateMessage<K, T>>
-    extends AbstractVersionedUpdatable<K, T, U> implements CmRDT<K, T, Dot<K, T>, U> {
+    extends AbstractVersionedUpdatable<K, T, U> implements CmRDT<K, U> {
 
   public AbstractCmRDT(VersionVector<K, T> initialVersion, K identifier,
       DeliveryChannel<K, U> deliveryChannel) {
@@ -47,19 +49,19 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends Dotted
   @Override
   public synchronized final void update(U message) throws DeliveryUpdateException {
     // Has the message already been delivered?
-    if (message.getDot().happenedBefore(version) || message.getDot().identical(version)) {
+    if (message.getVersion().happenedBefore(version) || message.getVersion().identical(version)) {
       // Nothing to do, update message is in the past.
       return;
     }
 
     // Is this the next message?
-    if (!version.precedes(message.getDot())) {
+    if (!version.precedes(message.getVersion())) {
       throw new DeliveryUpdateException(this, message, "Out of order delivery");
     }
 
     // Apply the update
     applyUpdate(message);
-    version.sync(message.getDot());
+    version.sync(message.getVersion());
   }
 
   /**

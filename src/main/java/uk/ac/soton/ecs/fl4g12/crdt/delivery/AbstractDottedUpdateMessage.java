@@ -22,7 +22,6 @@
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
 import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 
 /**
  * Abstract implementation of {@linkplain DottedUpdateMessage}.
@@ -42,15 +41,6 @@ public class AbstractDottedUpdateMessage<K, T extends Comparable<T>>
    */
   public AbstractDottedUpdateMessage(Dot<K, T> dot) {
     super(dot.getIdentifier(), dot);
-  }
-
-  /**
-   * Gets the {@linkplain LogicalVersion}, cast to a {@linkplain Dot}.
-   *
-   * @return the {@link LogicalVersion}, cast to a {@link Dot}.
-   */
-  public Dot<K, T> getDot() {
-    return (Dot<K, T>) getVersion();
   }
 
 }

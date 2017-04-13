@@ -23,17 +23,13 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CRDT;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DottedUpdateMessage;
-import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Interface for Commutative Replicated Data Types.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <T> the type of the timestamp used in the {@link Version}.
- * @param <V> the type of the {@link Version}
  * @param <U> the type of updates which this object can be updated by.
  */
-public interface CmRDT<K, T extends Comparable<T>, V extends Version<T, ? super V, V>, U extends DottedUpdateMessage<K, T>>
-    extends CRDT<K, U> {
+public interface CmRDT<K, U extends DottedUpdateMessage<K, ?>> extends CRDT<K, U> {
 
 }

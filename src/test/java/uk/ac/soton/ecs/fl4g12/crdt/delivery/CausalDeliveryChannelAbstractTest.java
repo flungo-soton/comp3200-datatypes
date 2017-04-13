@@ -23,17 +23,15 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LamportTimestamp;
-import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
  * Abstract tests for {@linkplain CausalDeliveryChannel} implementations.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <V> The type of the {@link Version} used in the {@link VersionedUpdateMessage}.
  * @param <U> The type of updates sent via the delivery channel.
  * @param <C> the type of the {@linkplain DeliveryChannel} to be tested.
  */
-public abstract class CausalDeliveryChannelAbstractTest<K, V extends Version, U extends VersionedUpdateMessage<K, V>, C extends CausalDeliveryChannel<K, V, U>>
+public abstract class CausalDeliveryChannelAbstractTest<K, U extends VersionedUpdateMessage<K, ?>, C extends CausalDeliveryChannel<K, U>>
     extends DeliveryChannelAbstractTest<K, U, C> {
 
   /**

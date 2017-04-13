@@ -27,7 +27,6 @@ import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractIT;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.local.LocalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
  * Test the integration of {@linkplain GSet}s and the {@linkplain LocalDeliveryChannel} for various
@@ -41,7 +40,7 @@ public class GSetLocalDeliveryIT extends
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  private LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, GSetState<Integer, Integer, Integer>> deliveryChannel;
+  private LocalDeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel;
 
   @Before
   public void setupDeliveryChannel() {
@@ -59,7 +58,7 @@ public class GSetLocalDeliveryIT extends
   }
 
   @Override
-  public LocalDeliveryChannel<Integer, VersionVector<Integer, Integer>, GSetState<Integer, Integer, Integer>> getDeliveryChannel() {
+  public LocalDeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> getDeliveryChannel() {
     return deliveryChannel;
   }
 

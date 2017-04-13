@@ -33,8 +33,6 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  * @param <T> the type of the timestamp.
  */
 public interface DottedUpdateMessage<K, T extends Comparable<T>>
-    extends UpdateMessage<K, VersionedUpdateMessage<K, Dot<K, T>>> {
-
-  Dot<K, T> getDot();
+    extends VersionedUpdateMessage<K, Dot<K, T>> {
 
 }

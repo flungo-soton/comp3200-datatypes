@@ -30,7 +30,6 @@ import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSet;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -70,7 +69,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeGSet(VersionVector<K, T> initialVersion, K identifier,
-      CausalDeliveryChannel<K, Dot<K, T>, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
+      CausalDeliveryChannel<K, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -85,7 +84,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeGSet(LogicalVersion<T, ?> zero, K identifier,
-      CausalDeliveryChannel<K, Dot<K, T>, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
+      CausalDeliveryChannel<K, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 

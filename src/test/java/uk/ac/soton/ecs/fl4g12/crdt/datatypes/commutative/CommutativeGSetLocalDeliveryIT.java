@@ -26,7 +26,6 @@ import org.junit.Before;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractIT;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.local.LocalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 
 /**
@@ -41,7 +40,7 @@ public class CommutativeGSetLocalDeliveryIT extends
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  private LocalDeliveryChannel<Integer, Dot<Integer, Integer>, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel;
+  private LocalDeliveryChannel<Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel;
 
   @Before
   public void setupDeliveryChannel() {
@@ -59,7 +58,7 @@ public class CommutativeGSetLocalDeliveryIT extends
   }
 
   @Override
-  public LocalDeliveryChannel<Integer, Dot<Integer, Integer>, CommutativeGSetUpdate<Integer, Integer, Integer>> getDeliveryChannel() {
+  public LocalDeliveryChannel<Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> getDeliveryChannel() {
     return deliveryChannel;
   }
 
