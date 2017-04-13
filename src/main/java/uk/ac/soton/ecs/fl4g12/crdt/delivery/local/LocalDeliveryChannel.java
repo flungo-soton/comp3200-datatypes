@@ -26,12 +26,12 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 
 /**
  * A delivery channel which delivers messages between local instances. This is not useful in
@@ -42,7 +42,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
  * @param <U> The type of updates sent via the delivery channel.
  */
 public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
-    implements CausalDeliveryChannel<K, U> {
+    implements ReliableDeliveryChannel<K, U> {
 
   private static final Logger LOGGER = Logger.getLogger(LocalDeliveryChannel.class.getName());
 

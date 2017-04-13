@@ -48,10 +48,11 @@ public interface DeliveryChannel<K, U extends UpdateMessage<K, ?>> {
   K register(Updatable<K, U> updatable) throws IllegalStateException;
 
   /**
-   * Publish messages via the delivery channel. The messages will be delivered reliably to all other
-   * nodes.
+   * Publish messages via this {@linkplain DeliveryChannel}. The messages will be delivered reliably
+   * in natural order to all other nodes.
    *
    * @param message the messages to send via the {@linkplain DeliveryChannel}.
    */
-  void publish(U message);
+  void publish(U message); // TODO: Move this to ReliableDeliveryChannel
+
 }

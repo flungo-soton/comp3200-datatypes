@@ -31,16 +31,16 @@ import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IllegalInsertionException;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.SetUpdateMessage.Operation;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSet;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 
 /**
  * A commutative grow-only set. As a commutative implementation, the update messages only contain
  * the new elements lowering the network overhead of updates but it requires a
- * {@linkplain CausalDeliveryChannel}.
+ * {@link ReliableDeliveryChannel}.
  *
  * When a concurrent add/remove occurs, this implementation is designed as a remove-wins
  * implementation.
@@ -76,7 +76,7 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeTwoPhaseSet(VersionVector<K, T> initialVersion, K identifier,
-      CausalDeliveryChannel<K, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
+      ReliableDeliveryChannel<K, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -91,7 +91,7 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeTwoPhaseSet(LogicalVersion<T, ?> zero, K identifier,
-      CausalDeliveryChannel<K, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
+      ReliableDeliveryChannel<K, CommutativeTwoPhaseSetUpdate<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 

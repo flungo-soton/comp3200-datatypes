@@ -24,10 +24,10 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableSetAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 
 /**
  * Tests the {@linkplain CommutativeGSetUpdate} implementation as a {@linkplain Set}.
@@ -39,8 +39,8 @@ public final class CommutativeGSetTest
       new IncrementalIntegerIdentifierFactory();
 
   public static CommutativeGSet<Integer, Integer, Integer> getCommutativeGSet() {
-    CausalDeliveryChannel<Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(CausalDeliveryChannel.class);
+    ReliableDeliveryChannel<Integer, CommutativeGSetUpdate<Integer, Integer, Integer>> deliveryChannel =
+        Mockito.mock(ReliableDeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
         .register(Mockito.any(Updatable.class));
     return new CommutativeGSet<>(new IntegerVersion(), null, deliveryChannel);

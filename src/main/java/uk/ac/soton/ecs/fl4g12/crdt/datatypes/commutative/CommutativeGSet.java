@@ -28,16 +28,16 @@ import java.util.Set;
 import org.openimaj.citation.annotation.Reference;
 import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSet;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.CausalDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 
 /**
  * A commutative grow-only set. As a commutative implementation, the update messages only contain
  * the new elements lowering the network overhead of updates but it requires a
- * {@linkplain CausalDeliveryChannel}.
+ * {@link ReliableDeliveryChannel}.
  *
  * The ordering enforced by the {@link AbstractCmRDT} ensures that the state of the local object
  * cannot be changed by an update message that is out of order for the node it is being delivered
@@ -69,7 +69,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeGSet(VersionVector<K, T> initialVersion, K identifier,
-      CausalDeliveryChannel<K, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
+      ReliableDeliveryChannel<K, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -84,7 +84,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public CommutativeGSet(LogicalVersion<T, ?> zero, K identifier,
-      CausalDeliveryChannel<K, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
+      ReliableDeliveryChannel<K, CommutativeGSetUpdate<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
