@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,21 +19,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
+
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IncrementableCounterConcurrencyAbstractIT;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.NullStateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 
 /**
- * Tests for the {@linkplain AtomicLongCounter}.
+ * Test/Benchmark for concurrent operations on a {@link GCounter}.
  */
-public class AtomicLongCounterTest extends CounterAbstractTest<Long, AtomicLongCounter> {
+public class GCounterConcurrencyIT
+    extends IncrementableCounterConcurrencyAbstractIT<Integer, GCounter<Integer, Integer>> {
+
+  private static IdentifierFactory<Integer> ID_FACTORY = new IncrementalIntegerIdentifierFactory();
 
   @Override
-  public Long getValue(int increments, int decrements) {
-    return (long) increments - decrements;
+  public GCounter<Integer, Integer> getCounter() {
+    StateDeliveryChannel<Integer, GCounterState<Integer, Integer>> deliveryChannel =
+        new NullStateDeliveryChannel<>(ID_FACTORY);
+    return GCounter.newIntegerGCounter(deliveryChannel);
   }
 
   @Override
-  public AtomicLongCounter getCounter() {
-    return new AtomicLongCounter();
+  public Integer getValue(int count) {
+    return count;
   }
 
 }

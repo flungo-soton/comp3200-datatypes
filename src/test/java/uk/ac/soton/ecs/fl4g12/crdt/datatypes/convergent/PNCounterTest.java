@@ -42,7 +42,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   private static final Logger LOGGER = Logger.getLogger(PNCounterTest.class.getName());
 
   @Override
-  protected PNCounter<Integer, Object> getCounter() {
+  public PNCounter<Integer, Object> getCounter() {
     StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         Mockito.mock(StateDeliveryChannel.class);
     Mockito.doReturn(new Object()).doThrow(IllegalStateException.class).when(deliveryChannel)
@@ -51,7 +51,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   }
 
   @Override
-  protected Integer getValue(int increments, int decrements) {
+  public Integer getValue(int increments, int decrements) {
     return increments - decrements;
   }
 

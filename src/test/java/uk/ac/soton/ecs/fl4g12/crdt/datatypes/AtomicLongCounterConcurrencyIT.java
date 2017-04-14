@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -22,9 +22,10 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
 /**
- * Tests for the {@linkplain AtomicLongCounter}.
+ * Test/Benchmark for concurrent operations on an {@link AtomicLongCounter}.
  */
-public class AtomicLongCounterTest extends CounterAbstractTest<Long, AtomicLongCounter> {
+public class AtomicLongCounterConcurrencyIT
+    extends CounterConcurrencyAbstractIT<Long, AtomicLongCounter> {
 
   @Override
   public Long getValue(int increments, int decrements) {

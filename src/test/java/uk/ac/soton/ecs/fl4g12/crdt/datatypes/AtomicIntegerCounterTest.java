@@ -27,12 +27,12 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 public class AtomicIntegerCounterTest extends CounterAbstractTest<Integer, AtomicIntegerCounter> {
 
   @Override
-  protected Integer getValue(int increments, int decrements) {
+  public Integer getValue(int increments, int decrements) {
     return increments - decrements;
   }
 
   @Override
-  protected AtomicIntegerCounter getCounter() {
+  public AtomicIntegerCounter getCounter() {
     return new AtomicIntegerCounter();
   }
 

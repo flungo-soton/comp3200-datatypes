@@ -44,13 +44,8 @@ public class GCounterTest
 
   private static final Logger LOGGER = Logger.getLogger(GCounterTest.class.getName());
 
-  @Before
-  public void setUp() {
-    MockitoAnnotations.initMocks(this);
-  }
-
   @Override
-  protected GCounter<Integer, Object> getCounter() {
+  public GCounter<Integer, Object> getCounter() {
     StateDeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
         Mockito.mock(StateDeliveryChannel.class);
     Mockito.doReturn(new Object()).doThrow(IllegalStateException.class).when(deliveryChannel)
@@ -59,7 +54,7 @@ public class GCounterTest
   }
 
   @Override
-  protected Integer getValue(int count) {
+  public Integer getValue(int count) {
     return count;
   }
 

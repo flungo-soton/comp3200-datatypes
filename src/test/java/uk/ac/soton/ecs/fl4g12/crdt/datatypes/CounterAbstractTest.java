@@ -29,7 +29,7 @@ import org.junit.Test;
 
 /**
  * Tests for implementations of {@linkplain Counter}.
- * 
+ *
  * @param <E> the type of counter value that the test uses.
  * @param <C> the type of the counter being tested.
  */
@@ -38,19 +38,13 @@ public abstract class CounterAbstractTest<E, C extends Counter<E>>
 
   private static final Logger LOGGER = Logger.getLogger(CounterAbstractTest.class.getName());
 
-  /**
-   * Get the value that a counter should have after a given number of increments and decrements.
-   *
-   * @param increments the number of increments.
-   * @param decrements the number of decrements.
-   * @return the expected value of the counter
-   */
-  protected abstract E getValue(int increments, int decrements);
-
   @Override
-  protected final E getValue(int count) {
+  public final E getValue(int count) {
     return getValue(count, 0);
   }
+
+  @Override
+  public abstract E getValue(int increments, int decrements);
 
   /**
    * Test that the counter decrements as expected.

@@ -30,11 +30,12 @@ import org.junit.rules.ExpectedException;
 
 /**
  * Tests for increment only implementations of {@linkplain Counter}.
- * 
+ *
  * @param <E> the type of counter value that the test uses.
  * @param <C> the type of the counter being tested.
  */
-public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>> {
+public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>>
+    implements CounterTestInterface<E, C> {
 
   private static final Logger LOGGER =
       Logger.getLogger(IncrementableCounterAbstractTest.class.getName());
@@ -44,19 +45,13 @@ public abstract class IncrementableCounterAbstractTest<E, C extends Counter<E>> 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
-  /**
-   * Get the counter instance for testing.
-   *
-   * @return a counter to be tested.
-   */
-  protected abstract C getCounter();
-
-  /**
-   *
-   * @param count the number of increments.
-   * @return the value the counter should have after the specified number of increments.
-   */
-  protected abstract E getValue(int count);
+  @Override
+  public E getValue(int increments, int decrements) {
+    if (decrements != 0) {
+      throw new UnsupportedOperationException("Increment only!");
+    }
+    return getValue(increments);
+  }
 
   /**
    * Test that the counter increments as expected.

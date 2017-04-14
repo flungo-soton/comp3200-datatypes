@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -22,18 +22,34 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
 /**
- * Tests for the {@linkplain AtomicLongCounter}.
+ * Interface providing methods that can be used for creating abstract {@link Counter} tests.
+ *
+ * @param <E> the type of counter value that the test uses.
+ * @param <C> the type of the counter being tested.
  */
-public class AtomicLongCounterTest extends CounterAbstractTest<Long, AtomicLongCounter> {
+public interface CounterTestInterface<E, C extends Counter<E>> {
 
-  @Override
-  public Long getValue(int increments, int decrements) {
-    return (long) increments - decrements;
-  }
+  /**
+   * Get the counter instance for testing.
+   *
+   * @return a counter to be tested.
+   */
+  C getCounter();
 
-  @Override
-  public AtomicLongCounter getCounter() {
-    return new AtomicLongCounter();
-  }
+  /**
+   *
+   * @param count the number of increments.
+   * @return the value the counter should have after the specified number of increments.
+   */
+  E getValue(int count);
+
+  /**
+   * Get the value that a counter should have after a given number of increments and decrements.
+   *
+   * @param increments the number of increments.
+   * @param decrements the number of decrements.
+   * @return the expected value of the counter
+   */
+  E getValue(int increments, int decrements);
 
 }
