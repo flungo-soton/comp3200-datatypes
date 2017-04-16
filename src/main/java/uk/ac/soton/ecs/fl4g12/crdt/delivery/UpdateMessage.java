@@ -22,6 +22,7 @@
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * A message containing an update. Messages are used to communicate the relevant changes that need
@@ -34,11 +35,14 @@ import java.io.Serializable;
  * Implementations of {@linkplain UpdateMessage} should be serializable so that the
  * {@link DeliveryChannel} which communicates the messages can serialize them.
  *
+ * {@link Object#equals(Object)} and {@link Object#hashCode()} should also be implemented for
+ * reliable message comparison and allowing messages to be used as {@link Map} keys.
+ *
  * @param <K> the type of identifier used to identify nodes.
- * @param <U> the type of {@linkplain UpdateMessage} instances can be compared with.
+ * @param <M> the type of {@linkplain UpdateMessage} instances can be compared with.
  */
-public interface UpdateMessage<K, U extends UpdateMessage<K, U>>
-    extends Comparable<U>, Serializable {
+public interface UpdateMessage<K, M extends UpdateMessage<K, M>>
+    extends Comparable<M>, Serializable {
 
   /**
    * Gets the identifier of the node that generated the message.

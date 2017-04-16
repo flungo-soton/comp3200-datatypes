@@ -25,9 +25,9 @@ import org.openimaj.citation.annotation.Reference;
 import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CRDT;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.Counter;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUpdateException;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
@@ -50,8 +50,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.util.LongArithmetic;
     institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
     pages = {"14", "15"})
 public final class GCounter<E extends Comparable<E>, K>
-    extends AbstractVersionedUpdatable<K, E, GCounterState<E, K>>
-    implements CvRDT<K, VersionVector<K, E>, GCounterState<E, K>>, Counter<E> {
+    extends AbstractCvRDT<K, E, GCounterState<E, K>> implements Counter<E> {
 
   private final Arithmetic<E> arithmetic;
 
@@ -69,7 +68,7 @@ public final class GCounter<E extends Comparable<E>, K>
    *        over.
    */
   public GCounter(Arithmetic<E> arithmetic, VersionVector<K, E> initialVersion, K identifier,
-      DeliveryChannel<K, GCounterState<E, K>> deliveryChannel) {
+      StateDeliveryChannel<K, GCounterState<E, K>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
     this.arithmetic = arithmetic;
   }
@@ -77,7 +76,7 @@ public final class GCounter<E extends Comparable<E>, K>
   @Override
   public synchronized void increment() {
     version.increment();
-    getDeliveryChannel().publish(snapshot());
+    getDeliveryChannel().publish();
   }
 
   @Override
@@ -115,7 +114,7 @@ public final class GCounter<E extends Comparable<E>, K>
    * @return a {@link GCounter} with an {@link Integer} value.
    */
   public static <K> GCounter<Integer, K> newIntegerGCounter(
-      DeliveryChannel<K, GCounterState<Integer, K>> deliveryChannel) {
+      StateDeliveryChannel<K, GCounterState<Integer, K>> deliveryChannel) {
     return new GCounter<>(IntegerArithmetic.getInstance(),
         new HashVersionVector<K, Integer>(new IntegerVersion()), null, deliveryChannel);
   }
@@ -130,7 +129,7 @@ public final class GCounter<E extends Comparable<E>, K>
    * @return a {@link GCounter} with an {@link Long} value.
    */
   public static <K> GCounter<Long, K> newLongGCounter(
-      DeliveryChannel<K, GCounterState<Long, K>> deliveryChannel) {
+      StateDeliveryChannel<K, GCounterState<Long, K>> deliveryChannel) {
     return new GCounter<>(LongArithmetic.getInstance(),
         new HashVersionVector<K, Long>(new LongVersion()), null, deliveryChannel);
   }

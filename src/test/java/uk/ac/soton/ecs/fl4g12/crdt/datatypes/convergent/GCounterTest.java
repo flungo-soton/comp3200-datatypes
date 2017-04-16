@@ -26,13 +26,12 @@ import java.util.logging.Logger;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IncrementableCounterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -45,9 +44,6 @@ public class GCounterTest
 
   private static final Logger LOGGER = Logger.getLogger(GCounterTest.class.getName());
 
-  @Captor
-  public ArgumentCaptor<GCounterState> updateMessageCaptor;
-
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
@@ -55,10 +51,10 @@ public class GCounterTest
 
   @Override
   protected GCounter<Integer, Object> getCounter() {
-    DeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
+    StateDeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
+        Mockito.mock(StateDeliveryChannel.class);
     Mockito.doReturn(new Object()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
+        .register(Mockito.any(StatefulUpdatable.class));
     return GCounter.newIntegerGCounter(deliveryChannel);
   }
 
@@ -81,16 +77,16 @@ public class GCounterTest
         new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(counter.getIdentifier());
     expectedVersionVector.increment(counter.getIdentifier());
-    final DeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
+    final StateDeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
     Mockito.reset(deliveryChannel);
     counter.increment();
 
-    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+    Mockito.verify(deliveryChannel).publish();
     Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-    GCounterState updateMessage = updateMessageCaptor.getValue();
+    GCounterState updateMessage = counter.snapshot();
 
     assertEquals("Update message identifier should be the same as the set's",
         counter.getIdentifier(), updateMessage.getIdentifier());

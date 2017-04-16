@@ -31,11 +31,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class StatefulSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
-    extends GrowableStatefulSetAbstractTest<E, K, T, U, S> {
+public abstract class StatefulSetAbstractTest<E, K, T extends Comparable<T>, M extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, M>>
+    extends GrowableStatefulSetAbstractTest<E, K, T, M, S> {
 
   // TODO: test remove, removeAll, retain, retainAll and clear.
 

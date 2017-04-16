@@ -26,13 +26,15 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  * Registers the {@link Updatable} with a {@link DeliveryChannel}.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <U> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
+ * @param <M> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
+ * @param <D> the type of {@link DeliveryChannel} this {@link Updatable} can use.
+ * @param <U> the type of this {@link Updatable}.
  */
-public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
-    implements Updatable<K, U> {
+public abstract class AbstractUpdatable<K, M extends UpdateMessage<K, ?>, D extends DeliveryChannel<K, M, ? super U>, U extends AbstractUpdatable<K, M, D, U>>
+    implements Updatable<K, M> {
 
   protected final K identifier;
-  protected final DeliveryChannel<K, U> deliveryChannel;
+  protected final D deliveryChannel;
 
   /**
    * Instantiate the {@linkplain AbstractUpdatable} with the provided {@linkplain DeliveryChannel}.
@@ -43,13 +45,13 @@ public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
    *        the {@link DeliveryChannel}.
    * @param deliveryChannel the {@link DeliveryChannel} to register with.
    */
-  public AbstractUpdatable(K identifier, DeliveryChannel<K, U> deliveryChannel) {
+  public AbstractUpdatable(K identifier, D deliveryChannel) {
     this.deliveryChannel = deliveryChannel;
     if (identifier == null) {
-      this.identifier = deliveryChannel.register(this);
+      this.identifier = deliveryChannel.register((U) this);
     } else {
       this.identifier = identifier;
-      deliveryChannel.register(this);
+      deliveryChannel.register((U) this);
     }
   }
 
@@ -64,7 +66,7 @@ public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
    *
    * @return the {@linkplain DeliveryChannel} of this {@linkplain Updatable}.
    */
-  public final DeliveryChannel<K, U> getDeliveryChannel() {
+  public final D getDeliveryChannel() {
     return deliveryChannel;
   }
 

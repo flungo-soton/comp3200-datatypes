@@ -21,7 +21,9 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -32,10 +34,12 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUtils;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.util.TestUtil;
 
 /**
  * Abstract tests for ensuring the conflict-free replicability in growable {@linkplain CRDT}
@@ -44,10 +48,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
+public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparable<T>, M extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
     implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER =
@@ -58,7 +62,8 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
   public static final int MAX_ELEMENTS = 1000;
 
   @Rule
-  public Timeout timeout = new Timeout(MAX_SETS * MAX_ELEMENTS * 2 + 5000, TimeUnit.MILLISECONDS);
+  public Timeout timeout =
+      TestUtil.getTimeout(MAX_SETS * MAX_ELEMENTS * 5 + 5000, TimeUnit.MILLISECONDS);
 
   /**
    * Get the {@linkplain Set} instance for testing. Sets should be configured with a delivery
@@ -71,17 +76,15 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
   @Override
   public abstract S getSet();
 
-  public abstract DeliveryChannel<K, U> getDeliveryChannel();
+  public abstract DeliveryChannel<K, M, ?> getDeliveryChannel();
 
-  /**
-   * Wait until there are no pending deliveries from the source to the destination.
-   *
-   * @param source the source of updates.
-   * @param destination the destination.
-   */
-  public final void waitForDelivery(S source, S destination) {
-    DeliveryUtils.waitForDelivery(source.getDeliveryChannel(), destination.getIdentifier());
-    DeliveryUtils.waitForUpdates(destination.getDeliveryChannel());
+  private DeliveryChannel[] getChannels(Collection<? extends Updatable> updatables) {
+    DeliveryChannel[] channels = new DeliveryChannel[updatables.size()];
+    Iterator<? extends Updatable> it = updatables.iterator();
+    for (int i = 0; i < updatables.size(); i++) {
+      channels[i] = it.next().getDeliveryChannel();
+    }
+    return channels;
   }
 
   @Test
@@ -97,7 +100,7 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
     set1.add(element);
     comparison.add(element);
 
-    waitForDelivery(set1, set2);
+    DeliveryUtils.waitForDelivery(set1.getDeliveryChannel(), set2.getDeliveryChannel());
     Assert.assertEquals(comparison, set2);
   }
 
@@ -118,8 +121,8 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
     set2.add(element);
     comparison.add(element);
 
-    waitForDelivery(set1, set2);
-    waitForDelivery(set2, set1);
+    DeliveryUtils.waitForDelivery(set1.getDeliveryChannel(), set2.getDeliveryChannel());
+    DeliveryUtils.waitForDelivery(set2.getDeliveryChannel(), set1.getDeliveryChannel());
     Assert.assertEquals(comparison, set1);
     Assert.assertEquals(comparison, set2);
   }
@@ -138,8 +141,8 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
     set2.add(element);
     comparison.add(element);
 
-    waitForDelivery(set1, set2);
-    waitForDelivery(set2, set1);
+    DeliveryUtils.waitForDelivery(set1.getDeliveryChannel(), set2.getDeliveryChannel());
+    DeliveryUtils.waitForDelivery(set2.getDeliveryChannel(), set1.getDeliveryChannel());
     Assert.assertEquals(comparison, set1);
     Assert.assertEquals(comparison, set2);
   }
@@ -159,7 +162,7 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
       comparison.add(element);
     }
 
-    waitForDelivery(set1, set2);
+    DeliveryUtils.waitForDelivery(set1.getDeliveryChannel(), set2.getDeliveryChannel());
     Assert.assertEquals(comparison, set2);
   }
 
@@ -187,8 +190,8 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
     thread1.join();
     thread2.join();
 
-    waitForDelivery(set1, set2);
-    waitForDelivery(set2, set1);
+    DeliveryUtils.waitForDelivery(set1.getDeliveryChannel(), set2.getDeliveryChannel());
+    DeliveryUtils.waitForDelivery(set2.getDeliveryChannel(), set1.getDeliveryChannel());
     Assert.assertEquals(comparison, set1);
     Assert.assertEquals(comparison, set2);
   }
@@ -210,8 +213,9 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
     source.add(element);
     comparison.add(element);
 
+    DeliveryUtils.waitForDelivery(source.getDeliveryChannel(), getChannels(destinations));
+
     for (S destination : destinations) {
-      waitForDelivery(source, destination);
       Assert.assertEquals(comparison, destination);
     }
   }
@@ -235,8 +239,9 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
       comparison.add(element);
     }
 
+    DeliveryUtils.waitForDelivery(source.getDeliveryChannel(), getChannels(destinations));
+
     for (S destination : destinations) {
-      waitForDelivery(source, destination);
       Assert.assertEquals(comparison, destination);
     }
   }
@@ -260,12 +265,11 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
       comparison.add(element);
     }
 
+    for (S source : sets) {
+      DeliveryUtils.waitForDelivery(source.getDeliveryChannel(), getChannels(sets));
+    }
+
     for (S destination : sets) {
-      for (S source : sets) {
-        if (source != destination) {
-          waitForDelivery(source, destination);
-        }
-      }
       Assert.assertEquals(comparison, destination);
     }
   }
@@ -300,12 +304,11 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
       }
     }
 
+    for (S source : sets) {
+      DeliveryUtils.waitForDelivery(source.getDeliveryChannel(), getChannels(sets));
+    }
+
     for (S destination : sets) {
-      for (S source : sets) {
-        if (source != destination) {
-          waitForDelivery(source, destination);
-        }
-      }
       Assert.assertEquals(comparison, destination);
     }
   }

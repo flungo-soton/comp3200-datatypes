@@ -27,9 +27,9 @@ import java.util.Iterator;
 import java.util.Set;
 import org.openimaj.citation.annotation.Reference;
 import org.openimaj.citation.annotation.ReferenceType;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUpdateException;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -47,8 +47,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
     institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
     pages = {"21", "22"})
 public final class GSet<E, K, T extends Comparable<T>>
-    extends AbstractVersionedUpdatable<K, T, GSetState<E, K, T>>
-    implements CvRDT<K, VersionVector<K, T>, GSetState<E, K, T>>, Set<E> {
+    extends AbstractCvRDT<K, T, GSetState<E, K, T>> implements Set<E> {
 
   private final Set<E> state = new HashSet<>();
 
@@ -64,7 +63,7 @@ public final class GSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public GSet(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, GSetState<E, K, T>> deliveryChannel) {
+      StateDeliveryChannel<K, GSetState<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -79,7 +78,7 @@ public final class GSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public GSet(LogicalVersion<T, ?> zero, K identifier,
-      DeliveryChannel<K, GSetState<E, K, T>> deliveryChannel) {
+      StateDeliveryChannel<K, GSetState<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
@@ -98,7 +97,7 @@ public final class GSet<E, K, T extends Comparable<T>>
   public synchronized boolean add(E element) {
     if (state.add(element)) {
       version.increment();
-      getDeliveryChannel().publish(snapshot());
+      getDeliveryChannel().publish();
       return true;
     }
     return false;
@@ -108,7 +107,7 @@ public final class GSet<E, K, T extends Comparable<T>>
   public synchronized boolean addAll(Collection<? extends E> collection) {
     if (state.addAll(collection)) {
       version.increment();
-      getDeliveryChannel().publish(snapshot());
+      getDeliveryChannel().publish();
       return true;
     }
     return false;

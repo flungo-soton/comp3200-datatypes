@@ -24,10 +24,10 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.AddOnceSetAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 
 /**
  * Tests the {@linkplain CommutativeTwoPhaseSetUpdate} implementation as a {@linkplain Set}.
@@ -42,7 +42,7 @@ public final class CommutativeTwoPhaseSetTest
     ReliableDeliveryChannel<Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> deliveryChannel =
         Mockito.mock(ReliableDeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
+        .register(Mockito.any(VersionedUpdatable.class));
     return new CommutativeTwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 

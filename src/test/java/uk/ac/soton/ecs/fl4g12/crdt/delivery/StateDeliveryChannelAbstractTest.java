@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,24 +19,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
+package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CRDT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import java.util.logging.Logger;
+import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * Interface for Convergent Replicated Data Types. {@linkplain CvRDT}s are based on
- * {@link StatefulUpdatable}s and use {@link StateSnapshot}s to communicate changes made.
  *
- * @param <K> the type of identifier used to identify nodes.
- * @param <V> the type of the {@link Version}.
- * @param <M> the type of the {@link StateSnapshot} which is taken and used as the
- *        {@link UpdateMessage}.
  */
-public interface CvRDT<K, V extends Version, M extends StateSnapshot<K, V>>
-    extends CRDT<K, M>, StatefulUpdatable<K, V, M> {
+public abstract class StateDeliveryChannelAbstractTest<K, M extends StateSnapshot<K, ?>, C extends StateDeliveryChannel<K, M>>
+    extends DeliveryChannelAbstractTest<K, M, StatefulUpdatable<K, ?, M>, C> {
+
+  private static final Logger LOGGER =
+      Logger.getLogger(ReliableDeliveryChannelAbstractTest.class.getName());
+
+  @Override
+  public StatefulUpdatable<K, ?, M> getUpdatable() {
+    return Mockito.mock(StatefulUpdatable.class);
+  }
+
+  @Override
+  public M getUpdateMessage(K identifier, int order) {
+    M message = super.getUpdateMessage(identifier, order);
+    Mockito.doReturn(getVersion(order)).when(message).getVersion();
+    return message;
+  }
+
+  /**
+   * Get a version which has logical ordering based on the provided order.
+   *
+   * @param order the ordering of the version.
+   * @return a version with relative ordering based on the provided order.
+   */
+  public abstract Version getVersion(int order);
 
 }

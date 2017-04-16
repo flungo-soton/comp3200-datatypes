@@ -22,7 +22,10 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Set;
+import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
@@ -33,15 +36,22 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
-    extends GrowableConflictFreeSetAbstractTest<E, K, T, U, S> {
+public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, M extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, M>>
+    extends GrowableConflictFreeSetAbstractTest<E, K, T, M, S> {
 
   public static <K, T extends Comparable<T>, U extends SetState<?, K, VersionVector<K, T>>, S extends StatefulUpdatable<K, VersionVector<K, T>, U>> void updateSet(
       S destination, S source) throws Exception {
     destination.update(source.snapshot());
+  }
+
+  @Override
+  public M assertPublish(DeliveryChannel<K, M, ?> channel) {
+    StateDeliveryChannel<K, M> stateDeliveryChannel = (StateDeliveryChannel<K, M>) channel;
+    Mockito.verify(stateDeliveryChannel).publish();
+    return stateDeliveryChannel.getUpdatable().snapshot();
   }
 
   @Override

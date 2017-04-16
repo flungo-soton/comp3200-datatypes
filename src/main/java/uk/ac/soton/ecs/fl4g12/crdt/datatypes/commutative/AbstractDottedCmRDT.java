@@ -21,8 +21,8 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DottedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -34,29 +34,29 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of timestamps which are used by each node.
- * @param <U> the type of updates which this object can be updated by.
+ * @param <M> the type of updates which this object can be updated by.
  * @see AbstractCmRDT for the guarantees which this provides and implementation details.
  */
-public abstract class AbstractDottedCmRDT<K, T extends Comparable<T>, U extends DottedUpdateMessage<K, T>>
-    extends AbstractCmRDT<K, T, U> {
+public abstract class AbstractDottedCmRDT<K, T extends Comparable<T>, M extends DottedUpdateMessage<K, T>>
+    extends AbstractCmRDT<K, T, M> {
 
   public AbstractDottedCmRDT(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, U> deliveryChannel) {
+      ReliableDeliveryChannel<K, M> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
   @Override
-  protected final boolean precedes(U message) {
+  protected final boolean precedes(M message) {
     return version.precedes(message.getVersion());
   }
 
   @Override
-  protected final boolean hasBeenApplied(U message) {
+  protected final boolean hasBeenApplied(M message) {
     return message.getVersion().happenedBefore(version) || message.getVersion().identical(version);
   }
 
   @Override
-  protected final void sync(U message) {
+  protected final void sync(M message) {
     version.sync(message.getVersion());
   }
 

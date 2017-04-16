@@ -27,7 +27,15 @@ import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.verification.VerificationMode;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -38,30 +46,38 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of snapshot made from this state.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends SetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
-    extends UpdatableSetAbstractTest<E, K, T, U, S> {
+public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, M extends SetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
+    extends UpdatableSetAbstractTest<E, K, T, M, S> {
+
+  @Captor
+  ArgumentCaptor<M> updateMessageCaptor;
+
+  @Before
+  public void initMocks() {
+    MockitoAnnotations.initMocks(this);
+  }
 
   @Override
-  protected boolean precedes(S updatable, U message) {
+  protected boolean precedes(S updatable, M message) {
     return updatable.getVersion().precedes(message.getVersion());
   }
 
   @Override
-  protected boolean precedes(U message1, U message2) {
+  protected boolean precedes(M message1, M message2) {
     return message1.getVersion().precedes(message2.getVersion());
   }
 
   @Override
-  protected int compare(U message1, U message2) {
+  protected int compare(M message1, M message2) {
     return message1.compareTo(message2);
   }
 
   @Override
   protected void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
-      U updateMessage) {
+      M updateMessage) {
     // Overridden to support Dot vs Vector comparisons,
     assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
         updateMessage.getIdentifier());
@@ -69,55 +85,55 @@ public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, 
         updateMessage.getVersion().identical(expectedVersion));
   }
 
-  protected void assertUpdateOperation(SetUpdateMessage.Operation expected, U updateMessage) {
+  protected void assertUpdateOperation(SetUpdateMessage.Operation expected, M updateMessage) {
     assertEquals("Update message should be an " + expected + " operation", expected,
         updateMessage.getOperation());
   }
 
   @Override
-  protected void assertAdd(S set, E element, U updateMessage) {
+  protected void assertAdd(S set, E element, M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist of the new element",
         new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
   }
 
   @Override
-  protected void assertAddAll_Single(S set, E element, U updateMessage) {
+  protected void assertAddAll_Single(S set, E element, M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist of the new element",
         new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
   }
 
   @Override
-  protected void assertAddAll_Multiple(S set, Set<E> elements, U updateMessage) {
+  protected void assertAddAll_Multiple(S set, Set<E> elements, M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist of the new elements", elements,
         updateMessage.getElements());
   }
 
   @Override
-  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, U updateMessage) {
+  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.ADD, updateMessage);
     assertEquals("Update element set should consist only of the new elements", newElements,
         updateMessage.getElements());
   }
 
   @Override
-  protected void assertRemove(S set, E element, U updateMessage) {
+  protected void assertRemove(S set, E element, M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
     assertEquals("Update element set should consist of the new element",
         new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
   }
 
   @Override
-  protected void assertRemoveAll_Single(S set, E element, U updateMessage) {
+  protected void assertRemoveAll_Single(S set, E element, M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
     assertEquals("Update element set should consist of the new element",
         new HashSet<>(Arrays.asList(element)), updateMessage.getElements());
   }
 
   @Override
-  protected void assertRemoveAll_Multiple(S set, Collection<E> elements, U updateMessage) {
+  protected void assertRemoveAll_Multiple(S set, Collection<E> elements, M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
     assertEquals("Update element set should consist of the new elements", elements,
         updateMessage.getElements());
@@ -125,10 +141,17 @@ public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, 
 
   @Override
   protected void assertRemoveAll_Overlap(S set, Collection<E> elements, Collection<E> newElements,
-      U updateMessage) {
+      M updateMessage) {
     assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
     assertEquals("Update element set should consist only of the new elements", newElements,
         updateMessage.getElements());
+  }
+
+  @Override
+  protected M assertPublish(DeliveryChannel<K, M, ?> channel, VerificationMode mode) {
+    Mockito.verify((ReliableDeliveryChannel<K, M>) channel, mode)
+        .publish(updateMessageCaptor.capture());
+    return updateMessageCaptor.getValue();
   }
 
 }

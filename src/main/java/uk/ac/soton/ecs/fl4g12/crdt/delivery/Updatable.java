@@ -31,9 +31,9 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  * the use of an {@link UpdateMessage} appropriate for the object.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <U> the type of updates sent via the delivery channel.
+ * @param <M> the type of updates sent via the delivery channel.
  */
-public interface Updatable<K, U extends UpdateMessage<K, ?>> {
+public interface Updatable<K, M extends UpdateMessage<K, ?>> {
 
   /**
    * Gets the identifier for this object. This is a globally unique identifier for the instance of
@@ -54,7 +54,7 @@ public interface Updatable<K, U extends UpdateMessage<K, ?>> {
    * @param message the message containing the update to be performed.
    * @throws DeliveryUpdateException if the update could not be applied.
    */
-  void update(U message) throws DeliveryUpdateException;
+  void update(M message) throws DeliveryUpdateException;
 
   /**
    * Get the delivery channel that is used by this {@linkplain Updatable} to deliver updates to
@@ -63,5 +63,5 @@ public interface Updatable<K, U extends UpdateMessage<K, ?>> {
    * @return the delivery channel that is used by this {@link Updatable} to deliver updates to
    *         replicas.
    */
-  DeliveryChannel<K, U> getDeliveryChannel();
+  DeliveryChannel<K, M, ?> getDeliveryChannel();
 }

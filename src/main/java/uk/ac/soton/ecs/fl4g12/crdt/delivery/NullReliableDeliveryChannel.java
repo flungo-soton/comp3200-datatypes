@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -21,28 +21,36 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
-import uk.ac.soton.ecs.fl4g12.crdt.order.Versioned;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
 
 /**
- * An {@link Updatable} object that keeps a {@link Version}. The version can be used to track the
- * changes in the {@link Updatable} object and determine causality between events and states of the
- * object.
+ * A {@link DeliveryChannel} which does not replicate to any other nodes. All publish messages are
+ * ignored. Useful for testing and as a placeholder while developing.
  *
- * @param <K> the type of identifier used to identify nodes.
- * @param <V> the type of the {@link Version}.
- * @param <M> the type of updates sent via the delivery channel.
+ * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public interface VersionedUpdatable<K, V extends Version, M extends UpdateMessage<K, ?>>
-    extends Updatable<K, M>, Versioned<V> {
+public class NullReliableDeliveryChannel<K, M extends VersionedUpdateMessage<K, ?>>
+    extends NullDeliveryChannel<K, M, VersionedUpdatable<K, ?, M>>
+    implements ReliableDeliveryChannel<K, M> {
 
   /**
-   * Get a copy of the current version of the {@linkplain VersionedUpdatable}. The version is
-   * tracked and represented as a {@link Version}.
+   * Create a {@linkplain NullReliableDeliveryChannel}.
    *
-   * @return a copy of the current version of this object.
+   * @param idFactory {@link IdentifierFactory} used to assign an identifier if the
+   *        {@link Updatable} doesn't have one when registering.
    */
+  public NullReliableDeliveryChannel(IdentifierFactory<K> idFactory) {
+    super(idFactory);
+  }
+
   @Override
-  V getVersion();
+  public void publish(M message) {
+    // Not final to support Mockito spy
+    if (!open) {
+      throw new IllegalStateException("Channel has been closed, not accepting new messages.");
+    }
+    // Do nothing
+  }
 
 }

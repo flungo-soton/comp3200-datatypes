@@ -32,10 +32,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}.
- * @param <U> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
+ * @param <M> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
+ * @param <D> the type of {@link DeliveryChannel} this {@link Updatable} can use.
+ * @param <U> the type of this {@link Updatable}.
  */
-public abstract class AbstractVersionedUpdatable<K, T extends Comparable<T>, U extends UpdateMessage<K, ?>>
-    extends AbstractUpdatable<K, U> implements VersionedUpdatable<K, VersionVector<K, T>, U> {
+public abstract class AbstractVersionedUpdatable<K, T extends Comparable<T>, M extends UpdateMessage<K, ?>, D extends DeliveryChannel<K, M, ? super U>, U extends AbstractVersionedUpdatable<K, T, M, D, U>>
+    extends AbstractUpdatable<K, M, D, U> implements VersionedUpdatable<K, VersionVector<K, T>, M> {
 
   /**
    * The version used by the {@linkplain Updatable}. This should be used instead of
@@ -55,7 +57,7 @@ public abstract class AbstractVersionedUpdatable<K, T extends Comparable<T>, U e
    * @param deliveryChannel the {@link DeliveryChannel} to register with.
    */
   public AbstractVersionedUpdatable(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, U> deliveryChannel) {
+      D deliveryChannel) {
     super(identifier, deliveryChannel);
     this.version = new LocalVersionVector<>(initialVersion.copy(), this.identifier);
   }

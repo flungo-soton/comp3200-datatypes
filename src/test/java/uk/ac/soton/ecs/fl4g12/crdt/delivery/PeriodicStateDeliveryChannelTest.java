@@ -21,26 +21,43 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
+import java.util.concurrent.TimeUnit;
+import org.mockito.Mockito;
+import static uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannelAbstractTest.BUFFER_TIME;
+import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * Interface for {@link Updatable}s which have a snapshotable state. A {@link StateSnapshot} can be
- * taken which is also the {@link UpdateMessage} that can be delivered by a {@link DeliveryChannel}
- * to update other {@link StatefulUpdatable}s of the same type.
  *
- * @param <K> the type of identifier used to identify nodes.
- * @param <V> the type of the {@link Version}
- * @param <M> the type of snapshot made from this state.
  */
-public interface StatefulUpdatable<K, V extends Version, M extends StateSnapshot<K, V>>
-    extends VersionedUpdatable<K, V, M> {
+public class PeriodicStateDeliveryChannelTest extends
+    StateDeliveryChannelAbstractTest<Integer, StateSnapshot<Integer, ?>, PeriodicStateDeiveryChannel<Integer, StateSnapshot<Integer, ?>>> {
 
-  /**
-   * Creates a snapshot of the state which can be used as an {@linkplain UpdateMessage}. The
-   * snapshot takes a snapshot of the state at a given time.
-   *
-   * @return a snapshot of the state.
-   */
-  M snapshot();
+  private static final long CHANNEL_PERIOD = BUFFER_TIME / 10;
+  private static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
+
+  @Override
+  public Integer getIdentifier(int i) {
+    return i;
+  }
+
+  @Override
+  public StateSnapshot<Integer, ?> getUpdateMessage() {
+    return Mockito.mock(StateSnapshot.class);
+  }
+
+  @Override
+  public Version getVersion(int order) {
+    IntegerVersion version = new IntegerVersion();
+    version.sync(order);
+    return version;
+  }
+
+  @Override
+  public PeriodicStateDeiveryChannel<Integer, StateSnapshot<Integer, ?>> getDeliveryChannel() {
+    DeliveryExchange<Integer, StateSnapshot<Integer, ?>> exchange =
+        Mockito.mock(DeliveryExchange.class);
+    return new PeriodicStateDeiveryChannel<>(exchange, CHANNEL_PERIOD, TIME_UNIT);
+  }
 
 }

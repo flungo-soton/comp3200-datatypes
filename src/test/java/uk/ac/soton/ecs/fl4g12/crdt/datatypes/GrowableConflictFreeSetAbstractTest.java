@@ -28,13 +28,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
@@ -47,22 +46,14 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
+public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Comparable<T>, M extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
     implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER =
       Logger.getLogger(GrowableConflictFreeSetAbstractTest.class.getName());
-
-  @Captor
-  public ArgumentCaptor<U> updateMessageCaptor;
-
-  @Before
-  public final void initMocks() {
-    MockitoAnnotations.initMocks(this);
-  }
 
   protected final void assertInitialState(Set<E> initial, S set1, S set2) {
     assertTrue("The version vectors should be identical to start with",
@@ -83,6 +74,17 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
     assertEquals("set1 should match expected final state", expected, set1);
     assertEquals("set2 should match expected final state", expected, set2);
   }
+
+  /**
+   * Assert that a message was published and capture or create the {@link UpdateMessage} with these
+   * changes. If the {@link DeliveryChannel} is a {@link ReliableDeliveryChannel} then the message
+   * will have been published to the channel. If the {@link DeliveryChannel} is a
+   * {@link StateDeliveryChannel} then capture the state from the {@link Updatable}.
+   *
+   * @param channel the channel which the message should have been published to.
+   * @return the message that was published or a snapshot of the updatable.
+   */
+  public abstract M assertPublish(DeliveryChannel<K, M, ?> channel);
 
   /**
    * Deliver an update from source to destination. This is provided to allow convergent
@@ -134,8 +136,11 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
     LOGGER.log(Level.INFO, "testUpdate_LocalAdd: Test update with a local addition.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
+
+    // Message buffer
+    M message;
 
     final HashSet<E> initial = new HashSet<>();
     final HashSet<E> added = new HashSet<>(Arrays.asList(getElement(1)));
@@ -143,7 +148,7 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
     assertInitialState(initial, set1, set2);
 
     set1.add(getElement(1));
-    Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
+    message = assertPublish(delivery1);
     assertTrue("set2 should have happenedBefore set1",
         set2.getVersion().happenedBefore(set1.getVersion()));
 
@@ -152,7 +157,7 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
         set2.getVersion().happenedBefore(set1.getVersion()));
     assertIntermediateState(added, set1, initial, set2);
 
-    set2.update(updateMessageCaptor.getValue());
+    set2.update(message);
     assertFinalState(added, set1, set2);
   }
 
@@ -167,7 +172,10 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
 
     final S set1 = getSet();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> delivery2 = set2.getDeliveryChannel();
+
+    // Message buffer
+    M message;
 
     final HashSet<E> initial = new HashSet<>();
     final HashSet<E> added = new HashSet<>(Arrays.asList(getElement(1)));
@@ -175,11 +183,11 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
     assertInitialState(initial, set1, set2);
 
     set2.add(getElement(1));
-    Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
+    message = assertPublish(delivery2);
     assertTrue("set1 should have happenedBefore set2",
         set1.getVersion().happenedBefore(set2.getVersion()));
 
-    set1.update(updateMessageCaptor.getValue());
+    set1.update(message);
     assertTrue("The version vectors should be identical after update",
         set2.getVersion().identical(set1.getVersion()));
     assertIntermediateState(added, set1, added, set2);
@@ -198,9 +206,12 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
     LOGGER.log(Level.INFO, "testUpdate_BothAdd: Test update with concurrent additions.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> delivery2 = set2.getDeliveryChannel();
+
+    // Message buffer
+    M message;
 
     final HashSet<E> initial = new HashSet<>();
     final HashSet<E> added1 = new HashSet<>(Arrays.asList(getElement(2)));
@@ -209,11 +220,11 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
     assertInitialState(initial, set1, set2);
 
     set1.add(getElement(1));
-    Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    message = assertPublish(delivery1);
+    final M update1 = message;
     set2.add(getElement(2));
-    Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    message = assertPublish(delivery2);
+    final M update2 = message;
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 
@@ -237,9 +248,12 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
         "testUpdate_BothAdd_Same: Test update with concurrent additions of the same element.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> delivery2 = set2.getDeliveryChannel();
+
+    // Message buffer
+    M message;
 
 
     final HashSet<E> initial = new HashSet<>();
@@ -248,11 +262,11 @@ public abstract class GrowableConflictFreeSetAbstractTest<E, K, T extends Compar
     assertInitialState(initial, set1, set2);
 
     set1.add(getElement(1));
-    Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    message = assertPublish(delivery1);
+    final M update1 = message;
     set2.add(getElement(1));
-    Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    message = assertPublish(delivery2);
+    final M update2 = message;
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 

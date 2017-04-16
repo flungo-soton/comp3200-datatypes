@@ -22,8 +22,11 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Set;
+import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.ConflictFreeSetAbstractTest;
 import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GrowableSetConvergenceTest.updateSet;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
@@ -34,11 +37,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of snapshot made from this state.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
-    extends ConflictFreeSetAbstractTest<E, K, T, U, S> {
+public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, M extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, M>>
+    extends ConflictFreeSetAbstractTest<E, K, T, M, S> {
 
   /**
    * Instantiate the abstract tests for {@linkplain StatefulUpdatable} {@linkplain Set}
@@ -54,6 +57,13 @@ public abstract class SetConvergenceTest<E, K, T extends Comparable<T>, U extend
   @Override
   protected void intermediateDelivery(S destination, S source) throws Exception {
     updateSet(destination, source);
+  }
+
+  @Override
+  public M assertPublish(DeliveryChannel<K, M, ?> channel) {
+    StateDeliveryChannel<K, M> stateDeliveryChannel = (StateDeliveryChannel<K, M>) channel;
+    Mockito.verify(stateDeliveryChannel).publish();
+    return stateDeliveryChannel.getUpdatable().snapshot();
   }
 
 }

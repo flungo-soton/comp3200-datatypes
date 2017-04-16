@@ -28,9 +28,9 @@ import java.util.Set;
 import org.openimaj.citation.annotation.Reference;
 import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IllegalInsertionException;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUpdateException;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -56,8 +56,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
     institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
     pages = {"22", "23"})
 public final class TwoPhaseSet<E, K, T extends Comparable<T>>
-    extends AbstractVersionedUpdatable<K, T, TwoPhaseSetState<E, K, T>>
-    implements CvRDT<K, VersionVector<K, T>, TwoPhaseSetState<E, K, T>>, Set<E> {
+    extends AbstractCvRDT<K, T, TwoPhaseSetState<E, K, T>> implements Set<E> {
 
   private final Set<E> additions = new HashSet<>();
   private final Set<E> removals = new HashSet<>();
@@ -74,7 +73,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public TwoPhaseSet(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, TwoPhaseSetState<E, K, T>> deliveryChannel) {
+      StateDeliveryChannel<K, TwoPhaseSetState<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -89,7 +88,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
    *        over.
    */
   public TwoPhaseSet(LogicalVersion<T, ?> zero, K identifier,
-      DeliveryChannel<K, TwoPhaseSetState<E, K, T>> deliveryChannel) {
+      StateDeliveryChannel<K, TwoPhaseSetState<E, K, T>> deliveryChannel) {
     this(new HashVersionVector<K, T>(zero), identifier, deliveryChannel);
   }
 
@@ -110,7 +109,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
   public synchronized boolean add(E element) {
     if (additions.add(element)) {
       version.increment();
-      getDeliveryChannel().publish(snapshot());
+      getDeliveryChannel().publish();
       return true;
     } else if (removals.contains(element)) {
       throw new IllegalInsertionException("Can't add an element that has already been removed.",
@@ -136,7 +135,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
     // Add the elements
     if (additions.addAll(collection)) {
       version.increment();
-      getDeliveryChannel().publish(snapshot());
+      getDeliveryChannel().publish();
       return true;
     }
     return false;
@@ -151,7 +150,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
         boolean added = additions.add(element);
         boolean removed = removals.add(element);
         if (removed) {
-          getDeliveryChannel().publish(snapshot());
+          getDeliveryChannel().publish();
         }
         return !added && removed;
       }
@@ -185,7 +184,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
       boolean added = additions.addAll(collection);
       boolean removed = removals.addAll(collection);
       if (removed) {
-        getDeliveryChannel().publish(snapshot());
+        getDeliveryChannel().publish();
       }
       return !added && removed;
     }
@@ -211,7 +210,7 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
 
     version.increment();
     removals.addAll(additions);
-    getDeliveryChannel().publish(snapshot());
+    getDeliveryChannel().publish();
   }
 
   @Override

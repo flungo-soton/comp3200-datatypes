@@ -53,9 +53,23 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * can be gracefully recovered.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <U> The type of updates sent via the delivery channel.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public interface ReliableDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
-    extends DeliveryChannel<K, U> {
+public interface ReliableDeliveryChannel<K, M extends VersionedUpdateMessage<K, ?>>
+    extends DeliveryChannel<K, M, VersionedUpdatable<K, ?, M>> {
 
+  /**
+   * Publish messages via this {@linkplain DeliveryChannel}. The messages will be delivered reliably
+   * in natural order to all other nodes. This method should be shortlived and prepare the message
+   * for delivery asynchronously so that the caller does not block other operations.
+   *
+   * If this method throws any {@link Throwable} then the behaviour of the instance calling is
+   * undefined. If unable to deliver immediately, for any reason, the message should be reliably
+   * cached until it can be delivered.
+   *
+   * After a successful delivery, {@link Object#notifyAll()} should be called.
+   *
+   * @param message the messages to send via the {@linkplain DeliveryChannel}.
+   */
+  void publish(M message); // TODO: Move this to ReliableDeliveryChannel
 }

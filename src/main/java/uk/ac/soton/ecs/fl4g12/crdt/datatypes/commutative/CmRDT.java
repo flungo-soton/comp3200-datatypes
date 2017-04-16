@@ -48,8 +48,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  * {@link ReliableDeliveryChannel}.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <U> the type of updates which this object can be updated by.
+ * @param <M> the type of updates which this object can be updated by.
  */
-public interface CmRDT<K, U extends VersionedUpdateMessage<K, ?>> extends CRDT<K, U> {
+public interface CmRDT<K, M extends VersionedUpdateMessage<K, ?>> extends CRDT<K, M> {
 
 }

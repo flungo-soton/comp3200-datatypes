@@ -27,16 +27,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.Register;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.RegisterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
@@ -53,20 +50,12 @@ public class LWWRegisterTest
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  @Captor
-  public ArgumentCaptor<LWWRegisterState> updateMessageCaptor;
-
-  @Before
-  public void setUp() {
-    MockitoAnnotations.initMocks(this);
-  }
-
   @Override
   protected LWWRegister<Integer, Integer, Integer> getRegister() {
-    DeliveryChannel<Integer, LWWRegisterState<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
+    StateDeliveryChannel<Integer, LWWRegisterState<Integer, Integer, Integer>> deliveryChannel =
+        Mockito.mock(StateDeliveryChannel.class);
     Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
+        .register(Mockito.any(StatefulUpdatable.class));
     return new LWWRegister<>(new HashVersionVector<Integer, Integer>(new IntegerVersion()), null,
         deliveryChannel);
   }
@@ -92,7 +81,7 @@ public class LWWRegisterTest
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(register.getIdentifier());
-      final DeliveryChannel<Integer, LWWRegisterState<Integer, Integer, Integer>> deliveryChannel =
+      final StateDeliveryChannel<Integer, LWWRegisterState<Integer, Integer, Integer>> deliveryChannel =
           register.getDeliveryChannel();
 
       final Integer value = getValue(i);
@@ -102,10 +91,10 @@ public class LWWRegisterTest
       register.assign(value);
       final long timestampAfter = System.currentTimeMillis();
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verify(deliveryChannel).publish();
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      LWWRegisterState updateMessage = updateMessageCaptor.getValue();
+      LWWRegisterState updateMessage = register.snapshot();
 
       assertEquals("Update message identifier should be the same as the set's",
           register.getIdentifier(), updateMessage.getIdentifier());

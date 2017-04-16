@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,23 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
-
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.CmRDT;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.CvRDT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
 /**
- * Interface for Conflict-free Replicated Data Types. This interface should not be extended directly
- * and the {@link CvRDT} and {@link CmRDT} should be used to determine the semantic of how the
- * datatype works.
+ * {@linkplain DeliveryChannel} which delivers the state of a {@linkplain StatefulUpdatable} to
+ * other replicas. There are no delivery guarantees provided by the type of {@link DeliveryChannel}.
  *
- * @param <K> the type of identifier used to identify nodes.
- * @param <M> the type of updates which this object can be updated by.
- * @see CvRDT for the interface to be used with Convergent Replicated Data Types.
- * @see CmRDT for the interface to be used with Commutative Replicated Data Types.
+ * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public interface CRDT<K, M extends UpdateMessage<K, ?>> extends Updatable<K, M> {
+public interface StateDeliveryChannel<K, M extends StateSnapshot<K, ?>>
+    extends DeliveryChannel<K, M, StatefulUpdatable<K, ?, M>> {
+
+  /**
+   * Notify the delivery channel that there has been a change to the object that needs publishing.
+   * Does not necessarily publish immediately - this is just a notification.
+   */
+  void publish();
 
 }

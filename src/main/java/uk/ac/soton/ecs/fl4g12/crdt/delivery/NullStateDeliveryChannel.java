@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>
+ * Copyright 2017 Fabrizio Lungo <fl4g12@ecs.soton.ac.uk>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -21,37 +21,35 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LamportTimestamp;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
 
 /**
- * Abstract tests for {@link ReliableDeliveryChannel} implementations.
+ * A {@link DeliveryChannel} which does not replicate to any other nodes. All publish messages are
+ * ignored. Useful for testing and as a placeholder while developing.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <U> The type of updates sent via the delivery channel.
- * @param <C> the type of the {@linkplain DeliveryChannel} to be tested.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public abstract class CausalDeliveryChannelAbstractTest<K, U extends VersionedUpdateMessage<K, ?>, C extends ReliableDeliveryChannel<K, U>>
-    extends DeliveryChannelAbstractTest<K, U, C> {
+public class NullStateDeliveryChannel<K, M extends StateSnapshot<K, ?>> extends
+    NullDeliveryChannel<K, M, StatefulUpdatable<K, ?, M>> implements StateDeliveryChannel<K, M> {
 
   /**
-   * {@linkplain UpdateMessage} that can be used as part of tests.
+   * Create a {@linkplain NullStateDeliveryChannel}.
    *
-   * @param <K> the type of identifier used to identify nodes.
+   * @param idFactory {@link IdentifierFactory} used to assign an identifier if the
+   *        {@link Updatable} doesn't have one when registering.
    */
-  public static class CausalTestUpdateMessage<K>
-      extends AbstractVersionedUpdateMessage<K, LamportTimestamp<Integer>> {
+  public NullStateDeliveryChannel(IdentifierFactory<K> idFactory) {
+    super(idFactory);
+  }
 
-    public CausalTestUpdateMessage(K identifier, int order) {
-      super(identifier, getVersion(order));
+  @Override
+  public void publish() {
+    // Not final to support Mockito spy
+    if (!open) {
+      throw new IllegalStateException("Channel has been closed, not accepting new messages.");
     }
-
-    private static IntegerVersion getVersion(int order) {
-      IntegerVersion version = new IntegerVersion();
-      version.sync(order);
-      return version;
-    }
-
+    // Do nothing
   }
 
 }
