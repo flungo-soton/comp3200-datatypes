@@ -26,13 +26,13 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  * Registers the {@link Updatable} with a {@link DeliveryChannel}.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <U> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
+ * @param <M> the type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
  */
-public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
-    implements Updatable<K, U> {
+public abstract class AbstractUpdatable<K, M extends UpdateMessage<K, ?>>
+    implements Updatable<K, M> {
 
   protected final K identifier;
-  protected final DeliveryChannel<K, U> deliveryChannel;
+  protected final DeliveryChannel<K, M> deliveryChannel;
 
   /**
    * Instantiate the {@linkplain AbstractUpdatable} with the provided {@linkplain DeliveryChannel}.
@@ -43,7 +43,7 @@ public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
    *        the {@link DeliveryChannel}.
    * @param deliveryChannel the {@link DeliveryChannel} to register with.
    */
-  public AbstractUpdatable(K identifier, DeliveryChannel<K, U> deliveryChannel) {
+  public AbstractUpdatable(K identifier, DeliveryChannel<K, M> deliveryChannel) {
     this.deliveryChannel = deliveryChannel;
     if (identifier == null) {
       this.identifier = deliveryChannel.register(this);
@@ -64,7 +64,7 @@ public abstract class AbstractUpdatable<K, U extends UpdateMessage<K, ?>>
    *
    * @return the {@linkplain DeliveryChannel} of this {@linkplain Updatable}.
    */
-  public final DeliveryChannel<K, U> getDeliveryChannel() {
+  public final DeliveryChannel<K, M> getDeliveryChannel() {
     return deliveryChannel;
   }
 

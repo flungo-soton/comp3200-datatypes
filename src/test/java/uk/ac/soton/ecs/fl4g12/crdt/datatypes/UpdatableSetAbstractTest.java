@@ -45,11 +45,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link VersionedUpdateMessage} produced by the {@link VersionedUpdatable}
+ *        {@link Set}.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
-    extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
+public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, M extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
+    extends GrowableUpdatableSetAbstractTest<E, K, T, M, S> {
 
   private static final Logger LOGGER = Logger.getLogger(UpdatableSetAbstractTest.class.getName());
 
@@ -62,7 +63,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    * @param elements the elements that should be added as part of the update message.
    * @return an {@link VersionedUpdateMessage} representing the addition of the given elements.
    */
-  protected abstract U getRemoveUpdate(S set, K identifier, VersionVector<K, T> version,
+  protected abstract M getRemoveUpdate(S set, K identifier, VersionVector<K, T> version,
       Collection<E> elements);
 
   /**
@@ -75,7 +76,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    * @return an {@link VersionedUpdateMessage} representing the addition of the given elements.
    * @see #getRemoveUpdate(Set, Object, VersionVector, Collection) for more details.
    */
-  protected final U getRemoveUpdate(S set, K identifier, VersionVector<K, T> version,
+  protected final M getRemoveUpdate(S set, K identifier, VersionVector<K, T> version,
       E... elements) {
     return getRemoveUpdate(set, identifier, version, Arrays.asList(elements));
   }
@@ -99,7 +100,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
       final E element = getElement(i);
       Mockito.reset(deliveryChannel);
@@ -108,7 +109,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      U updateMessage = updateMessageCaptor.getValue();
+      M updateMessage = updateMessageCaptor.getValue();
 
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
       assertRemove(set, element, updateMessage);
@@ -124,7 +125,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    * @param updateMessage the {@link VersionedUpdateMessage} that was published by the {@link Set}
    *        being tested.
    */
-  protected abstract void assertRemove(S set, E element, U updateMessage);
+  protected abstract void assertRemove(S set, E element, M updateMessage);
 
   /**
    * Ensure that when an element that has already been removed is removed, that no change is
@@ -151,7 +152,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
       final E element = getElement(i);
       set.remove(element);
@@ -182,16 +183,16 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
     LOGGER.log(Level.INFO, "testRemove_MessageOrder: "
         + "Ensure that when an element is removed, that the change is published to the DeliveryChannel.");
     final S set = getSet();
-    final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+    final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
     // TODO: May need to add elements first to avoid problems with observed remove sets.
 
-    final ArrayList<U> previousMessages = new ArrayList<>();
+    final ArrayList<M> previousMessages = new ArrayList<>();
 
     // Add initial element to generate first update message
     set.remove(getElement(0));
     Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-    U previousMessage = updateMessageCaptor.getValue();
+    M previousMessage = updateMessageCaptor.getValue();
     previousMessages.add(previousMessage);
 
     assertTrue("Initial message should be preceded by the the version of a new set.",
@@ -201,10 +202,10 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       set.remove(getElement(i));
       // Using times instead of resetting ensures that no async operations are taking place.
       Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
-      U currentMessage = updateMessageCaptor.getValue();
+      M currentMessage = updateMessageCaptor.getValue();
 
       // Compare to all previous messages
-      for (U message : previousMessages) {
+      for (M message : previousMessages) {
         assertEquals("Should only be preceded by previousMessage", message == previousMessage,
             precedes(message, currentMessage));
         assertTrue("All previous messages should come before this one",
@@ -237,7 +238,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
       final E element = getElement(i);
       Mockito.reset(deliveryChannel);
@@ -246,7 +247,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      U updateMessage = updateMessageCaptor.getValue();
+      M updateMessage = updateMessageCaptor.getValue();
 
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
       assertRemoveAll_Single(set, element, updateMessage);
@@ -263,7 +264,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    * @param updateMessage the {@link VersionedUpdateMessage} that was published by the {@link Set}
    *        being tested.
    */
-  protected abstract void assertRemoveAll_Single(S set, E element, U updateMessage);
+  protected abstract void assertRemoveAll_Single(S set, E element, M updateMessage);
 
   /**
    * Ensure that when elements are removed using {@linkplain Set#removeAll(java.util.Collection)},
@@ -285,7 +286,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
       final HashSet<E> elements = new HashSet<>(
           Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
@@ -295,7 +296,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      U updateMessage = updateMessageCaptor.getValue();
+      M updateMessage = updateMessageCaptor.getValue();
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
 
       assertRemoveAll_Multiple(set, elements, updateMessage);
@@ -312,7 +313,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    * @param updateMessage the {@link VersionedUpdateMessage} that was published by the {@link Set}
    *        being tested.
    */
-  protected abstract void assertRemoveAll_Multiple(S set, Collection<E> elements, U updateMessage);
+  protected abstract void assertRemoveAll_Multiple(S set, Collection<E> elements, M updateMessage);
 
   /**
    * Ensure that when an elements are removed using
@@ -337,7 +338,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
 
     for (int i = 1; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
       final HashSet<E> elements = new HashSet<>(
           Arrays.asList(getElement(2 * i), getElement(2 * i + 1), getElement(2 * i + 2)));
@@ -349,7 +350,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      U updateMessage = updateMessageCaptor.getValue();
+      M updateMessage = updateMessageCaptor.getValue();
 
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
       assertRemoveAll_Overlap(set, elements, newElements, updateMessage);
@@ -369,7 +370,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    *        being tested.
    */
   protected abstract void assertRemoveAll_Overlap(S set, Collection<E> elements,
-      Collection<E> newElements, U updateMessage);
+      Collection<E> newElements, M updateMessage);
 
   /**
    * Ensure that when elements that have already been removed are removed, that no change is
@@ -396,7 +397,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
       final HashSet<E> elements = new HashSet<>(
           Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
@@ -442,7 +443,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       final E element = getElement(i);
 
       messageVersionVector.increment(set.getIdentifier());
-      final U message = getRemoveUpdate(set, set.getIdentifier(), messageVersionVector, element);
+      final M message = getRemoveUpdate(set, set.getIdentifier(), messageVersionVector, element);
 
       set.update(message);
 
@@ -461,7 +462,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    * @param updateMessage the {@link VersionedUpdateMessage} that was applied to the {@link Set}
    *        being tested.
    */
-  protected void assertUpdate_Remove_Single(S set, U updateMessage) {
+  protected void assertUpdate_Remove_Single(S set, M updateMessage) {
     // Do nothing by default
   }
 
@@ -488,7 +489,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
           Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
 
       messageVersionVector.increment(set.getIdentifier());
-      final U message = getRemoveUpdate(set, set.getIdentifier(), messageVersionVector, elements);
+      final M message = getRemoveUpdate(set, set.getIdentifier(), messageVersionVector, elements);
 
       set.update(message);
 
@@ -509,7 +510,7 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
    * @param updateMessage the {@link VersionedUpdateMessage} that was applied to the {@link Set}
    *        being tested.
    */
-  protected void assertUpdate_Remove_Multiple(S set, U updateMessage) {
+  protected void assertUpdate_Remove_Multiple(S set, M updateMessage) {
     // Do nothing by default
   }
 
@@ -522,16 +523,16 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
     LOGGER.log(Level.INFO, "testRemoveAll_MessageOrder: "
         + "Ensure that when element are removed, that the change is published to the DeliveryChannel.");
     final S set = getSet();
-    final DeliveryChannel<K, U> deliveryChannel = set.getDeliveryChannel();
+    final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
 
     // TODO: May need to add elements first to avoid problems with observed remove sets.
 
-    final ArrayList<U> previousMessages = new ArrayList<>();
+    final ArrayList<M> previousMessages = new ArrayList<>();
 
     // Add initial element to generate first update message
     set.removeAll(Arrays.asList(getElement(0), getElement(1), getElement(2)));
     Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-    U previousMessage = updateMessageCaptor.getValue();
+    M previousMessage = updateMessageCaptor.getValue();
     previousMessages.add(previousMessage);
 
     assertTrue("Initial message should be preceded by the the version of a new set.",
@@ -541,10 +542,10 @@ public abstract class UpdatableSetAbstractTest<E, K, T extends Comparable<T>, U 
       set.removeAll(Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
       // Using times instead of resetting ensures that no async operations are taking place.
       Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
-      U currentMessage = updateMessageCaptor.getValue();
+      M currentMessage = updateMessageCaptor.getValue();
 
       // Compare to all previous messages
-      for (U message : previousMessages) {
+      for (M message : previousMessages) {
         assertEquals("Should only be preceded by previousMessage", message == previousMessage,
             precedes(message, currentMessage));
         assertTrue("All previous messages should come before this one",

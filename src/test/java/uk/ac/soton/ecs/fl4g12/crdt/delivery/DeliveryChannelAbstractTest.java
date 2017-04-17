@@ -35,10 +35,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
  * Abstract tests for {@linkplain DeliveryChannel} implementations.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <U> The type of updates sent via the delivery channel.
+ * @param <M> The type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
  * @param <C> the type of the {@linkplain DeliveryChannel} to be tested.
  */
-public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, ?>, C extends DeliveryChannel<K, U>> {
+public abstract class DeliveryChannelAbstractTest<K, M extends UpdateMessage<K, ?>, C extends DeliveryChannel<K, M>> {
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -68,7 +68,7 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
    *        {@link Updatable}.
    * @return an update message for {@link Updatable} with identifier {@code id}.
    */
-  public abstract U getUpdateMessage(K id, int order);
+  public abstract M getUpdateMessage(K id, int order);
 
   /**
    * Get a {@linkplain DeliveryChannel} that can be used for testing. {@link DeliveryChannel}s with
@@ -223,7 +223,7 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     channelB2.register(updatableB2);
 
     // Publish a message on A0
-    U updateA0_0 = getUpdateMessage(id0, 0);
+    M updateA0_0 = getUpdateMessage(id0, 0);
     channelA0.publish(updateA0_0);
 
     // Wait for all messages to be delivered
@@ -238,7 +238,7 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     Mockito.verify(updatableB2, Mockito.times(0)).update(updateA0_0);
 
     // Publish a message on A1
-    U updateA1_0 = getUpdateMessage(id1, 0);
+    M updateA1_0 = getUpdateMessage(id1, 0);
     channelA1.publish(updateA1_0);
 
     // Wait for all messages to be delivered
@@ -292,7 +292,7 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     channelA2.register(updatableA2);
 
     // Publish a message on A0
-    U updateA0_0 = getUpdateMessage(id0, 0);
+    M updateA0_0 = getUpdateMessage(id0, 0);
     channelA0.publish(updateA0_0);
 
     // Make assertions
@@ -302,7 +302,7 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
 
     // Publish a message on A0
-    U updateA0_1 = getUpdateMessage(id0, 1);
+    M updateA0_1 = getUpdateMessage(id0, 1);
     channelA0.publish(updateA0_1);
 
     // Make assertions
@@ -339,12 +339,12 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     InOrder inOrder = Mockito.inOrder(updatableA1);
 
     // Publish a message on A0
-    U updateA0_0 = getUpdateMessage(id0, 0);
-    U updateA0_1 = getUpdateMessage(id0, 1);
-    U updateA0_2 = getUpdateMessage(id0, 2);
-    U updateA0_3 = getUpdateMessage(id0, 3);
-    U updateA0_4 = getUpdateMessage(id0, 4);
-    U updateA0_5 = getUpdateMessage(id0, 5);
+    M updateA0_0 = getUpdateMessage(id0, 0);
+    M updateA0_1 = getUpdateMessage(id0, 1);
+    M updateA0_2 = getUpdateMessage(id0, 2);
+    M updateA0_3 = getUpdateMessage(id0, 3);
+    M updateA0_4 = getUpdateMessage(id0, 4);
+    M updateA0_5 = getUpdateMessage(id0, 5);
     channelA0.publish(updateA0_0);
     channelA0.publish(updateA0_1);
     channelA0.publish(updateA0_2);
@@ -396,12 +396,12 @@ public abstract class DeliveryChannelAbstractTest<K, U extends UpdateMessage<K, 
     InOrder inOrder = Mockito.inOrder(updatableA1);
 
     // Create the updates
-    U updateA0_0 = getUpdateMessage(id0, 0);
-    U updateA0_1 = getUpdateMessage(id0, 1);
-    U updateA0_2 = getUpdateMessage(id0, 2);
-    U updateA0_3 = getUpdateMessage(id0, 3);
-    U updateA0_4 = getUpdateMessage(id0, 4);
-    U updateA0_5 = getUpdateMessage(id0, 5);
+    M updateA0_0 = getUpdateMessage(id0, 0);
+    M updateA0_1 = getUpdateMessage(id0, 1);
+    M updateA0_2 = getUpdateMessage(id0, 2);
+    M updateA0_3 = getUpdateMessage(id0, 3);
+    M updateA0_4 = getUpdateMessage(id0, 4);
+    M updateA0_5 = getUpdateMessage(id0, 5);
 
     // Fail when updateA0_2 is delivered
     Mockito.doThrow(DeliveryUpdateException.class).when(updatableA1).update(updateA0_2);

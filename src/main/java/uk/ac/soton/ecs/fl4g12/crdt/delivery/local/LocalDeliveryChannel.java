@@ -39,16 +39,16 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
  * {@link Updatable} instances which are instantiated with this {@link DeliveryChannel}.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <U> The type of updates sent via the delivery channel.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
-    implements ReliableDeliveryChannel<K, U> {
+public class LocalDeliveryChannel<K, M extends VersionedUpdateMessage<K, ?>>
+    implements ReliableDeliveryChannel<K, M> {
 
   private static final Logger LOGGER = Logger.getLogger(LocalDeliveryChannel.class.getName());
 
   private final IdentifierFactory<K> idFactory;
-  private final Map<K, Updatable<K, U>> objects = new HashMap<>();
-  private final Map<K, PriorityQueue<U>> queues = new HashMap<>();
+  private final Map<K, Updatable<K, M>> objects = new HashMap<>();
+  private final Map<K, PriorityQueue<M>> queues = new HashMap<>();
 
   /**
    * Instantiate a {@linkplain LocalDeliveryChannel} with the given {@linkplain IdentifierFactory}.
@@ -61,7 +61,7 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
   }
 
   @Override
-  public synchronized K register(Updatable<K, U> updatable) throws IllegalStateException {
+  public synchronized K register(Updatable<K, M> updatable) throws IllegalStateException {
     K identifier = updatable.getIdentifier();
     if (identifier == null) {
       do {
@@ -72,15 +72,15 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
           "An updatable with that ID is already registered:" + updatable.getIdentifier());
     }
     objects.put(identifier, updatable);
-    queues.put(identifier, new PriorityQueue<U>());
+    queues.put(identifier, new PriorityQueue<M>());
     return identifier;
   }
 
   @Override
-  public void publish(U message) {
+  public void publish(M message) {
     // Put the message onto the queues
-    for (Updatable<K, U> updatable : objects.values()) {
-      PriorityQueue<U> queue = queues.get(updatable.getIdentifier());
+    for (Updatable<K, M> updatable : objects.values()) {
+      PriorityQueue<M> queue = queues.get(updatable.getIdentifier());
       if (!message.getIdentifier().equals(updatable.getIdentifier())) {
         synchronized (queue) {
           queue.add(message);
@@ -93,7 +93,7 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
 
   @Override
   public boolean hasPendingDeliveries() {
-    for (PriorityQueue<U> queue : queues.values()) {
+    for (PriorityQueue<M> queue : queues.values()) {
       synchronized (queue) {
         if (!queue.isEmpty()) {
           return true;
@@ -105,7 +105,7 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
 
   @Override
   public boolean hasPendingDeliveries(K id) {
-    PriorityQueue<U> queue = queues.get(id);
+    PriorityQueue<M> queue = queues.get(id);
     synchronized (queue) {
       return !queue.isEmpty();
     }
@@ -120,9 +120,9 @@ public class LocalDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
    * Deliver queued {@linkplain UpdateMessage}s to their respective {@linkplain Updatable}.
    */
   public void deliverUpdates() {
-    for (Updatable<K, U> updatable : objects.values()) {
-      PriorityQueue<U> queue = queues.get(updatable.getIdentifier());
-      U message;
+    for (Updatable<K, M> updatable : objects.values()) {
+      PriorityQueue<M> queue = queues.get(updatable.getIdentifier());
+      M message;
 
       // Synchronize delivery on the queue to allow pipelining.
       synchronized (queue) {

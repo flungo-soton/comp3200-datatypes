@@ -28,11 +28,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.LamportTimestamp;
  * Abstract tests for {@link ReliableDeliveryChannel} implementations.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <U> The type of updates sent via the delivery channel.
+ * @param <M> The type of {@link VersionedUpdateMessage} sent via the
+ *        {@link ReliableDeliveryChannel}.
  * @param <C> the type of the {@linkplain DeliveryChannel} to be tested.
  */
-public abstract class CausalDeliveryChannelAbstractTest<K, U extends VersionedUpdateMessage<K, ?>, C extends ReliableDeliveryChannel<K, U>>
-    extends DeliveryChannelAbstractTest<K, U, C> {
+public abstract class CausalDeliveryChannelAbstractTest<K, M extends VersionedUpdateMessage<K, ?>, C extends ReliableDeliveryChannel<K, M>>
+    extends DeliveryChannelAbstractTest<K, M, C> {
 
   /**
    * {@linkplain UpdateMessage} that can be used as part of tests.

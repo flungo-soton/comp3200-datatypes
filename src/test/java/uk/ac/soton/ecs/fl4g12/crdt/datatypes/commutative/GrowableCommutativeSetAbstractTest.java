@@ -38,24 +38,25 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}.
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link GrowableSetUpdateMessage} produced by the
+ *        {@link VersionedUpdatable} {@link Set}.
  * @param <S> the type of {@link VersionedUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Comparable<T>, U extends GrowableSetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
-    extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
+public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Comparable<T>, M extends GrowableSetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
+    extends GrowableUpdatableSetAbstractTest<E, K, T, M, S> {
 
   @Override
-  protected boolean precedes(S updatable, U message) {
+  protected boolean precedes(S updatable, M message) {
     return updatable.getVersion().precedes(message.getVersion());
   }
 
   @Override
-  protected boolean precedes(U message1, U message2) {
+  protected boolean precedes(M message1, M message2) {
     return message1.getVersion().precedes(message2.getVersion());
   }
 
   @Override
-  protected int compare(U message1, U message2) {
+  protected int compare(M message1, M message2) {
     return message1.compareTo(message2);
   }
 
@@ -67,7 +68,7 @@ public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Compara
 
   @Override
   protected void assertExpectedUpdateMessage(S set, VersionVector<K, T> expectedVersion,
-      U updateMessage) {
+      M updateMessage) {
     // Overridden to support Dot vs Vector comparisons,
     assertEquals("Update message identifier should be the same as the set's", set.getIdentifier(),
         updateMessage.getIdentifier());
@@ -76,22 +77,22 @@ public abstract class GrowableCommutativeSetAbstractTest<E, K, T extends Compara
   }
 
   @Override
-  protected void assertAdd(S set, E element, U updateMessage) {
+  protected void assertAdd(S set, E element, M updateMessage) {
     assertElementsMatch(new HashSet<>(Arrays.asList(element)), updateMessage);
   }
 
   @Override
-  protected void assertAddAll_Single(S set, E element, U updateMessage) {
+  protected void assertAddAll_Single(S set, E element, M updateMessage) {
     assertElementsMatch(new HashSet<>(Arrays.asList(element)), updateMessage);
   }
 
   @Override
-  protected void assertAddAll_Multiple(S set, Set<E> elements, U updateMessage) {
+  protected void assertAddAll_Multiple(S set, Set<E> elements, M updateMessage) {
     assertElementsMatch(elements, updateMessage);
   }
 
   @Override
-  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, U updateMessage) {
+  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, M updateMessage) {
     assertElementsMatch(newElements, updateMessage);
   }
 

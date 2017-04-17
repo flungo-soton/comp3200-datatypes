@@ -36,13 +36,13 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of timestamps which are used by each node.
- * @param <U> the type of updates which this object can be updated by.
+ * @param <M> the type of updates which this object can be updated by.
  */
-public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ?>>
-    extends AbstractVersionedUpdatable<K, T, U> implements CmRDT<K, U> {
+public abstract class AbstractCmRDT<K, T extends Comparable<T>, M extends VersionedUpdateMessage<K, ?>>
+    extends AbstractVersionedUpdatable<K, T, M> implements CmRDT<K, M> {
 
   public AbstractCmRDT(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, U> deliveryChannel) {
+      DeliveryChannel<K, M> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 
@@ -54,7 +54,7 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends Versio
    * @return {@code true} if the {@link VersionVector} of this {@linkplain VersionedUpdatable}
    *         precedes the version in the {@link VersionedUpdateMessage}, {@code false} otherwise.
    */
-  protected abstract boolean precedes(U message);
+  protected abstract boolean precedes(M message);
 
   /**
    * Determine if the provided {@linkplain VersionedUpdateMessage} has already been applied.
@@ -66,7 +66,7 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends Versio
    * @return {@code true} if the {@linkplain VersionedUpdateMessage} has already been applied,
    *         {@code false} otherwise.
    */
-  protected abstract boolean hasBeenApplied(U message);
+  protected abstract boolean hasBeenApplied(M message);
 
   /**
    * Synchronise the {@link VersionVector} of this {@linkplain VersionedUpdatable} with the
@@ -74,10 +74,10 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends Versio
    *
    * @param message the {@linkplain VersionedUpdateMessage} to check.
    */
-  protected abstract void sync(U message);
+  protected abstract void sync(M message);
 
   @Override
-  public synchronized final void update(U message) throws DeliveryUpdateException {
+  public synchronized final void update(M message) throws DeliveryUpdateException {
     // Is this the next message?
     // Checking this first saves checking happenedBefore and identical for most messages
     // Precedence implies that the message has not happened before and is not identical.
@@ -109,6 +109,6 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, U extends Versio
    *
    * @param message the {@link UpdateMessage} to apply.
    */
-  protected abstract void applyUpdate(U message);
+  protected abstract void applyUpdate(M message);
 
 }

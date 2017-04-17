@@ -38,10 +38,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link SetState} made from the {@link StatefulUpdatable} {@link Set}.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
+public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable<T>, M extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, M>>
     implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER =
@@ -57,7 +57,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
 
     final VersionVector<K, T> expectedVersionVector = set.getVersion().copy();
 
-    U state = set.snapshot();
+    M state = set.snapshot();
 
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
@@ -87,7 +87,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
 
     set.add(getElement(0));
     expectedVersionVector.increment(set.getIdentifier());
-    U state = set.snapshot();
+    M state = set.snapshot();
 
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());
@@ -115,7 +115,7 @@ public abstract class GrowableStatefulSetAbstractTest<E, K, T extends Comparable
 
     set.addAll(Arrays.asList(getElement(0), getElement(1), getElement(2)));
     expectedVersionVector.increment(set.getIdentifier());
-    U state = set.snapshot();
+    M state = set.snapshot();
 
     assertEquals("state identifier should be the same as the set", set.getIdentifier(),
         state.getIdentifier());

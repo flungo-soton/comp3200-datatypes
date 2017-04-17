@@ -31,10 +31,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Versioned;
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <V> the type of the {@link Version}.
- * @param <U> the type of updates sent via the delivery channel.
+ * @param <M> the type of updates sent via the delivery channel.
  */
-public interface VersionedUpdatable<K, V extends Version, U extends UpdateMessage<K, ?>>
-    extends Updatable<K, U>, Versioned<V> {
+public interface VersionedUpdatable<K, V extends Version, M extends UpdateMessage<K, ?>>
+    extends Updatable<K, M>, Versioned<V> {
 
   /**
    * Get a copy of the current version of the {@linkplain VersionedUpdatable}. The version is

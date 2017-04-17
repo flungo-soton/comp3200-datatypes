@@ -44,10 +44,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link VersionedUpdateMessage} produced by the {@link VersionedUpdatable}
+ *        {@link Set}.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
+public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparable<T>, M extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
     implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER =
@@ -71,7 +72,7 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
   @Override
   public abstract S getSet();
 
-  public abstract DeliveryChannel<K, U> getDeliveryChannel();
+  public abstract DeliveryChannel<K, M> getDeliveryChannel();
 
   /**
    * Wait until there are no pending deliveries from the source to the destination.

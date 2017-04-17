@@ -36,49 +36,49 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link SetState} made from the {@link StatefulUpdatable} {@link Set}.
  * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
  */
-public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
-    extends UpdatableSetAbstractTest<E, K, T, U, S> {
+public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, M extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, M>>
+    extends UpdatableSetAbstractTest<E, K, T, M, S> {
 
   @Override
-  protected boolean precedes(S updatable, U message) {
+  protected boolean precedes(S updatable, M message) {
     return updatable.getVersion().precedes(message.getVersion());
   }
 
   @Override
-  protected boolean precedes(U message1, U message2) {
+  protected boolean precedes(M message1, M message2) {
     return message1.getVersion().precedes(message2.getVersion());
   }
 
   @Override
-  protected int compare(U message1, U message2) {
+  protected int compare(M message1, M message2) {
     return message1.compareTo(message2);
   }
 
   @Override
-  protected void assertAdd(S set, E element, U updateMessage) {
+  protected void assertAdd(S set, E element, M updateMessage) {
     assertSetStateContains(updateMessage, element);
   }
 
   @Override
-  protected void assertAddAll_Single(S set, E element, U updateMessage) {
+  protected void assertAddAll_Single(S set, E element, M updateMessage) {
     assertSetStateContains(updateMessage, element);
   }
 
   @Override
-  protected void assertAddAll_Multiple(S set, Set<E> elements, U updateMessage) {
+  protected void assertAddAll_Multiple(S set, Set<E> elements, M updateMessage) {
     assertSetStateContainsAll(updateMessage, elements);
   }
 
   @Override
-  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, U updateMessage) {
+  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, M updateMessage) {
     assertSetStateContainsAll(updateMessage, elements);
   }
 
   @Override
-  protected void assertRemove(S set, E element, U updateMessage) {
+  protected void assertRemove(S set, E element, M updateMessage) {
     assertFalse("The set update message state should not contain the removed element.",
         updateMessage.getState().contains(element));
 
@@ -86,7 +86,7 @@ public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U
   }
 
   @Override
-  protected void assertRemoveAll_Single(S set, E element, U updateMessage) {
+  protected void assertRemoveAll_Single(S set, E element, M updateMessage) {
     assertFalse("The set update message state should not contain the removed element.",
         updateMessage.getState().contains(element));
 
@@ -94,7 +94,7 @@ public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U
   }
 
   @Override
-  protected void assertRemoveAll_Multiple(S set, Collection<E> elements, U updateMessage) {
+  protected void assertRemoveAll_Multiple(S set, Collection<E> elements, M updateMessage) {
     for (E element : elements) {
       assertFalse("The set update message state should not contain any of the removed elements.",
           updateMessage.getState().contains(element));
@@ -105,7 +105,7 @@ public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, U
 
   @Override
   protected void assertRemoveAll_Overlap(S set, Collection<E> elements, Collection<E> newElements,
-      U updateMessage) {
+      M updateMessage) {
     for (E element : elements) {
       assertFalse("The set update message state should not contain any of the removed elements.",
           updateMessage.getState().contains(element));

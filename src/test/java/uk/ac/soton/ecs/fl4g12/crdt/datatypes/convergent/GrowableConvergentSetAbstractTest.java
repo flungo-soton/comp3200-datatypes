@@ -34,11 +34,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link SetState} made from the {@link StatefulUpdatable} {@link Set}.
  * @param <S> the type of {@link StatefulUpdatable} based {@link Set} being tested.
  */
-public abstract class GrowableConvergentSetAbstractTest<E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>>
-    extends GrowableUpdatableSetAbstractTest<E, K, T, U, S> {
+public abstract class GrowableConvergentSetAbstractTest<E, K, T extends Comparable<T>, M extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, M>>
+    extends GrowableUpdatableSetAbstractTest<E, K, T, M, S> {
 
   public static <E, K, T extends Comparable<T>, U extends SetState<E, K, VersionVector<K, T>>, S extends Set<E> & StatefulUpdatable<K, VersionVector<K, T>, U>> void assertSetStateContains(
       U setState, E element) {
@@ -53,37 +53,37 @@ public abstract class GrowableConvergentSetAbstractTest<E, K, T extends Comparab
   }
 
   @Override
-  protected void assertAdd(S set, E element, U updateMessage) {
+  protected void assertAdd(S set, E element, M updateMessage) {
     assertSetStateContains(updateMessage, element);
   }
 
   @Override
-  protected void assertAddAll_Single(S set, E element, U updateMessage) {
+  protected void assertAddAll_Single(S set, E element, M updateMessage) {
     assertSetStateContains(updateMessage, element);
   }
 
   @Override
-  protected void assertAddAll_Multiple(S set, Set<E> elements, U updateMessage) {
+  protected void assertAddAll_Multiple(S set, Set<E> elements, M updateMessage) {
     assertSetStateContainsAll(updateMessage, elements);
   }
 
   @Override
-  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, U updateMessage) {
+  protected void assertAddAll_Overlap(S set, Set<E> elements, Set<E> newElements, M updateMessage) {
     assertSetStateContainsAll(updateMessage, elements);
   }
 
   @Override
-  protected boolean precedes(S updatable, U message) {
+  protected boolean precedes(S updatable, M message) {
     return updatable.getVersion().precedes(message.getVersion());
   }
 
   @Override
-  protected boolean precedes(U message1, U message2) {
+  protected boolean precedes(M message1, M message2) {
     return message1.getVersion().precedes(message2.getVersion());
   }
 
   @Override
-  protected int compare(U message1, U message2) {
+  protected int compare(M message1, M message2) {
     return message1.compareTo(message2);
   }
 

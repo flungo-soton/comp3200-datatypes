@@ -34,10 +34,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link GrowableSetUpdateMessage} produced by the
+ *        {@link VersionedUpdatable} {@link Set}.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class GrowableSetCommutativityTest<E, K, T extends Comparable<T>, U extends GrowableSetUpdateMessage<E, K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
-    extends GrowableConflictFreeSetAbstractTest<E, K, T, U, S> {
+public abstract class GrowableSetCommutativityTest<E, K, T extends Comparable<T>, M extends GrowableSetUpdateMessage<E, K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
+    extends GrowableConflictFreeSetAbstractTest<E, K, T, M, S> {
 
 }

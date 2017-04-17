@@ -33,10 +33,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  *
  * @param <K> the type of identifier used to identify nodes.
  * @param <V> the type of the {@link Version}.
- * @param <S> the type of the {@link StateSnapshot} which is taken and used as the
+ * @param <M> the type of the {@link StateSnapshot} which is taken and used as the
  *        {@link UpdateMessage}.
  */
-public interface CvRDT<K, V extends Version, S extends StateSnapshot<K, V>>
-    extends CRDT<K, S>, StatefulUpdatable<K, V, S> {
+public interface CvRDT<K, V extends Version, M extends StateSnapshot<K, V>>
+    extends CRDT<K, M>, StatefulUpdatable<K, V, M> {
 
 }

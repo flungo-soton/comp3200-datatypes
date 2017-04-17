@@ -29,11 +29,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
  * to update other {@link StatefulUpdatable}s of the same type.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <V> the type of the {@link Version}
- * @param <S> the type of snapshot made from this state.
+ * @param <V> the type of the {@link Version}.
+ * @param <M> the type of {@link StateSnapshot} made from this {@link StatefulUpdatable}.
  */
-public interface StatefulUpdatable<K, V extends Version, S extends StateSnapshot<K, V>>
-    extends VersionedUpdatable<K, V, S> {
+public interface StatefulUpdatable<K, V extends Version, M extends StateSnapshot<K, V>>
+    extends VersionedUpdatable<K, V, M> {
 
   /**
    * Creates a snapshot of the state which can be used as an {@linkplain UpdateMessage}. The
@@ -41,6 +41,6 @@ public interface StatefulUpdatable<K, V extends Version, S extends StateSnapshot
    *
    * @return a snapshot of the state.
    */
-  S snapshot();
+  M snapshot();
 
 }

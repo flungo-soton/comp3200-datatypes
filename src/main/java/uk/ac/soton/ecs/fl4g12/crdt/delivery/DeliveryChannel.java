@@ -27,9 +27,9 @@ package uk.ac.soton.ecs.fl4g12.crdt.delivery;
  * registered at instantiation of the {@link Updatable} object.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <U> The type of updates sent via the delivery channel.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public interface DeliveryChannel<K, U extends UpdateMessage<K, ?>> {
+public interface DeliveryChannel<K, M extends UpdateMessage<K, ?>> {
 
   /**
    * Register the {@link Updatable} to deliver messages to as part of the channel. Only one object
@@ -45,7 +45,7 @@ public interface DeliveryChannel<K, U extends UpdateMessage<K, ?>> {
    * @return the id of the object that has been assigned.
    * @throws IllegalStateException if the channel has already been registered to another object.
    */
-  K register(Updatable<K, U> updatable) throws IllegalStateException;
+  K register(Updatable<K, M> updatable) throws IllegalStateException;
 
   /**
    * Publish messages via this {@linkplain DeliveryChannel}. The messages will be delivered reliably
@@ -60,7 +60,7 @@ public interface DeliveryChannel<K, U extends UpdateMessage<K, ?>> {
    *
    * @param message the messages to send via the {@linkplain DeliveryChannel}.
    */
-  void publish(U message); // TODO: Move this to ReliableDeliveryChannel
+  void publish(M message); // TODO: Move this to ReliableDeliveryChannel
 
   /**
    * Determine if there are any messages waiting to be delivered. If the

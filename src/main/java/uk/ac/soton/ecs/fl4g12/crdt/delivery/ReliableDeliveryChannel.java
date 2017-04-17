@@ -53,9 +53,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * can be gracefully recovered.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <U> The type of updates sent via the delivery channel.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public interface ReliableDeliveryChannel<K, U extends VersionedUpdateMessage<K, ?>>
-    extends DeliveryChannel<K, U> {
+public interface ReliableDeliveryChannel<K, M extends VersionedUpdateMessage<K, ?>>
+    extends DeliveryChannel<K, M> {
 
 }

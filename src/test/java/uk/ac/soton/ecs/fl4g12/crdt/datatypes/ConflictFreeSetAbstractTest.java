@@ -45,11 +45,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <E> the type of values stored in the {@link Set}.
  * @param <K> the type of identifier used to identify nodes.
  * @param <T> the type of the timestamp within the {@link VersionVector}
- * @param <U> the type of snapshot made from this state.
+ * @param <M> the type of {@link VersionedUpdateMessage} produced by the {@link VersionedUpdatable}
+ *        {@link Set}.
  * @param <S> the type of {@link Set} being tested.
  */
-public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>, U extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, U>>
-    extends GrowableConflictFreeSetAbstractTest<E, K, T, U, S> {
+public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>, M extends VersionedUpdateMessage<K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
+    extends GrowableConflictFreeSetAbstractTest<E, K, T, M, S> {
 
   private static final Logger LOGGER =
       Logger.getLogger(ConflictFreeSetAbstractTest.class.getName());
@@ -76,7 +77,7 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
     LOGGER.log(Level.INFO, "testUpdate_LocalRemove: Test update with a local remove.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
 
     // Setup the initial states
@@ -114,9 +115,9 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
     LOGGER.log(Level.INFO, "testUpdate_RemoteRemove: Test update with a remote remove.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery2 = set2.getDeliveryChannel();
 
     // Setup the initial states
     final HashSet<E> initial = new HashSet<>(Arrays.asList(getElement(0), getElement(1)));
@@ -153,9 +154,9 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
     LOGGER.log(Level.INFO, "testUpdate_BothRemove: Test update with concurrent removals.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery2 = set2.getDeliveryChannel();
 
     // Setup the initial states
     final HashSet<E> initial =
@@ -172,10 +173,10 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
 
     set1.remove(getElement(0));
     Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    final M update1 = updateMessageCaptor.getValue();
     set2.remove(getElement(1));
     Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    final M update2 = updateMessageCaptor.getValue();
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 
@@ -199,9 +200,9 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
         "testUpdate_BothRemove_Same: Test update with concurrent removals of the same item.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery2 = set2.getDeliveryChannel();
 
     // Setup the initial states
     final HashSet<E> initial = new HashSet<>(Arrays.asList(getElement(0), getElement(1)));
@@ -216,10 +217,10 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
 
     set1.remove(getElement(1));
     Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    final M update1 = updateMessageCaptor.getValue();
     set2.remove(getElement(1));
     Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    final M update2 = updateMessageCaptor.getValue();
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 
@@ -243,9 +244,9 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
         + "Test update with a local add and remote remove of different elements.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery2 = set2.getDeliveryChannel();
 
     // Setup the initial states
     final HashSet<E> initial = new HashSet<>(Arrays.asList(getElement(0), getElement(1)));
@@ -261,10 +262,10 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
 
     set1.add(getElement(2));
     Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    final M update1 = updateMessageCaptor.getValue();
     set2.remove(getElement(1));
     Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    final M update2 = updateMessageCaptor.getValue();
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 
@@ -288,9 +289,9 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
         + "Test update with a local remove and remote add of different elements.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery2 = set2.getDeliveryChannel();
 
     // Setup the initial states
     final HashSet<E> initial = new HashSet<>(Arrays.asList(getElement(0), getElement(1)));
@@ -307,10 +308,10 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
 
     set1.remove(getElement(1));
     Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    final M update1 = updateMessageCaptor.getValue();
     set2.add(getElement(2));
     Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    final M update2 = updateMessageCaptor.getValue();
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 
@@ -334,9 +335,9 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
         + "Test update with a local add and remote remove of different elements.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery2 = set2.getDeliveryChannel();
 
     // Setup the initial states
     final HashSet<E> initial = new HashSet<>(Arrays.asList(getElement(0)));
@@ -358,10 +359,10 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
 
     set1.add(getElement(1));
     Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    final M update1 = updateMessageCaptor.getValue();
     set2.remove(getElement(1));
     Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    final M update2 = updateMessageCaptor.getValue();
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 
@@ -385,9 +386,9 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
         + "Test update with a local add and remote remove of different elements.");
 
     final S set1 = getSet();
-    final DeliveryChannel<K, U> delivery1 = set1.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery1 = set1.getDeliveryChannel();
     final S set2 = getSet();
-    final DeliveryChannel<K, U> delivery2 = set2.getDeliveryChannel();
+    final DeliveryChannel<K, M> delivery2 = set2.getDeliveryChannel();
 
     // Setup the initial states
     final HashSet<E> initial = new HashSet<>(Arrays.asList(getElement(0)));
@@ -409,10 +410,10 @@ public abstract class ConflictFreeSetAbstractTest<E, K, T extends Comparable<T>,
 
     set1.remove(getElement(1));
     Mockito.verify(delivery1).publish(updateMessageCaptor.capture());
-    final U update1 = updateMessageCaptor.getValue();
+    final M update1 = updateMessageCaptor.getValue();
     set2.add(getElement(1));
     Mockito.verify(delivery2).publish(updateMessageCaptor.capture());
-    final U update2 = updateMessageCaptor.getValue();
+    final M update2 = updateMessageCaptor.getValue();
     assertTrue("set1 should be concurrent with set2",
         set1.getVersion().concurrentWith(set2.getVersion()));
 

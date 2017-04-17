@@ -32,10 +32,10 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
  * datatype works.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <U> the type of updates which this object can be updated by.
+ * @param <M> the type of updates which this object can be updated by.
  * @see CvRDT for the interface to be used with Convergent Replicated Data Types.
  * @see CmRDT for the interface to be used with Commutative Replicated Data Types.
  */
-public interface CRDT<K, U extends UpdateMessage<K, ?>> extends Updatable<K, U> {
+public interface CRDT<K, M extends UpdateMessage<K, ?>> extends Updatable<K, M> {
 
 }
