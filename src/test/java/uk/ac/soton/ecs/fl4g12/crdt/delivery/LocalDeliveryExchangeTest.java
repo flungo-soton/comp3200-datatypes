@@ -19,52 +19,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
+package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import org.junit.After;
-import org.junit.Before;
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractIT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.local.LocalDeliveryChannel;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * Test the integration of {@linkplain GSet}s and the {@linkplain LocalDeliveryChannel} for various
- * operations. Ensures that the {@link GSet} is replicated as expected over the
- * {@linkplain LocalDeliveryChannel} and that the state converges to the expected state after a
- * series of operations.
+ *
  */
-public class GSetLocalDeliveryIT extends
-    GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
+public class LocalDeliveryExchangeTest extends
+    DeliveryExchangeAbstractTest<Integer, VersionedUpdateMessage<Integer, ?>, LocalDeliveryExchange<Integer, VersionedUpdateMessage<Integer, ?>>> {
+
+  private static final Logger LOGGER = Logger.getLogger(LocalDeliveryExchangeTest.class.getName());
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
-
-  private LocalDeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel;
-
-  @Before
-  public void setupDeliveryChannel() {
-    deliveryChannel = new LocalDeliveryChannel<>(ID_FACTORY);
-  }
-
-  @After
-  public void teardownDeliveryChannel() {
-    deliveryChannel = null;
-  }
+  private static final long EXCHANGE_PERIOD = BUFFER_TIME / 10;
+  private static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
 
   @Override
-  public GSet<Integer, Integer, Integer> getSet() {
-    return new GSet<>(new IntegerVersion(), null, getDeliveryChannel());
-  }
-
-  @Override
-  public LocalDeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> getDeliveryChannel() {
-    return deliveryChannel;
-  }
-
-  @Override
-  public Integer getElement(int i) {
+  public Integer getIdentifier(int i) {
     return i;
+  }
+
+  @Override
+  public LocalDeliveryExchange<Integer, VersionedUpdateMessage<Integer, ?>> getDeliveryExchange() {
+    return new LocalDeliveryExchange<>(ID_FACTORY, EXCHANGE_PERIOD, TIME_UNIT);
+  }
+
+  @Override
+  public VersionedUpdateMessage<Integer, ?> getUpdateMessage() {
+    return Mockito.mock(VersionedUpdateMessage.class);
+  }
+
+  @Override
+  public Version getVersion(int order) {
+    IntegerVersion version = new IntegerVersion();
+    version.sync(order);
+    return version;
   }
 
 }

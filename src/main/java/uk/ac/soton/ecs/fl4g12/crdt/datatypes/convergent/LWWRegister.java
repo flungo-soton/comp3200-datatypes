@@ -29,9 +29,9 @@ import java.util.logging.Logger;
 import org.openimaj.citation.annotation.Reference;
 import org.openimaj.citation.annotation.ReferenceType;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.Register;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUpdateException;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
@@ -60,8 +60,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
     institution = "inria", year = "2011", url = "https://hal.inria.fr/inria-00555588",
     pages = {"17", "18", "19"})
 public final class LWWRegister<E extends Serializable, K extends Comparable<K>, T extends Comparable<T>>
-    extends AbstractVersionedUpdatable<K, T, LWWRegisterState<E, K, T>>
-    implements CvRDT<K, VersionVector<K, T>, LWWRegisterState<E, K, T>>, Register<E> {
+    extends AbstractCvRDT<K, T, LWWRegisterState<E, K, T>> implements Register<E> {
 
   private static final Logger LOGGER = Logger.getLogger(LWWRegister.class.getName());
 
@@ -78,7 +77,7 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
    *        over.
    */
   public LWWRegister(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, LWWRegisterState<E, K, T>> deliveryChannel) {
+      StateDeliveryChannel<K, LWWRegisterState<E, K, T>> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
     this.element = new AtomicReference<>(new Element<E>(null, 0));
   }
@@ -87,7 +86,7 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
   public synchronized void assign(E value) {
     version.increment();
     assign(new Element<>(value), identifier);
-    getDeliveryChannel().publish(snapshot());
+    getDeliveryChannel().publish();
   }
 
   /**

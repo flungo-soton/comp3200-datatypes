@@ -63,5 +63,5 @@ public interface Updatable<K, M extends UpdateMessage<K, ?>> {
    * @return the delivery channel that is used by this {@link Updatable} to deliver updates to
    *         replicas.
    */
-  DeliveryChannel<K, M> getDeliveryChannel();
+  DeliveryChannel<K, M, ?> getDeliveryChannel();
 }

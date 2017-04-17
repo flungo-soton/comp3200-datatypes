@@ -21,36 +21,51 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Before;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractIT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.local.LocalDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.LocalDeliveryExchange;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.PeriodicReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 
 /**
  * Test the integration of {@linkplain CommutativeTwoPhaseSet}s and the
- * {@linkplain LocalDeliveryChannel} for various operations. Ensures that the
- * {@link CommutativeTwoPhaseSet} is replicated as expected over the
- * {@linkplain LocalDeliveryChannel} and that the state converges to the expected state after a
- * series of operations.
+ * {@link LocalDeliveryExchange} for various operations. Ensures that the
+ * {@link CommutativeTwoPhaseSet} is replicated as expected over the {@link LocalDeliveryExchange}
+ * and that the state converges to the expected state after a series of operations.
  */
-public class CommutativeTwoPhaseSetLocalDeliveryIT extends
+public class CommutativeTwoPhaseSetLocalExchangeIT extends
     GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>, CommutativeTwoPhaseSet<Integer, Integer, Integer>> {
+
+  private static final Logger LOGGER =
+      Logger.getLogger(CommutativeTwoPhaseSetLocalExchangeIT.class.getName());
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
+  private static final long EXCHANGE_PERIOD = 100;
+  private static final long CHANNEL_PERIOD = 100;
+  private static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
 
-  private LocalDeliveryChannel<Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> deliveryChannel;
+  private LocalDeliveryExchange<Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> deliveryExchange;
 
   @Before
   public void setupDeliveryChannel() {
-    deliveryChannel = new LocalDeliveryChannel<>(ID_FACTORY);
+    deliveryExchange = new LocalDeliveryExchange<>(ID_FACTORY, EXCHANGE_PERIOD, TIME_UNIT);
   }
 
   @After
   public void teardownDeliveryChannel() {
-    deliveryChannel = null;
+    try {
+      deliveryExchange.close();
+    } catch (Exception ex) {
+      LOGGER.log(Level.SEVERE,
+          "DeliveryExchange could not be shutdown between tests: may still be running", ex);
+    }
+    deliveryExchange = null;
   }
 
   @Override
@@ -59,8 +74,8 @@ public class CommutativeTwoPhaseSetLocalDeliveryIT extends
   }
 
   @Override
-  public LocalDeliveryChannel<Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> getDeliveryChannel() {
-    return deliveryChannel;
+  public PeriodicReliableDeliveryChannel<Integer, CommutativeTwoPhaseSetUpdate<Integer, Integer, Integer>> getDeliveryChannel() {
+    return new PeriodicReliableDeliveryChannel<>(deliveryExchange, CHANNEL_PERIOD, TIME_UNIT);
   }
 
   @Override

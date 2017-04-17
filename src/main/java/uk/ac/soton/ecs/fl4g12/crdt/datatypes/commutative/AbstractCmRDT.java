@@ -22,8 +22,8 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryUpdateException;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
@@ -39,10 +39,12 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * @param <M> the type of updates which this object can be updated by.
  */
 public abstract class AbstractCmRDT<K, T extends Comparable<T>, M extends VersionedUpdateMessage<K, ?>>
-    extends AbstractVersionedUpdatable<K, T, M> implements CmRDT<K, M> {
+    extends
+    AbstractVersionedUpdatable<K, T, M, ReliableDeliveryChannel<K, M>, AbstractCmRDT<K, T, M>>
+    implements CmRDT<K, M> {
 
   public AbstractCmRDT(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, M> deliveryChannel) {
+      ReliableDeliveryChannel<K, M> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 

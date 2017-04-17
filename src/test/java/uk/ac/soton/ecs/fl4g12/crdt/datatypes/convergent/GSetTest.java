@@ -24,8 +24,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableSetAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.NullStateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 
@@ -38,10 +38,10 @@ public class GSetTest extends GrowableSetAbstractTest<Integer, GSet<Integer, Int
       new IncrementalIntegerIdentifierFactory();
 
   public static GSet<Integer, Integer, Integer> getGSet() {
-    DeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
+    StateDeliveryChannel<Integer, GSetState<Integer, Integer, Integer>> deliveryChannel =
+        Mockito.spy(new NullStateDeliveryChannel<Integer, GSetState<Integer, Integer, Integer>>(
+            ID_FACTORY));
+
     return new GSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 

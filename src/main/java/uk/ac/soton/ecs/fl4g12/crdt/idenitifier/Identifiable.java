@@ -19,36 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.delivery;
-
-import java.io.Serializable;
-import java.util.Map;
+package uk.ac.soton.ecs.fl4g12.crdt.idenitifier;
 
 /**
- * A message containing an update. Messages are used to communicate the relevant changes that need
- * to be applied to other nodes.
+ * Objects which have an identifier associated with them.
  *
- * The contents of the message will be defined by subclasses and will typically be specific for the
- * {@link Updatable} which they are used for. Generics are used as part of the {@link Updatable}
- * interface in order to allow this.
- *
- * Implementations of {@linkplain UpdateMessage} should be serializable so that the
- * {@link DeliveryChannel} which communicates the messages can serialize them.
- *
- * {@link Object#equals(Object)} and {@link Object#hashCode()} should also be implemented for
- * reliable message comparison and allowing messages to be used as {@link Map} keys.
- *
- * @param <K> the type of identifier used to identify nodes.
- * @param <M> the type of {@linkplain UpdateMessage} instances can be compared with.
+ * @param <K> the type of the identifier associated with this object.
  */
-public interface UpdateMessage<K, M extends UpdateMessage<K, M>>
-    extends Comparable<M>, Serializable {
+public interface Identifiable<K> {
 
   /**
-   * Gets the identifier of the node that generated the message.
+   * Get the identifier associated with this object.
    *
-   * @return the identifier of the node which created the message.
+   * @return the identifier associated with this object.
    */
   K getIdentifier();
-
 }

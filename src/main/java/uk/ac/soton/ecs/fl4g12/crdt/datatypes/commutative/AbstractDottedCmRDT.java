@@ -21,8 +21,8 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DottedUpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -41,7 +41,7 @@ public abstract class AbstractDottedCmRDT<K, T extends Comparable<T>, M extends 
     extends AbstractCmRDT<K, T, M> {
 
   public AbstractDottedCmRDT(VersionVector<K, T> initialVersion, K identifier,
-      DeliveryChannel<K, M> deliveryChannel) {
+      ReliableDeliveryChannel<K, M> deliveryChannel) {
     super(initialVersion, identifier, deliveryChannel);
   }
 

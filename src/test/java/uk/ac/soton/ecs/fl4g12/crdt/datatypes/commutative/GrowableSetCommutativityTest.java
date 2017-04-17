@@ -22,7 +22,14 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative;
 
 import java.util.Set;
+import org.junit.Before;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -40,5 +47,19 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  */
 public abstract class GrowableSetCommutativityTest<E, K, T extends Comparable<T>, M extends GrowableSetUpdateMessage<E, K, ? extends Version>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
     extends GrowableConflictFreeSetAbstractTest<E, K, T, M, S> {
+
+  @Captor
+  ArgumentCaptor<M> updateMessageCaptor;
+
+  @Before
+  public void initMocks() {
+    MockitoAnnotations.initMocks(this);
+  }
+
+  @Override
+  public M assertPublish(DeliveryChannel<K, M, ?> channel) {
+    Mockito.verify((ReliableDeliveryChannel<K, M>) channel).publish(updateMessageCaptor.capture());
+    return updateMessageCaptor.getValue();
+  }
 
 }

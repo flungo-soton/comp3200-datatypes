@@ -19,36 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.delivery;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
-import java.io.Serializable;
-import java.util.Map;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.AbstractVersionedUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateSnapshot;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
+import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
 /**
- * A message containing an update. Messages are used to communicate the relevant changes that need
- * to be applied to other nodes.
- *
- * The contents of the message will be defined by subclasses and will typically be specific for the
- * {@link Updatable} which they are used for. Generics are used as part of the {@link Updatable}
- * interface in order to allow this.
- *
- * Implementations of {@linkplain UpdateMessage} should be serializable so that the
- * {@link DeliveryChannel} which communicates the messages can serialize them.
- *
- * {@link Object#equals(Object)} and {@link Object#hashCode()} should also be implemented for
- * reliable message comparison and allowing messages to be used as {@link Map} keys.
+ * Abstract base class for {@linkplain CvRDT}s.
  *
  * @param <K> the type of identifier used to identify nodes.
- * @param <M> the type of {@linkplain UpdateMessage} instances can be compared with.
+ * @param <T> the type of the timestamp in the {@link VersionVector}.
+ * @param <M> the type of the {@link StateSnapshot} which is taken and used as the
+ *        {@link UpdateMessage}.
  */
-public interface UpdateMessage<K, M extends UpdateMessage<K, M>>
-    extends Comparable<M>, Serializable {
+public abstract class AbstractCvRDT<K, T extends Comparable<T>, M extends StateSnapshot<K, VersionVector<K, T>>>
+    extends AbstractVersionedUpdatable<K, T, M, StateDeliveryChannel<K, M>, AbstractCvRDT<K, T, M>>
+    implements CvRDT<K, VersionVector<K, T>, M> {
 
-  /**
-   * Gets the identifier of the node that generated the message.
-   *
-   * @return the identifier of the node which created the message.
-   */
-  K getIdentifier();
+  public AbstractCvRDT(VersionVector<K, T> initialVersion, K identifier,
+      StateDeliveryChannel<K, M> deliveryChannel) {
+    super(initialVersion, identifier, deliveryChannel);
+  }
 
 }

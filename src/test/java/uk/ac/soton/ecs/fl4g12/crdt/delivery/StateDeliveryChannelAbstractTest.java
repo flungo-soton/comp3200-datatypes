@@ -21,34 +21,37 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import java.io.Serializable;
-import java.util.Map;
+import java.util.logging.Logger;
+import org.mockito.Mockito;
+import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 
 /**
- * A message containing an update. Messages are used to communicate the relevant changes that need
- * to be applied to other nodes.
  *
- * The contents of the message will be defined by subclasses and will typically be specific for the
- * {@link Updatable} which they are used for. Generics are used as part of the {@link Updatable}
- * interface in order to allow this.
- *
- * Implementations of {@linkplain UpdateMessage} should be serializable so that the
- * {@link DeliveryChannel} which communicates the messages can serialize them.
- *
- * {@link Object#equals(Object)} and {@link Object#hashCode()} should also be implemented for
- * reliable message comparison and allowing messages to be used as {@link Map} keys.
- *
- * @param <K> the type of identifier used to identify nodes.
- * @param <M> the type of {@linkplain UpdateMessage} instances can be compared with.
  */
-public interface UpdateMessage<K, M extends UpdateMessage<K, M>>
-    extends Comparable<M>, Serializable {
+public abstract class StateDeliveryChannelAbstractTest<K, M extends StateSnapshot<K, ?>, C extends StateDeliveryChannel<K, M>>
+    extends DeliveryChannelAbstractTest<K, M, StatefulUpdatable<K, ?, M>, C> {
+
+  private static final Logger LOGGER =
+      Logger.getLogger(ReliableDeliveryChannelAbstractTest.class.getName());
+
+  @Override
+  public StatefulUpdatable<K, ?, M> getUpdatable() {
+    return Mockito.mock(StatefulUpdatable.class);
+  }
+
+  @Override
+  public M getUpdateMessage(K identifier, int order) {
+    M message = super.getUpdateMessage(identifier, order);
+    Mockito.doReturn(getVersion(order)).when(message).getVersion();
+    return message;
+  }
 
   /**
-   * Gets the identifier of the node that generated the message.
+   * Get a version which has logical ordering based on the provided order.
    *
-   * @return the identifier of the node which created the message.
+   * @param order the ordering of the version.
+   * @return a version with relative ordering based on the provided order.
    */
-  K getIdentifier();
+  public abstract Version getVersion(int order);
 
 }

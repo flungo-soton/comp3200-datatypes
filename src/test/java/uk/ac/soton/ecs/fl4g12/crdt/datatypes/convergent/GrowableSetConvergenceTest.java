@@ -22,7 +22,10 @@
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
 import java.util.Set;
+import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
@@ -42,6 +45,13 @@ public abstract class GrowableSetConvergenceTest<E, K, T extends Comparable<T>, 
   public static <K, T extends Comparable<T>, U extends SetState<?, K, VersionVector<K, T>>, S extends StatefulUpdatable<K, VersionVector<K, T>, U>> void updateSet(
       S destination, S source) throws Exception {
     destination.update(source.snapshot());
+  }
+
+  @Override
+  public M assertPublish(DeliveryChannel<K, M, ?> channel) {
+    StateDeliveryChannel<K, M> stateDeliveryChannel = (StateDeliveryChannel<K, M>) channel;
+    Mockito.verify(stateDeliveryChannel).publish();
+    return stateDeliveryChannel.getUpdatable().snapshot();
   }
 
   @Override

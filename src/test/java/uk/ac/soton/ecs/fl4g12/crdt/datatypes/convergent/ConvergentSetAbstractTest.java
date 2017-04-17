@@ -24,9 +24,13 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.Collection;
 import java.util.Set;
 import static org.junit.Assert.assertFalse;
+import org.mockito.Mockito;
+import org.mockito.verification.VerificationMode;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
 import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GrowableConvergentSetAbstractTest.assertSetStateContains;
 import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GrowableConvergentSetAbstractTest.assertSetStateContainsAll;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
@@ -113,5 +117,13 @@ public abstract class ConvergentSetAbstractTest<E, K, T extends Comparable<T>, M
 
     // TODO: Compare with an expectedState
   }
+
+  @Override
+  protected M assertPublish(DeliveryChannel<K, M, ?> channel, VerificationMode mode) {
+    StateDeliveryChannel<K, M> stateDeliveryChannel = (StateDeliveryChannel<K, M>) channel;
+    Mockito.verify(stateDeliveryChannel, mode).publish();
+    return stateDeliveryChannel.getUpdatable().snapshot();
+  }
+
 
 }

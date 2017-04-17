@@ -27,7 +27,15 @@ import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.verification.VerificationMode;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.UpdatableSetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Dot;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -44,6 +52,14 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  */
 public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, M extends SetUpdateMessage<E, K, Dot<K, T>>, S extends Set<E> & VersionedUpdatable<K, VersionVector<K, T>, M>>
     extends UpdatableSetAbstractTest<E, K, T, M, S> {
+
+  @Captor
+  ArgumentCaptor<M> updateMessageCaptor;
+
+  @Before
+  public void initMocks() {
+    MockitoAnnotations.initMocks(this);
+  }
 
   @Override
   protected boolean precedes(S updatable, M message) {
@@ -130,6 +146,13 @@ public abstract class CommutativeSetAbstractTest<E, K, T extends Comparable<T>, 
     assertUpdateOperation(SetUpdateMessage.Operation.REMOVE, updateMessage);
     assertEquals("Update element set should consist only of the new elements", newElements,
         updateMessage.getElements());
+  }
+
+  @Override
+  protected M assertPublish(DeliveryChannel<K, M, ?> channel, VerificationMode mode) {
+    Mockito.verify((ReliableDeliveryChannel<K, M>) channel, mode)
+        .publish(updateMessageCaptor.capture());
+    return updateMessageCaptor.getValue();
   }
 
 }

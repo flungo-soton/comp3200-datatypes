@@ -31,20 +31,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.verification.VerificationMode;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.UpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.VersionedUpdateMessage;
 import uk.ac.soton.ecs.fl4g12.crdt.order.Version;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.util.TestUtil;
 
 /**
  * Tests for growable {@link VersionedUpdatable} {@link Set} implementations.
@@ -65,15 +66,7 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
   public static final int MAX_OPERATIONS = 500;
 
   @Rule
-  public Timeout timeout = new Timeout(MAX_OPERATIONS * 10, TimeUnit.MILLISECONDS);
-
-  @Captor
-  public ArgumentCaptor<M> updateMessageCaptor;
-
-  @Before
-  public void setUpUpdateMessageCaptor() {
-    MockitoAnnotations.initMocks(this);
-  }
+  public Timeout timeout = TestUtil.getTimeout(MAX_OPERATIONS * 10, TimeUnit.MILLISECONDS);
 
   /**
    * Test that the {@linkplain VersionedUpdatable} {@linkplain Set} precedes the
@@ -150,6 +143,22 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
   }
 
   /**
+   * Assert that a message was published and capture or create the {@link UpdateMessage} with these
+   * changes. If the {@link DeliveryChannel} is a {@link ReliableDeliveryChannel} then the message
+   * will have been published to the channel. If the {@link DeliveryChannel} is a
+   * {@link StateDeliveryChannel} then capture the state from the {@link Updatable}.
+   *
+   * @param channel the channel which the message should have been published to.
+   * @param mode the Mockito VerificationMode to use, or {@code null} for default.
+   * @return the message that was published or a snapshot of the updatable.
+   */
+  protected abstract M assertPublish(DeliveryChannel<K, M, ?> channel, VerificationMode mode);
+
+  protected final M assertPublish(DeliveryChannel<K, M, ?> channel) {
+    return assertPublish(channel, Mockito.times(1)); // TODO: Will null work here?
+  }
+
+  /**
    * Ensure that when an element is added, that the change is published to the
    * {@linkplain DeliveryChannel}.
    */
@@ -163,16 +172,14 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
       final E element = getElement(i);
       Mockito.reset(deliveryChannel);
       set.add(element);
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      M updateMessage = assertPublish(deliveryChannel);
       Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      M updateMessage = updateMessageCaptor.getValue();
 
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
       assertAdd(set, element, updateMessage);
@@ -205,7 +212,7 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
       final E element = getElement(i);
       set.add(element);
@@ -236,14 +243,13 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
     LOGGER.log(Level.INFO, "testAdd_MessageOrder: "
         + "Ensure that when an element is added, that the change is published to the DeliveryChannel.");
     final S set = getSet();
-    final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
     final ArrayList<M> previousMessages = new ArrayList<>();
 
     // Add initial element to generate first update message
     set.add(getElement(0));
-    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-    M previousMessage = updateMessageCaptor.getValue();
+    M previousMessage = assertPublish(deliveryChannel);
     previousMessages.add(previousMessage);
 
     assertTrue("Initial message should be preceded by the the version of a new set.",
@@ -252,8 +258,7 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
     for (int i = 1; i < MAX_OPERATIONS; i++) {
       set.add(getElement(i));
       // Using times instead of resetting ensures that no async operations are taking place.
-      Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
-      M currentMessage = updateMessageCaptor.getValue();
+      M currentMessage = assertPublish(deliveryChannel, Mockito.times(i + 1));
 
       // Compare to all previous messages
       for (M message : previousMessages) {
@@ -283,16 +288,14 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
       final E element = getElement(i);
       Mockito.reset(deliveryChannel);
       set.addAll(new HashSet<>(Arrays.asList(getElement(i))));
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      M updateMessage = assertPublish(deliveryChannel);
       Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      M updateMessage = updateMessageCaptor.getValue();
 
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
       assertAddAll_Single(set, element, updateMessage);
@@ -324,17 +327,15 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
       final HashSet<E> elements = new HashSet<>(
           Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
       Mockito.reset(deliveryChannel);
       set.addAll(elements);
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      M updateMessage = assertPublish(deliveryChannel);
       Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      M updateMessage = updateMessageCaptor.getValue();
 
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
       assertAddAll_Multiple(set, elements, updateMessage);
@@ -371,7 +372,7 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
 
     for (int i = 1; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
       final HashSet<E> elements = new HashSet<>(
           Arrays.asList(getElement(2 * i), getElement(2 * i + 1), getElement(2 * i + 2)));
@@ -380,10 +381,8 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
       Mockito.reset(deliveryChannel);
       set.addAll(elements);
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      M updateMessage = assertPublish(deliveryChannel);
       Mockito.verifyNoMoreInteractions(deliveryChannel);
-
-      M updateMessage = updateMessageCaptor.getValue();
 
       assertExpectedUpdateMessage(set, expectedVersionVector, updateMessage);
       assertAddAll_Overlap(set, elements, newElements, updateMessage);
@@ -419,7 +418,7 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
       expectedVersionVector.increment(set.getIdentifier());
-      final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+      final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
       final Collection<E> elements = new ArrayList<>();
       for (int j = 0; j < MAX_OPERATIONS; j++) {
@@ -454,14 +453,13 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
     LOGGER.log(Level.INFO, "testAddAll_MessageOrder: "
         + "Ensure that when element are added, that the change is published to the DeliveryChannel.");
     final S set = getSet();
-    final DeliveryChannel<K, M> deliveryChannel = set.getDeliveryChannel();
+    final DeliveryChannel<K, M, ?> deliveryChannel = set.getDeliveryChannel();
 
     final ArrayList<M> previousMessages = new ArrayList<>();
 
     // Add initial element to generate first update message
     set.addAll(Arrays.asList(getElement(0), getElement(1), getElement(2)));
-    Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
-    M previousMessage = updateMessageCaptor.getValue();
+    M previousMessage = assertPublish(deliveryChannel);
     previousMessages.add(previousMessage);
 
     assertTrue("Initial message should be preceded by the the version of a new set.",
@@ -470,8 +468,7 @@ public abstract class GrowableUpdatableSetAbstractTest<E, K, T extends Comparabl
     for (int i = 1; i < MAX_OPERATIONS; i++) {
       set.addAll(Arrays.asList(getElement(3 * i), getElement(3 * i + 1), getElement(3 * i + 2)));
       // Using times instead of resetting ensures that no async operations are taking place.
-      Mockito.verify(deliveryChannel, Mockito.times(i + 1)).publish(updateMessageCaptor.capture());
-      M currentMessage = updateMessageCaptor.getValue();
+      M currentMessage = assertPublish(deliveryChannel, Mockito.times(i + 1));
 
       // Compare to all previous messages
       for (M message : previousMessages) {

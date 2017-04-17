@@ -24,7 +24,11 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.Collection;
 import java.util.Set;
 import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.verification.VerificationMode;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableUpdatableSetAbstractTest;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 
@@ -50,6 +54,13 @@ public abstract class GrowableConvergentSetAbstractTest<E, K, T extends Comparab
       U setState, Collection<E> elements) {
     assertTrue("The set state should contain the elements that were added",
         setState.getState().containsAll(elements));
+  }
+
+  @Override
+  protected M assertPublish(DeliveryChannel<K, M, ?> channel, VerificationMode mode) {
+    StateDeliveryChannel<K, M> stateDeliveryChannel = (StateDeliveryChannel<K, M>) channel;
+    Mockito.verify(stateDeliveryChannel, mode).publish();
+    return stateDeliveryChannel.getUpdatable().snapshot();
   }
 
   @Override

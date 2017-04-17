@@ -21,34 +21,20 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import java.io.Serializable;
-import java.util.Map;
-
 /**
- * A message containing an update. Messages are used to communicate the relevant changes that need
- * to be applied to other nodes.
+ * {@linkplain DeliveryChannel} which delivers the state of a {@linkplain StatefulUpdatable} to
+ * other replicas. There are no delivery guarantees provided by the type of {@link DeliveryChannel}.
  *
- * The contents of the message will be defined by subclasses and will typically be specific for the
- * {@link Updatable} which they are used for. Generics are used as part of the {@link Updatable}
- * interface in order to allow this.
- *
- * Implementations of {@linkplain UpdateMessage} should be serializable so that the
- * {@link DeliveryChannel} which communicates the messages can serialize them.
- *
- * {@link Object#equals(Object)} and {@link Object#hashCode()} should also be implemented for
- * reliable message comparison and allowing messages to be used as {@link Map} keys.
- *
- * @param <K> the type of identifier used to identify nodes.
- * @param <M> the type of {@linkplain UpdateMessage} instances can be compared with.
+ * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public interface UpdateMessage<K, M extends UpdateMessage<K, M>>
-    extends Comparable<M>, Serializable {
+public interface StateDeliveryChannel<K, M extends StateSnapshot<K, ?>>
+    extends DeliveryChannel<K, M, StatefulUpdatable<K, ?, M>> {
 
   /**
-   * Gets the identifier of the node that generated the message.
-   *
-   * @return the identifier of the node which created the message.
+   * Notify the delivery channel that there has been a change to the object that needs publishing.
+   * Does not necessarily publish immediately - this is just a notification.
    */
-  K getIdentifier();
+  void publish();
 
 }

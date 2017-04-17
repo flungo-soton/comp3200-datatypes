@@ -21,30 +21,43 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import static org.junit.Assert.assertNotNull;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Timeout;
-import org.mockito.InOrder;
 import org.mockito.Mockito;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
+import uk.ac.soton.ecs.fl4g12.crdt.util.TestUtil;
 
 /**
  * Abstract tests for {@linkplain DeliveryChannel} implementations.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
  * @param <M> The type of {@link UpdateMessage} sent via the {@link DeliveryChannel}.
+ * @param <U> the type of {@link Updatable} which the {@link DeliveryChannel} delivers for.
  * @param <C> the type of the {@linkplain DeliveryChannel} to be tested.
  */
-public abstract class DeliveryChannelAbstractTest<K, M extends UpdateMessage<K, ?>, C extends DeliveryChannel<K, M>> {
+public abstract class DeliveryChannelAbstractTest<K, M extends UpdateMessage<K, ?>, U extends Updatable<K, M>, C extends DeliveryChannel<K, M, U>> {
+
+  private static final Logger LOGGER =
+      Logger.getLogger(DeliveryChannelAbstractTest.class.getName());
+
+  public static final long BUFFER_TIME = 2000;
+
+  public static final int MAX_CHANNELS = 10;
+  public static final int MESSAGES = 100;
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
   @Rule
-  public Timeout timeout = new Timeout(10, TimeUnit.SECONDS);
+  public Timeout timeout = TestUtil.getTimeout(10, TimeUnit.SECONDS);
 
   /**
    * Gets an identifier. This should be a bijection such that for any unique value of {@code i}
@@ -56,91 +69,210 @@ public abstract class DeliveryChannelAbstractTest<K, M extends UpdateMessage<K, 
   public abstract K getIdentifier(int i);
 
   /**
-   * Gets an update message which may be sent by the {@linkplain Updatable} with given identifier.
-   * The value of {@code order} determines the ordering of the messages relative to other messages
-   * from the same {@link Updatable}.
+   * Get a {@linkplain DeliveryChannel} which can be registered with the
+   * {@linkplain DeliveryExchange}. The {@link DeliveryChannel} should not be registered the the
+   * exchange but should be an object on which Mockito verifications can be performed. A Mock Object
+   * is sufficient providing that the {@link DeliveryChannel} returns any values required by the
+   * {@link DeliveryExchange}. IT is expected that during the registration,
+   * {@link DeliveryChannel#getExchange()} and {@link DeliveryChannel#getIdentifier()} will be
+   * called and these should return the values given in the function arguments.
    *
-   * The update message returned should be a Mockito Mock or Spy to allow verifications on method
-   * calls.
-   *
-   * @param id the identifier of the {@link Updatable} that produced the message.
-   * @param order the order of the {@link UpdateMessage} relative to others from the same
-   *        {@link Updatable}.
-   * @return an update message for {@link Updatable} with identifier {@code id}.
+   * @param channel the exchange to return when {@link DeliveryChannel#getExchange()} is called.
+   * @param identifier the identifier to return when {@link DeliveryChannel#getIdentifier()} is
+   *        called.
+   * @return a {@link DeliveryChannel} which can have Mockito verifications made against it.
    */
-  public abstract M getUpdateMessage(K id, int order);
+  public final U getUpdatable(C channel, K identifier) {
+    U updatable = getUpdatable();
+    Mockito.doReturn(channel).when(updatable).getDeliveryChannel();
+    Mockito.doReturn(identifier).when(updatable).getIdentifier();
+    return updatable;
+  }
 
   /**
-   * Get a {@linkplain DeliveryChannel} that can be used for testing. {@link DeliveryChannel}s with
-   * the same {@link Channel} are used with replicas of the same {@link Updatable} and {@code i}
-   * uniquely identifies the instances with the same {@link Channel}.
+   * Get a {@linkplain DeliveryChannel} which can be registered with the
+   * {@linkplain DeliveryExchange}. The {@link DeliveryChannel} should not be registered with the
+   * exchange but should be an object on which Mockito verifications can be performed.
    *
-   * Between tests, the {@link DeliveryChannel}s should be cleared by utilising an
-   * {@link org.junit.After} handler.
-   *
-   * @param channel the channel which the
-   * @param i a unique identifier for the instance of the {@link Updatable}
-   * @return the {@link DeliveryChannel} for the given {@link Channel}.
+   * @return a {@link DeliveryChannel} which can have Mockito verifications made against it.
    */
-  public abstract C getDeliveryChannel(Channel channel, int i);
+  public abstract U getUpdatable();
 
-  protected void waitForDelivery(C source, C... destinations) {
-    DeliveryUtils.waitForDelivery(source);
-    for (C destination : destinations) {
-      DeliveryUtils.waitForUpdates(destination);
+  public M getUpdateMessage(K identifier, int order) {
+    M message = getUpdateMessage();
+    Mockito.doReturn(identifier).when(message).getIdentifier();
+    return message;
+  }
+
+  /**
+   * Get a mockable {@linkplain UpdateMessage}.
+   *
+   * @return a mockable {@link UpdateMessage}.
+   */
+  public abstract M getUpdateMessage();
+
+  /**
+   * Get a {@linkplain DeliveryChannel} that can be used for testing. Returns a
+   * {@link DeliveryChannel} with a mock {@link DeliveryExchange} (returned by
+   * {@link DeliveryChannel#getExchange()}.
+   *
+   * @return the {@link DeliveryChannel} to be tested.
+   */
+  public abstract C getDeliveryChannel();
+
+  /**
+   * Trigger the application of messages to the updatable if required. If the
+   * {@link DeliveryChannel} does not update automatically, this method is called once all messages
+   * have been received and the {@link DeliveryChannel} needs to apply the updates.
+   *
+   * @param channel the {@link DeliveryChannel} to trigger delivery on.
+   */
+  public void triggerUpdates(C channel) {}
+
+  /**
+   * Test that registering an unidentified updatable delegates to the exchange.
+   *
+   * @throws Exception if the test fails.
+   */
+  @Test
+  public void testRegister_NoID() throws Exception {
+    LOGGER.log(Level.INFO, "testRegister_NoID: "
+        + "Test that registering an unidentified updatable delegates to the exchange");
+
+    for (int i = 0; i < MAX_CHANNELS; i++) {
+      try (C channel = getDeliveryChannel()) {
+        U updatable = getUpdatable(channel, null);
+        K expected = getIdentifier(i);
+        Mockito.doReturn(expected).when(channel.getExchange()).register(channel);
+
+        K identifier = channel.register(updatable);
+
+        assertEquals(expected, identifier);
+        Mockito.verify(channel.getExchange()).register(channel);
+        Mockito.verifyNoMoreInteractions(channel.getExchange());
+      }
     }
   }
 
   /**
-   * Test that when an {@link Updatable} which does not have an ID is registered, that an ID is
-   * assigned.
+   * Test that registering an identified updatable delegates to the exchange.
+   *
+   * @throws Exception if the test fails.
    */
   @Test
-  public void testRegister_NoID() {
-    C channel = getDeliveryChannel(Channel.A, 0);
+  public void testRegister_WithID() throws Exception {
+    LOGGER.log(Level.INFO, "testRegister_WithID: "
+        + "Test that registering an identified updatable delegates to the exchange");
 
-    Updatable updatable = Mockito.mock(Updatable.class);
-    Mockito.doReturn(null).when(updatable).getIdentifier();
+    for (int i = 0; i < MAX_CHANNELS; i++) {
+      try (C channel = getDeliveryChannel()) {
+        U updatable = getUpdatable(channel, getIdentifier(i));
+        K expected = getIdentifier(MAX_CHANNELS + i);
+        Mockito.doReturn(expected).when(channel.getExchange()).register(channel);
 
-    Object id = channel.register(updatable);
+        K identifier = channel.register(updatable);
 
-    assertNotNull(id);
-    Mockito.verify(updatable).getIdentifier();
-    Mockito.verifyNoMoreInteractions(updatable);
+        assertEquals(expected, identifier);
+        Mockito.verify(channel.getExchange()).register(channel);
+        Mockito.verifyNoMoreInteractions(channel.getExchange());
+      }
+    }
   }
 
   /**
-   * Test that when an object is registered and already has an ID, that the ID is kept.
+   * Test registering two updatables to the same channel.
+   *
+   * @throws Exception if the test fails, unless expected.
    */
   @Test
-  public void testRegister_HasID() {
-    C channel = getDeliveryChannel(Channel.A, 0);
+  public void testRegister_TwiceDifferent() throws Exception {
+    LOGGER.log(Level.INFO,
+        "testRegister_TwiceDifferent: Test registering two updatables with the same ID");
 
-    K expectedId = getIdentifier(3);
+    try (C channel = getDeliveryChannel()) {
+      U updatable1 = getUpdatable(channel, getIdentifier(0));
+      U updatable2 = getUpdatable(channel, getIdentifier(1));
 
-    Updatable updatable = Mockito.mock(Updatable.class);
-    Mockito.doReturn(expectedId).when(updatable).getIdentifier();
+      channel.register(updatable1);
 
-    Object id = channel.register(updatable);
-
-    assertNotNull(id);
-    Mockito.verify(updatable).getIdentifier();
-    Mockito.verifyNoMoreInteractions(updatable);
+      // Expect exception
+      thrown.expect(IllegalStateException.class);
+      channel.register(updatable2);
+    }
   }
 
   /**
-   * Test that registering the same object twice fails on the second attempt.
+   * Test registering the same updatable twice.
+   *
+   * @throws Exception if the test fails, unless expected.
    */
   @Test
-  public void testRegister_Twice() {
-    C channel = getDeliveryChannel(Channel.A, 0);
+  public void testRegister_TwiceSame() throws Exception {
+    LOGGER.log(Level.INFO, "testRegister_Twice: Test registering the same updatable twice");
+    try (C channel = getDeliveryChannel()) {
+      U updatable = getUpdatable(channel, getIdentifier(0));
+      channel.register(updatable);
 
-    K id = getIdentifier(0);
+      // Expect exception
+      thrown.expect(IllegalStateException.class);
+      channel.register(updatable);
+    }
+  }
 
-    Updatable updatable = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id).when(updatable).getIdentifier();
+  /**
+   * Test registering an updatable with the wrong channel set.
+   *
+   * @throws Exception if the test fails, unless expected.
+   */
+  @Test
+  public void testRegister_WrongChannel() throws Exception {
+    LOGGER.log(Level.INFO,
+        "testRegister_WrongChannel: Test registering an updatable with the wrong channel set");
+    try (C channel = getDeliveryChannel()) {
+      try (C other = getDeliveryChannel()) {
+        U updatable = getUpdatable(other, getIdentifier(0));
 
-    channel.register(updatable);
+        // Expect exception
+        thrown.expect(IllegalArgumentException.class);
+        channel.register(updatable);
+      }
+    }
+  }
+
+  /**
+   * Test registering an updatable with no channel set.
+   *
+   * @throws Exception if the test fails, unless expected.
+   */
+  @Test
+  public void testRegister_NoChannel() throws Exception {
+    LOGGER.log(Level.INFO, "testRegister_Twice: Test registering an updatable with no channel set");
+    try (C channel = getDeliveryChannel()) {
+      K id = getIdentifier(0);
+
+      U updatable = getUpdatable(null, id);
+
+      // Expect exception
+      thrown.expect(IllegalArgumentException.class);
+      channel.register(updatable);
+    }
+  }
+
+  /**
+   * Test registering on a closed channel.
+   *
+   * @throws Exception if the test fails, unless expected.
+   */
+  @Test
+  public void testRegister_Closed() throws Exception {
+    LOGGER.log(Level.INFO, "testRegister_Closed: Test registering on a closed channel");
+
+    // Get the DeliveryExchange and close it
+    C channel = getDeliveryChannel();
+    channel.close();
+
+    // Get the DeliveryChannel
+    U updatable = getUpdatable(channel, getIdentifier(0));
 
     // Expect exception
     thrown.expect(IllegalStateException.class);
@@ -148,345 +280,161 @@ public abstract class DeliveryChannelAbstractTest<K, M extends UpdateMessage<K, 
   }
 
   /**
-   * Test that registration fails if an object with the same ID as an already registered object is
-   * given.
+   * Test getUpdatable on an unregistered channel.
+   *
+   * @throws Exception if the test fails, unless expected.
    */
   @Test
-  public void testRegister_DuplicateID() {
-    C channel = getDeliveryChannel(Channel.A, 0);
+  public void testGetUpdatable_Unregistered() throws Exception {
+    LOGGER.log(Level.INFO,
+        "testGetUpdatable_Unregistered: Test getUpdatable on an unregistered channel");
 
-    K id = getIdentifier(0);
-
-    Updatable updatable1 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id).when(updatable1).getIdentifier();
-
-    channel.register(updatable1);
-
-    Updatable updatable2 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id).when(updatable2).getIdentifier();
-
-    // Expect exception
-    thrown.expect(IllegalStateException.class);
-    channel.register(updatable2);
+    try (C channel = getDeliveryChannel()) {
+      // Expect exception
+      thrown.expect(IllegalStateException.class);
+      channel.getUpdatable();
+    }
   }
 
   /**
-   * Test that individually publiushed messages are sent to the right reciptients.
+   * Test getUpdatable.
    *
    * @throws Exception if the test fails.
    */
   @Test
-  public void testPublish_Single() throws Exception {
-    // Setup channel A0
-    C channelA0 = getDeliveryChannel(Channel.A, 0);
+  public void testGetUpdatable() throws Exception {
+    LOGGER.log(Level.INFO, "testGetUpdatable_Unregistered: Test getUpdatable");
 
-    K id0 = getIdentifier(0);
-    Updatable updatableA0 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id0).when(updatableA0).getIdentifier();
-    channelA0.register(updatableA0);
+    try (C channel = getDeliveryChannel()) {
+      U expected = getUpdatable(channel, getIdentifier(0));
+      channel.register(expected);
 
-    // Setup channel A1
-    C channelA1 = getDeliveryChannel(Channel.A, 1);
+      U result = channel.getUpdatable();
+      assertSame(expected, result);
+    }
+  }
 
-    K id1 = getIdentifier(1);
-    Updatable updatableA1 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id1).when(updatableA1).getIdentifier();
-    channelA1.register(updatableA1);
 
-    // Setup channel A2
-    C channelA2 = getDeliveryChannel(Channel.A, 2);
 
-    K id2 = getIdentifier(2);
-    Updatable updatableA2 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id2).when(updatableA2).getIdentifier();
-    channelA2.register(updatableA2);
+  /**
+   * Test getIdentifier on an unregistered channel.
+   *
+   * @throws Exception if the test fails, unless expected.
+   */
+  @Test
+  public void testGetIdentifier_Unregistered() throws Exception {
+    LOGGER.log(Level.INFO,
+        "testGetUpdatable_Unregistered: Test getIdentifier on an unregistered channel");
 
-    // Setup channel B0
-    C channelB0 = getDeliveryChannel(Channel.B, 0);
-
-    Updatable updatableB0 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id0).when(updatableB0).getIdentifier();
-    channelB0.register(updatableB0);
-
-    // Setup channel B1
-    C channelB1 = getDeliveryChannel(Channel.B, 1);
-
-    Updatable updatableB1 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id1).when(updatableB1).getIdentifier();
-    channelB1.register(updatableB1);
-
-    // Setup channel B2
-    C channelB2 = getDeliveryChannel(Channel.B, 2);
-
-    Updatable updatableB2 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id2).when(updatableB2).getIdentifier();
-    channelB2.register(updatableB2);
-
-    // Publish a message on A0
-    M updateA0_0 = getUpdateMessage(id0, 0);
-    channelA0.publish(updateA0_0);
-
-    // Wait for all messages to be delivered
-    waitForDelivery(channelA0, channelA1, channelA2, channelB0, channelB1, channelB2);
-
-    // Make assertions
-    Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
-    Mockito.verify(updatableA1).update(updateA0_0);
-    Mockito.verify(updatableA2).update(updateA0_0);
-    Mockito.verify(updatableB0, Mockito.times(0)).update(updateA0_0);
-    Mockito.verify(updatableB1, Mockito.times(0)).update(updateA0_0);
-    Mockito.verify(updatableB2, Mockito.times(0)).update(updateA0_0);
-
-    // Publish a message on A1
-    M updateA1_0 = getUpdateMessage(id1, 0);
-    channelA1.publish(updateA1_0);
-
-    // Wait for all messages to be delivered
-    waitForDelivery(channelA1, channelA0, channelA2, channelB0, channelB1, channelB2);
-
-    // Make assertions
-    Mockito.verify(updatableA0).update(updateA1_0);
-    Mockito.verify(updatableA1, Mockito.times(0)).update(updateA1_0);
-    Mockito.verify(updatableA2).update(updateA1_0);
-    Mockito.verify(updatableB0, Mockito.times(0)).update(updateA1_0);
-    Mockito.verify(updatableB1, Mockito.times(0)).update(updateA1_0);
-    Mockito.verify(updatableB2, Mockito.times(0)).update(updateA1_0);
+    try (C channel = getDeliveryChannel()) {
+      // Expect exception
+      thrown.expect(IllegalStateException.class);
+      channel.getIdentifier();
+    }
   }
 
   /**
-   * Test that if an exception is thrown delivering to one {@linkplain Updatable} it is delivered to
-   * the others. Tested with both receivers throwing an exception for each message to ensure that
-   * regardless of the order that the messages are delivered, this method will test that the
-   * exception does not stop delivery to other receivers.
+   * Test getIdentifier.
    *
    * @throws Exception if the test fails.
    */
   @Test
-  public void testPublish_SingleException() throws Exception {
-    // Setup channel A0
-    C channelA0 = getDeliveryChannel(Channel.A, 0);
+  public void testGetIdentifier() throws Exception {
+    LOGGER.log(Level.INFO, "testGetUpdatable_Unregistered: Test getIdentifier");
 
-    K id0 = getIdentifier(0);
-    Updatable updatableA0 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id0).when(updatableA0).getIdentifier();
-    channelA0.register(updatableA0);
+    try (C channel = getDeliveryChannel()) {
+      K id = getIdentifier(0);
 
-    // Setup channel A1
-    C channelA1 = getDeliveryChannel(Channel.A, 1);
+      U updatable = getUpdatable(channel, id);
+      channel.register(updatable);
 
-    K id1 = getIdentifier(1);
-    Updatable updatableA1 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id1).when(updatableA1).getIdentifier();
-    Mockito.doThrow(DeliveryUpdateException.class).doNothing().when(updatableA1)
-        .update(Mockito.any(UpdateMessage.class));
-    channelA1.register(updatableA1);
-
-    // Setup channel A2
-    C channelA2 = getDeliveryChannel(Channel.A, 2);
-
-    K id2 = getIdentifier(2);
-    Updatable updatableA2 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id2).when(updatableA2).getIdentifier();
-    Mockito.doNothing().doThrow(DeliveryUpdateException.class).when(updatableA1)
-        .update(Mockito.any(UpdateMessage.class));
-    channelA2.register(updatableA2);
-
-    // Publish a message on A0
-    M updateA0_0 = getUpdateMessage(id0, 0);
-    channelA0.publish(updateA0_0);
-
-    // Make assertions
-    Mockito.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_0);
-    Mockito.verify(updatableA2, Mockito.timeout(1000)).update(updateA0_0);
-    Thread.sleep(1000);
-    Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
-
-    // Publish a message on A0
-    M updateA0_1 = getUpdateMessage(id0, 1);
-    channelA0.publish(updateA0_1);
-
-    // Make assertions
-    Mockito.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_1);
-    Mockito.verify(updatableA2, Mockito.timeout(1000)).update(updateA0_1);
-    Thread.sleep(1000);
-    Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_1);
+      K result = channel.getIdentifier();
+      assertSame(id, result);
+      Mockito.verify(updatable).getIdentifier();
+    }
   }
 
   /**
-   * Test that when multiple messages are published, they are published in the correct order.
+   * Test getUpdatable on an unregistered channel.
    *
-   * @throws Exception if the test fails.
+   * @throws Exception if the test fails, unless expected.
    */
   @Test
-  public void testPublish_Multiple() throws Exception {
-    // Setup channel A0
-    C channelA0 = getDeliveryChannel(Channel.A, 0);
+  public void testReceive_Unregistered() throws Exception {
+    LOGGER.log(Level.INFO,
+        "testGetUpdatable_Unregistered: Test getUpdatable on an unregistered channel");
 
-    K id0 = getIdentifier(0);
-    Updatable updatableA0 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id0).when(updatableA0).getIdentifier();
-    channelA0.register(updatableA0);
+    try (C channel = getDeliveryChannel()) {
+      K id = getIdentifier(0);
 
-    // Setup channel A1
-    C channelA1 = getDeliveryChannel(Channel.A, 1);
-
-    K id1 = getIdentifier(1);
-    Updatable updatableA1 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id1).when(updatableA1).getIdentifier();
-    channelA1.register(updatableA1);
-
-    // Setup inOrder
-    InOrder inOrder = Mockito.inOrder(updatableA1);
-
-    // Publish a message on A0
-    M updateA0_0 = getUpdateMessage(id0, 0);
-    M updateA0_1 = getUpdateMessage(id0, 1);
-    M updateA0_2 = getUpdateMessage(id0, 2);
-    M updateA0_3 = getUpdateMessage(id0, 3);
-    M updateA0_4 = getUpdateMessage(id0, 4);
-    M updateA0_5 = getUpdateMessage(id0, 5);
-    channelA0.publish(updateA0_0);
-    channelA0.publish(updateA0_1);
-    channelA0.publish(updateA0_2);
-    channelA0.publish(updateA0_3);
-    channelA0.publish(updateA0_4);
-    channelA0.publish(updateA0_5);
-
-    // Wait for all messages to be delivered
-    waitForDelivery(channelA0, channelA1);
-
-    // Make assertions
-    // TODO: Find a better way of waiting for delivery than using a timeout
-    inOrder.verify(updatableA1).update(updateA0_0);
-    inOrder.verify(updatableA1).update(updateA0_1);
-    inOrder.verify(updatableA1).update(updateA0_2);
-    inOrder.verify(updatableA1).update(updateA0_3);
-    inOrder.verify(updatableA1).update(updateA0_4);
-    inOrder.verify(updatableA1).update(updateA0_5);
-    Mockito.verify(updatableA0, Mockito.times(0)).update(updateA0_0);
+      // Expect exception
+      thrown.expect(IllegalStateException.class);
+      channel.receive(getUpdateMessage(id, 1));
+    }
   }
 
   /**
-   * Test that when an exception delivering one message in a batch fails, the rest are not
-   * delivered.
+   * Test registering the same updatable twice.
    *
-   * @throws Exception if the test fails.
+   * @throws Exception if the test fails, unless expected.
    */
   @Test
-  public void testPublish_MultipleException() throws Exception {
-    // Setup channel A0
-    C channelA0 = getDeliveryChannel(Channel.A, 0);
+  public void testReceive_Single() throws Exception {
+    LOGGER.log(Level.INFO, "testReceive_Single: Test registering the same updatable twice");
+    try (C channel = getDeliveryChannel()) {
+      U updatable = getUpdatable(channel, getIdentifier(0));
+      channel.register(updatable);
 
-    K id0 = getIdentifier(0);
-    Updatable updatableA0 = Mockito.mock(Updatable.class);
-    Mockito.doReturn(id0).when(updatableA0).getIdentifier();
-    channelA0.register(updatableA0);
+      // Receive an update
+      M message = getUpdateMessage(getIdentifier(1), 1);
+      channel.receive(message);
+      triggerUpdates(channel);
 
-    // Setup channel A1
-    C channelA1 = getDeliveryChannel(Channel.A, 1);
+      // Wait for the update to be applied
+      DeliveryUtils.waitForUpdates(channel);
 
-    K id1 = getIdentifier(1);
-    Updatable updatableA1 = Mockito.mock(Updatable.class);
-    Mockito.doNothing().doNothing().doThrow(DeliveryUpdateException.class).doNothing()
-        .when(updatableA1).update(Mockito.any(UpdateMessage.class));
-    Mockito.doReturn(id1).when(updatableA1).getIdentifier();
-    channelA1.register(updatableA1);
-
-    // Setup inOrder
-    InOrder inOrder = Mockito.inOrder(updatableA1);
-
-    // Create the updates
-    M updateA0_0 = getUpdateMessage(id0, 0);
-    M updateA0_1 = getUpdateMessage(id0, 1);
-    M updateA0_2 = getUpdateMessage(id0, 2);
-    M updateA0_3 = getUpdateMessage(id0, 3);
-    M updateA0_4 = getUpdateMessage(id0, 4);
-    M updateA0_5 = getUpdateMessage(id0, 5);
-
-    // Fail when updateA0_2 is delivered
-    Mockito.doThrow(DeliveryUpdateException.class).when(updatableA1).update(updateA0_2);
-
-    // Publish messages on A0
-    channelA0.publish(updateA0_0);
-    channelA0.publish(updateA0_1);
-    channelA0.publish(updateA0_2);
-    channelA0.publish(updateA0_3);
-    channelA0.publish(updateA0_4);
-    channelA0.publish(updateA0_5);
-
-    // Make assertions
-    // TODO: Find a better way of waiting for delivery than using a timeout
-    inOrder.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_0);
-    inOrder.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_1);
-    inOrder.verify(updatableA1, Mockito.timeout(1000)).update(updateA0_2);
-    Thread.sleep(1000);
-    Mockito.verify(updatableA1, Mockito.times(0)).update(updateA0_3);
-    Mockito.verify(updatableA1, Mockito.times(0)).update(updateA0_4);
-    Mockito.verify(updatableA1, Mockito.times(0)).update(updateA0_5);
-
-    // Nothing back to self
-    Mockito.verify(updatableA0, Mockito.times(0)).update(Mockito.any(UpdateMessage.class));
-  }
-
-  // TODO: Test redelivery and causal ordering.
-
-  /**
-   * {@linkplain IdentifierFactory} that can be used as part of tests.
-   */
-  public class TestIdentifierFactory implements IdentifierFactory<K> {
-
-    private int next;
-
-    @Override
-    public K create() {
-      return getIdentifier(next++);
+      // Make assertions
+      Mockito.verify(updatable).update((M) Mockito.any());
+      Mockito.verify(updatable).update(message);
     }
-
-    public int getNext() {
-      return next;
-    }
-
-    public void setNext(int next) {
-      this.next = next;
-    }
-
   }
 
   /**
-   * {@linkplain UpdateMessage} that can be used as part of tests.
+   * Test registering the same updatable twice.
    *
-   * @param <K> the type of identifier used to identify nodes.
+   * @throws Exception if the test fails, unless expected.
    */
-  public static class TestUpdateMessage<K> implements UpdateMessage<K, TestUpdateMessage<K>> {
+  @Test
+  public void testReceive_Multiple() throws Exception {
+    LOGGER.log(Level.INFO, "testReceive_Single: Test registering the same updatable twice");
+    try (C channel = getDeliveryChannel()) {
+      U updatable = getUpdatable(channel, getIdentifier(0));
+      channel.register(updatable);
 
-    private final K identifier;
-    private final Integer order;
+      // Receive updates
+      Set<M> messages = new HashSet<>();
+      for (int i = 0; i < MESSAGES; i++) {
+        M message = getUpdateMessage(getIdentifier(1), i);
+        channel.receive(message);
+        messages.add(message);
+      }
+      triggerUpdates(channel);
 
-    public TestUpdateMessage(K identifier, Integer order) {
-      this.identifier = identifier;
-      this.order = order;
+      // Wait for the update to be applied
+      DeliveryUtils.waitForUpdates(channel);
+
+      // Verify that the correct messages were applied.
+      Mockito.verify(updatable, Mockito.times(MESSAGES)).update((M) Mockito.any());
+      for (M message : messages) {
+        Mockito.verify(updatable).update(message);
+      }
+
+      // Wait a little longer and make sure nothing else happened
+      Thread.sleep(BUFFER_TIME);
+      Mockito.verify(updatable, Mockito.times(MESSAGES)).update((M) Mockito.any());
     }
-
-    @Override
-    public K getIdentifier() {
-      return identifier;
-    }
-
-    @Override
-    public int compareTo(TestUpdateMessage o) {
-      return order.compareTo(o.order);
-    }
-
   }
 
-  /**
-   * Channels which are used for testing. Each channel is used for one replicated data type and
-   * should be isolated from the others. When a message is published to any {@link DeliveryChannel},
-   * part of the {@linkplain Channel}, it should be delivered to all other {@link DeliveryChannel}s
-   * which are on the same {@link Channel}.
-   */
-  public static enum Channel {
-    A, B
-  }
+  // TODO: Test other methods (receive, hasPendingMessages, etc.)
 
 }

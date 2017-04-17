@@ -24,8 +24,8 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.Set;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.AddOnceSetAbstractTest;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.NullStateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 
@@ -39,10 +39,11 @@ public class TwoPhaseSetTest
       new IncrementalIntegerIdentifierFactory();
 
   public static TwoPhaseSet<Integer, Integer, Integer> getTwoPhaseSet() {
-    DeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
-    Mockito.doReturn(ID_FACTORY.create()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
+    StateDeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel =
+        Mockito
+            .spy(new NullStateDeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>>(
+                ID_FACTORY));
+
     return new TwoPhaseSet<>(new IntegerVersion(), null, deliveryChannel);
   }
 

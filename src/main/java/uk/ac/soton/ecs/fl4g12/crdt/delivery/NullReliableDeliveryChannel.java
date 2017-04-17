@@ -21,38 +21,36 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
-import uk.ac.soton.ecs.fl4g12.crdt.order.LamportTimestamp;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
 
 /**
- * Abstract tests for {@link ReliableDeliveryChannel} implementations.
+ * A {@link DeliveryChannel} which does not replicate to any other nodes. All publish messages are
+ * ignored. Useful for testing and as a placeholder while developing.
  *
  * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
- * @param <M> The type of {@link VersionedUpdateMessage} sent via the
- *        {@link ReliableDeliveryChannel}.
- * @param <C> the type of the {@linkplain DeliveryChannel} to be tested.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public abstract class CausalDeliveryChannelAbstractTest<K, M extends VersionedUpdateMessage<K, ?>, C extends ReliableDeliveryChannel<K, M>>
-    extends DeliveryChannelAbstractTest<K, M, C> {
+public class NullReliableDeliveryChannel<K, M extends VersionedUpdateMessage<K, ?>>
+    extends NullDeliveryChannel<K, M, VersionedUpdatable<K, ?, M>>
+    implements ReliableDeliveryChannel<K, M> {
 
   /**
-   * {@linkplain UpdateMessage} that can be used as part of tests.
+   * Create a {@linkplain NullReliableDeliveryChannel}.
    *
-   * @param <K> the type of identifier used to identify nodes.
+   * @param idFactory {@link IdentifierFactory} used to assign an identifier if the
+   *        {@link Updatable} doesn't have one when registering.
    */
-  public static class CausalTestUpdateMessage<K>
-      extends AbstractVersionedUpdateMessage<K, LamportTimestamp<Integer>> {
+  public NullReliableDeliveryChannel(IdentifierFactory<K> idFactory) {
+    super(idFactory);
+  }
 
-    public CausalTestUpdateMessage(K identifier, int order) {
-      super(identifier, getVersion(order));
+  @Override
+  public void publish(M message) {
+    // Not final to support Mockito spy
+    if (!open) {
+      throw new IllegalStateException("Channel has been closed, not accepting new messages.");
     }
-
-    private static IntegerVersion getVersion(int order) {
-      IntegerVersion version = new IntegerVersion();
-      version.sync(order);
-      return version;
-    }
-
+    // Do nothing
   }
 
 }

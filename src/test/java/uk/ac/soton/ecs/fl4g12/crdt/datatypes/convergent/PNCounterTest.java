@@ -24,15 +24,12 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CounterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.Updatable;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -44,20 +41,12 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
 
   private static final Logger LOGGER = Logger.getLogger(PNCounterTest.class.getName());
 
-  @Captor
-  public ArgumentCaptor<PNCounterState> updateMessageCaptor;
-
-  @Before
-  public void setUp() {
-    MockitoAnnotations.initMocks(this);
-  }
-
   @Override
   protected PNCounter<Integer, Object> getCounter() {
-    DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
-        Mockito.mock(DeliveryChannel.class);
+    StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+        Mockito.mock(StateDeliveryChannel.class);
     Mockito.doReturn(new Object()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(Updatable.class));
+        .register(Mockito.any(StatefulUpdatable.class));
     return PNCounter.newIntegerPNCounter(deliveryChannel);
   }
 
@@ -79,7 +68,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
     final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
     final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -89,10 +78,10 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
       Mockito.reset(deliveryChannel);
       counter.increment();
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verify(deliveryChannel).publish();
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      PNCounterState updateMessage = updateMessageCaptor.getValue();
+      PNCounterState updateMessage = counter.snapshot();
 
       assertEquals("Update message identifier should be the same as the set's",
           counter.getIdentifier(), updateMessage.getIdentifier());
@@ -116,7 +105,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
     final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
     final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -126,10 +115,10 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
       Mockito.reset(deliveryChannel);
       counter.decrement();
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verify(deliveryChannel).publish();
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      PNCounterState updateMessage = updateMessageCaptor.getValue();
+      PNCounterState updateMessage = counter.snapshot();
 
       assertEquals("Update message identifier should be the same as the set's",
           counter.getIdentifier(), updateMessage.getIdentifier());
@@ -153,7 +142,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
     final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
     final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -166,10 +155,10 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
       Mockito.reset(deliveryChannel);
       counter.decrement();
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verify(deliveryChannel).publish();
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      PNCounterState updateMessage = updateMessageCaptor.getValue();
+      PNCounterState updateMessage = counter.snapshot();
 
       assertEquals("Update message identifier should be the same as the set's",
           counter.getIdentifier(), updateMessage.getIdentifier());
@@ -193,7 +182,7 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
     final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
     final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
     final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final DeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -206,10 +195,10 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
       Mockito.reset(deliveryChannel);
       counter.increment();
 
-      Mockito.verify(deliveryChannel).publish(updateMessageCaptor.capture());
+      Mockito.verify(deliveryChannel).publish();
       Mockito.verifyNoMoreInteractions(deliveryChannel);
 
-      PNCounterState updateMessage = updateMessageCaptor.getValue();
+      PNCounterState updateMessage = counter.snapshot();
 
       assertEquals("Update message identifier should be the same as the set's",
           counter.getIdentifier(), updateMessage.getIdentifier());

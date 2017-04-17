@@ -21,34 +21,35 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.delivery;
 
-import java.io.Serializable;
-import java.util.Map;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
 
 /**
- * A message containing an update. Messages are used to communicate the relevant changes that need
- * to be applied to other nodes.
+ * A {@link DeliveryChannel} which does not replicate to any other nodes. All publish messages are
+ * ignored. Useful for testing and as a placeholder while developing.
  *
- * The contents of the message will be defined by subclasses and will typically be specific for the
- * {@link Updatable} which they are used for. Generics are used as part of the {@link Updatable}
- * interface in order to allow this.
- *
- * Implementations of {@linkplain UpdateMessage} should be serializable so that the
- * {@link DeliveryChannel} which communicates the messages can serialize them.
- *
- * {@link Object#equals(Object)} and {@link Object#hashCode()} should also be implemented for
- * reliable message comparison and allowing messages to be used as {@link Map} keys.
- *
- * @param <K> the type of identifier used to identify nodes.
- * @param <M> the type of {@linkplain UpdateMessage} instances can be compared with.
+ * @param <K> The type of the identifier that is assigned to the {@link Updatable}.
+ * @param <M> The type of updates sent via the delivery channel.
  */
-public interface UpdateMessage<K, M extends UpdateMessage<K, M>>
-    extends Comparable<M>, Serializable {
+public class NullStateDeliveryChannel<K, M extends StateSnapshot<K, ?>> extends
+    NullDeliveryChannel<K, M, StatefulUpdatable<K, ?, M>> implements StateDeliveryChannel<K, M> {
 
   /**
-   * Gets the identifier of the node that generated the message.
+   * Create a {@linkplain NullStateDeliveryChannel}.
    *
-   * @return the identifier of the node which created the message.
+   * @param idFactory {@link IdentifierFactory} used to assign an identifier if the
+   *        {@link Updatable} doesn't have one when registering.
    */
-  K getIdentifier();
+  public NullStateDeliveryChannel(IdentifierFactory<K> idFactory) {
+    super(idFactory);
+  }
+
+  @Override
+  public void publish() {
+    // Not final to support Mockito spy
+    if (!open) {
+      throw new IllegalStateException("Channel has been closed, not accepting new messages.");
+    }
+    // Do nothing
+  }
 
 }

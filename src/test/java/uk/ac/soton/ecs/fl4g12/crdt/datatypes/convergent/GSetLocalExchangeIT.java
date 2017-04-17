@@ -21,45 +21,61 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Before;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableConflictFreeSetAbstractIT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.local.LocalDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.PeriodicStateDeiveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.LocalDeliveryExchange;
 import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 
 /**
- * Test the integration of {@linkplain TwoPhaseSet}s and the {@linkplain LocalDeliveryChannel} for
- * various operations. Ensures that the {@link TwoPhaseSet} is replicated as expected over the
- * {@linkplain LocalDeliveryChannel} and that the state converges to the expected state after a
+ * Test the integration of {@linkplain GSet}s and the {@link PeriodicStateDeiveryChannel} for
+ * various operations. Ensures that the {@link GSet} is replicated as expected over the
+ * {@link PeriodicStateDeiveryChannel} and that the state converges to the expected state after a
  * series of operations.
  */
-public class TwoPhaseSetLocalDeliveryIT extends
-    GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, TwoPhaseSetState<Integer, Integer, Integer>, TwoPhaseSet<Integer, Integer, Integer>> {
+public class GSetLocalExchangeIT extends
+    GrowableConflictFreeSetAbstractIT<Integer, Integer, Integer, GSetState<Integer, Integer, Integer>, GSet<Integer, Integer, Integer>> {
+
+  private static final Logger LOGGER = Logger.getLogger(GSetLocalExchangeIT.class.getName());
 
   private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
       new IncrementalIntegerIdentifierFactory();
 
-  private LocalDeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> deliveryChannel;
+  private static final long DELIVERY_PERIOD = 100;
+  private static final long EXCHANGE_PERIOD = 100;
+  private static final TimeUnit TIME_UNIT = TimeUnit.MILLISECONDS;
+
+  private LocalDeliveryExchange<Integer, GSetState<Integer, Integer, Integer>> exchange;
 
   @Before
-  public void setupDeliveryChannel() {
-    deliveryChannel = new LocalDeliveryChannel<>(ID_FACTORY);
+  public void setupExchange() {
+    exchange = new LocalDeliveryExchange<>(ID_FACTORY, EXCHANGE_PERIOD, TIME_UNIT);
   }
 
   @After
-  public void teardownDeliveryChannel() {
-    deliveryChannel = null;
+  public void teardownExchange() {
+    try {
+      exchange.close();
+    } catch (Exception ex) {
+      LOGGER.log(Level.SEVERE,
+          "DeliveryExchange could not be shut down between tests, may still be running", ex);
+    }
+    exchange = null;
   }
 
   @Override
-  public TwoPhaseSet<Integer, Integer, Integer> getSet() {
-    return new TwoPhaseSet<>(new IntegerVersion(), null, getDeliveryChannel());
+  public GSet<Integer, Integer, Integer> getSet() {
+    return new GSet<>(new IntegerVersion(), null, getDeliveryChannel());
   }
 
   @Override
-  public LocalDeliveryChannel<Integer, TwoPhaseSetState<Integer, Integer, Integer>> getDeliveryChannel() {
-    return deliveryChannel;
+  public PeriodicStateDeiveryChannel<Integer, GSetState<Integer, Integer, Integer>> getDeliveryChannel() {
+    return new PeriodicStateDeiveryChannel<>(exchange, DELIVERY_PERIOD, TIME_UNIT);
   }
 
   @Override
