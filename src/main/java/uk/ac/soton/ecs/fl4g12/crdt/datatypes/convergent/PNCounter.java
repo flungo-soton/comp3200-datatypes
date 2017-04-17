@@ -110,8 +110,8 @@ public final class PNCounter<E extends Comparable<E>, K>
   }
 
   @Override
-  public String toString() {
-    return "PNCounter{" + value() + '}';
+  protected String toStringMore() {
+    return super.toStringMore() + "p=" + p + ", n=" + n + ", value=" + value() + ", ";
   }
 
   /**

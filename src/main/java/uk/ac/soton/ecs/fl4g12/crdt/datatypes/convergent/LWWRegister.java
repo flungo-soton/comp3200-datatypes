@@ -157,8 +157,8 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
   }
 
   @Override
-  public String toString() {
-    return "LWWRegister{" + value() + '}';
+  protected String toStringMore() {
+    return super.toStringMore() + "element=" + element.get() + ", ";
   }
 
   /**
@@ -237,6 +237,11 @@ public final class LWWRegister<E extends Serializable, K extends Comparable<K>, 
         return false;
       }
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "Element{" + "value=" + value + ", timestamp=" + timestamp + '}';
     }
 
   }

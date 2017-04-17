@@ -34,6 +34,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.util.StringUtils;
 
 /**
  * Two-phase {@linkplain CvRDT} {@linkplain Set}. Elements can only be added to a set once and
@@ -270,8 +271,9 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
   }
 
   @Override
-  public String toString() {
-    return getElements().toString();
+  protected String toStringMore() {
+    return super.toStringMore() + "additions=" + StringUtils.getCollectionString(additions)
+        + ", removals=" + StringUtils.getCollectionString(removals) + ", ";
   }
 
   /**

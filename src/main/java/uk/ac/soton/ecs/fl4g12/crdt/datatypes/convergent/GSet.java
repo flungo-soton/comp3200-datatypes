@@ -33,6 +33,7 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
+import uk.ac.soton.ecs.fl4g12.crdt.util.StringUtils;
 
 /**
  * Grow-only {@linkplain CvRDT} {@linkplain Set}.
@@ -179,8 +180,8 @@ public final class GSet<E, K, T extends Comparable<T>>
   }
 
   @Override
-  public String toString() {
-    return state.toString();
+  protected String toStringMore() {
+    return super.toStringMore() + "state=" + StringUtils.getCollectionString(state) + ", ";
   }
 
   /**

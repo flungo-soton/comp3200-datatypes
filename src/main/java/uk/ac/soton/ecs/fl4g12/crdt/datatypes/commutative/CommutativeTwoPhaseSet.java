@@ -32,10 +32,11 @@ import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IllegalInsertionException;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.commutative.SetUpdateMessage.Operation;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSet;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.LogicalVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.util.StringUtils;
 
 /**
  * A commutative grow-only set. As a commutative implementation, the update messages only contain
@@ -45,9 +46,9 @@ import uk.ac.soton.ecs.fl4g12.crdt.delivery.ReliableDeliveryChannel;
  * When a concurrent add/remove occurs, this implementation is designed as a remove-wins
  * implementation.
  *
- * The ordering enforced by the {@link AbstractDottedCmRDT} ensures that the state of the local object
- * cannot be changed by an update message that is out of order for the node it is being delivered
- * from and as such, that no messages have been missed.
+ * The ordering enforced by the {@link AbstractDottedCmRDT} ensures that the state of the local
+ * object cannot be changed by an update message that is out of order for the node it is being
+ * delivered from and as such, that no messages have been missed.
  *
  * @param <E> the type of values stored in the {@link GSet}.
  * @param <K> the type of identifier used to identify nodes.
@@ -310,8 +311,9 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
   }
 
   @Override
-  public String toString() {
-    return getElements().toString();
+  protected String toStringMore() {
+    return super.toStringMore() + "additions=" + StringUtils.getCollectionString(additions)
+        + ", removals=" + StringUtils.getCollectionString(removals) + ", ";
   }
 
   /**

@@ -100,8 +100,8 @@ public final class GCounter<E extends Comparable<E>, K>
   }
 
   @Override
-  public String toString() {
-    return "GCounter{" + value() + '}';
+  protected String toStringMore() {
+    return super.toStringMore() + "value=" + value() + ", ";
   }
 
   /**

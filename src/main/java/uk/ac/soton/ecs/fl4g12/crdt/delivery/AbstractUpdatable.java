@@ -66,8 +66,25 @@ public abstract class AbstractUpdatable<K, M extends UpdateMessage<K, ?>, D exte
    *
    * @return the {@linkplain DeliveryChannel} of this {@linkplain Updatable}.
    */
+  @Override
   public final D getDeliveryChannel() {
     return deliveryChannel;
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + '{' + "identifier=" + identifier + ", " + toStringMore()
+        + "deliveryChannel=" + deliveryChannel + '}';
+  }
+
+  /**
+   * Comma separated list of additional information to display in the return of {@link #toString()}.
+   * Should end in {@code ", "} if anything other than {@code ""} is provided.
+   *
+   * @return comma-separated list of additional information.
+   */
+  protected String toStringMore() {
+    return "";
+  };
 
 }

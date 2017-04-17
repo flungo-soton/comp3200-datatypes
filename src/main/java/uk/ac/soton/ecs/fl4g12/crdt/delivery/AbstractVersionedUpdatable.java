@@ -67,4 +67,9 @@ public abstract class AbstractVersionedUpdatable<K, T extends Comparable<T>, M e
     return version.copy();
   }
 
+  @Override
+  protected String toStringMore() {
+    return "version=" + getVersion() + ", ";
+  }
+
 }
