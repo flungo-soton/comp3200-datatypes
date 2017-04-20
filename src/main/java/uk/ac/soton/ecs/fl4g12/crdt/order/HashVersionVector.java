@@ -22,7 +22,9 @@
 package uk.ac.soton.ecs.fl4g12.crdt.order;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@linkplain VersionVector} backed by a {@linkplain HashMap}. Flexible implementation of a
@@ -38,7 +40,7 @@ public final class HashVersionVector<K, T extends Comparable<T>>
 
   private final LogicalVersion<T, ?> zero;
 
-  private final HashMap<K, LogicalVersion<T, ?>> vector;
+  private final Map<K, LogicalVersion<T, ?>> vector;
 
   /**
    * Construct a {@linkplain HashVersionVector}. The {@link LogicalVersion} provided as {@code zero}
@@ -48,7 +50,7 @@ public final class HashVersionVector<K, T extends Comparable<T>>
    *        timestamps.
    */
   public HashVersionVector(LogicalVersion<T, ?> zero) {
-    this(zero, new HashMap<K, LogicalVersion<T, ?>>());
+    this(zero, new ConcurrentHashMap<K, LogicalVersion<T, ?>>());
   }
 
   /**
@@ -58,7 +60,7 @@ public final class HashVersionVector<K, T extends Comparable<T>>
    *        timestamps.
    * @param vector the vector to initialise with. This value is not copied.
    */
-  private HashVersionVector(LogicalVersion<T, ?> zero, HashMap<K, LogicalVersion<T, ?>> vector) {
+  private HashVersionVector(LogicalVersion<T, ?> zero, Map<K, LogicalVersion<T, ?>> vector) {
     super(zero);
     this.zero = zero.copy();
     this.vector = vector;
