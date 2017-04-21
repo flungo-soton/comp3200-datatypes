@@ -37,7 +37,7 @@ public class StringUtils {
   /**
    * Get a reasonable length string to represent a {@link Collection}. Always includes the type and
    * size of the collection with up to {@link #MAX_ELEMENTS} elements listed.
-   * 
+   *
    * @param collection the collection to get the representation of.
    * @return a string representation of the {@link Collection}.
    */
@@ -51,7 +51,7 @@ public class StringUtils {
         sb.append(it.next()).append(", ");
       }
       sb.append("...");
-    } else {
+    } else if (size > 0) {
       for (int i = 1; i < size; i++) {
         sb.append(it.next()).append(", ");
       }
