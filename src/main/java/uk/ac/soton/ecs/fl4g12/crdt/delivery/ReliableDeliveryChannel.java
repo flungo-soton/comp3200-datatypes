@@ -71,5 +71,5 @@ public interface ReliableDeliveryChannel<K, M extends VersionedUpdateMessage<K, 
    *
    * @param message the messages to send via the {@linkplain DeliveryChannel}.
    */
-  void publish(M message); // TODO: Move this to ReliableDeliveryChannel
+  void publish(M message);
 }
