@@ -97,7 +97,7 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
   }
 
   @Override
-  protected synchronized void applyUpdate(CommutativeTwoPhaseSetUpdate<E, K, T> message) {
+  protected synchronized void effectUpdate(CommutativeTwoPhaseSetUpdate<E, K, T> message) {
     // Add to the add set regardless of if this is an add or remove
     additions.addAll(message.getElements());
     // Add to the remove set if the operation was a remove operation

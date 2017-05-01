@@ -90,7 +90,7 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
   }
 
   @Override
-  protected synchronized void applyUpdate(CommutativeGSetUpdate<E, K, T> message) {
+  protected synchronized void effectUpdate(CommutativeGSetUpdate<E, K, T> message) {
     state.addAll(message.getElements());
   }
 

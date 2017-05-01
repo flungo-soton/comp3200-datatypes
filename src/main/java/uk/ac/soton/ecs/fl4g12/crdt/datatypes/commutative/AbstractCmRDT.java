@@ -95,7 +95,7 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, M extends Versio
     }
 
     // Apply the update
-    applyUpdate(message);
+    effectUpdate(message);
     sync(message);
   }
 
@@ -111,6 +111,6 @@ public abstract class AbstractCmRDT<K, T extends Comparable<T>, M extends Versio
    *
    * @param message the {@link UpdateMessage} to apply.
    */
-  protected abstract void applyUpdate(M message);
+  protected abstract void effectUpdate(M message);
 
 }
