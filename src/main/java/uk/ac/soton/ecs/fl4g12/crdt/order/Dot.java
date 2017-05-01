@@ -170,6 +170,14 @@ public final class Dot<K, T extends Comparable<T>> implements LogicalVersion<T, 
 
   @Override
   public int compareTo(LogicalVersion<T, ?> o) {
+    if (o instanceof Dot) {
+      // Dot specific implementation
+      // If identifiers are different they are concurrent
+      if (!identifier.equals(((Dot) o).identifier)) {
+        return 0;
+      }
+    }
+    // Treat as a plain LogicalVersion
     return logicalVersion.compareTo(o);
   }
 

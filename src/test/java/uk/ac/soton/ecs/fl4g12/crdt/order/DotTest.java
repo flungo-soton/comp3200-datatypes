@@ -41,8 +41,12 @@ public final class DotTest {
   public ExpectedException thrown = ExpectedException.none();
 
   private Dot getDot() {
+    return getDot(new Object());
+  }
+
+  private Dot getDot(Object id) {
     LogicalVersion version = Mockito.mock(LogicalVersion.class);
-    return new Dot(new Object(), version);
+    return new Dot(id, version);
   }
 
   /**
@@ -281,8 +285,8 @@ public final class DotTest {
    * Test getDot method of {@linkplain Dot}.
    */
   @Test
-  public void testCompareTo() {
-    LOGGER.log(Level.INFO, "testCompareTo: Testing compareTo");
+  public void testCompareTo_LogicalVersion() {
+    LOGGER.log(Level.INFO, "testCompareTo_LogicalVersion: Testing compareTo with a LogicalVersion");
 
     Dot dot = getDot();
     LogicalVersion version = Mockito.mock(LogicalVersion.class);
@@ -291,9 +295,45 @@ public final class DotTest {
 
     int result = dot.compareTo(version);
 
-    assertEquals("", comparison, result);
+    assertEquals(comparison, result);
     Mockito.verify(dot.getLogicalVersion()).compareTo(version);
     Mockito.verifyNoMoreInteractions(dot.getLogicalVersion());
+  }
+
+  /**
+   * Test getDot method of {@linkplain Dot}.
+   */
+  @Test
+  public void testCompareTo_Dot() {
+    LOGGER.log(Level.INFO, "testCompareTo: Testing compareTo with a concurrent Dot");
+
+    Object id = new Object();
+    Dot dot1 = getDot(id);
+    Dot dot2 = getDot(id);
+    int comparison = -123;
+    Mockito.doReturn(comparison).when(dot1.getLogicalVersion()).compareTo(dot2);
+
+    int result = dot1.compareTo(dot2);
+
+    assertEquals(comparison, result);
+    Mockito.verify(dot1.getLogicalVersion()).compareTo(dot2);
+    Mockito.verifyNoMoreInteractions(dot1.getLogicalVersion());
+  }
+
+  /**
+   * Test getDot method of {@linkplain Dot}.
+   */
+  @Test
+  public void testCompareTo_ConcurrentDot() {
+    LOGGER.log(Level.INFO, "testCompareTo: Testing compareTo with a concurrent Dot");
+
+    Dot dot1 = getDot();
+    Dot dot2 = getDot();
+
+    int result = dot1.compareTo(dot2);
+
+    assertEquals(0, result);
+    Mockito.verifyZeroInteractions(dot1.getLogicalVersion());
   }
 
   /**
