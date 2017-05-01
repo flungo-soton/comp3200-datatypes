@@ -216,11 +216,13 @@ public final class TwoPhaseSet<E, K, T extends Comparable<T>>
 
   @Override
   public boolean contains(Object o) {
-    return additions.contains(o) && !removals.contains(o);
+    return !removals.contains(o) && additions.contains(o);
   }
 
   @Override
   public boolean containsAll(Collection<?> c) {
+    // TODO: Review if this is actually more or less efficient that itterating through and checking
+    // both sets.
     return getElements().containsAll(c);
   }
 
