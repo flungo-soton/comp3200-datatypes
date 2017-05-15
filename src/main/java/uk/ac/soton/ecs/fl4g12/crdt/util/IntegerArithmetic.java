@@ -29,6 +29,16 @@ public final class IntegerArithmetic extends AbstractArithmetic<Integer> {
   private IntegerArithmetic() {}
 
   @Override
+  public Integer getZero() {
+    return 0;
+  }
+
+  @Override
+  public Integer getUnit() {
+    return 1;
+  }
+
+  @Override
   public Integer add(Iterable<Integer> elements) {
     int accumulator = 0;
     for (Integer i : elements) {

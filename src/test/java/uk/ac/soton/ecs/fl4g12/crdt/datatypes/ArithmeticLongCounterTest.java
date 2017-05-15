@@ -19,54 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.util;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
+
+import uk.ac.soton.ecs.fl4g12.crdt.util.LongArithmetic;
 
 /**
- * {@linkplain Arithmetic} implementation for {@linkplain Long} objects.
+ * Tests for {@linkplain ArithmeticCounter} using {@link LongArithmetic}.
  */
-public final class LongArithmetic extends AbstractArithmetic<Long> {
-
-  private LongArithmetic() {}
+public class ArithmeticLongCounterTest extends CounterAbstractTest<Long, ArithmeticCounter<Long>> {
 
   @Override
-  public Long getZero() {
-    return 0l;
+  public Long getValue(int increments, int decrements) {
+    return (long) increments - decrements;
   }
 
   @Override
-  public Long getUnit() {
-    return 1l;
+  public ArithmeticCounter<Long> getCounter() {
+    return new ArithmeticCounter<>(LongArithmetic.getInstance());
   }
 
-  @Override
-  public Long add(Iterable<Long> elements) {
-    long accumulator = 0;
-    for (Long i : elements) {
-      accumulator += i;
-    }
-    return accumulator;
-  }
-
-  @Override
-  public Long sub(Long value, Iterable<Long> elements) {
-    long accumulator = value;
-    for (Long i : elements) {
-      accumulator -= i;
-    }
-    return accumulator;
-  }
-
-  /**
-   * Get the instance of {@linkplain LongArithmetic}. {@linkplain LongArithmetic} is a singleton and
-   * this method returns the single instance.
-   *
-   * @return the {@linkplain LongArithmetic} instance.
-   */
-  public static LongArithmetic getInstance() {
-    return LongArithmeticHolder.INSTANCE;
-  }
-
-  private static class LongArithmeticHolder {
-    private static final LongArithmetic INSTANCE = new LongArithmetic();
-  }
 }

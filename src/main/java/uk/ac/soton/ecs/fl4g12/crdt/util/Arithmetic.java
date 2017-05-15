@@ -22,11 +22,26 @@
 package uk.ac.soton.ecs.fl4g12.crdt.util;
 
 /**
- * Interface for performing arithmetic on objects of the given type.
+ * Interface for performing arithmetic on objects of the given type. Objects should be treated as
+ * immutable and arguments should not be modified.
  *
  * @param <T> the type which this object provides arithmetic operations on.
  */
 public interface Arithmetic<T> {
+
+  /**
+   * Get a zero value for the arithmetic type.
+   *
+   * @return a zero value for the arithmetic type.
+   */
+  T getZero();
+
+  /**
+   * Get the unit value for the arithmetic type.
+   *
+   * @return the unit value for the arithmetic type.
+   */
+  T getUnit();
 
   /**
    * Add the given elements.
