@@ -113,6 +113,7 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
 
   private CommutativeTwoPhaseSetUpdate<E, K, T> createUpdateMessage(Operation operation,
       Set<? extends E> elements) {
+    version.increment();
     return new CommutativeTwoPhaseSetUpdate<E, K, T>(version.getDot(identifier), operation,
         elements);
   }
@@ -120,7 +121,6 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
   @Override
   public synchronized boolean add(E element) {
     if (additions.add(element)) {
-      version.increment();
       getDeliveryChannel().publish(createUpdateMessage(Operation.ADD, element));
       return true;
     } else if (removals.contains(element)) {
@@ -152,7 +152,6 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
       }
     }
     if (!elements.isEmpty()) {
-      version.increment();
       getDeliveryChannel().publish(createUpdateMessage(Operation.ADD, elements));
       return true;
     }
@@ -164,7 +163,6 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
     try {
       E element = (E) object;
       synchronized (this) {
-        version.increment();
         boolean added = additions.add(element);
         boolean removed = removals.add(element);
         if (removed) {
@@ -217,7 +215,6 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
         }
       }
       if (!elements.isEmpty()) {
-        version.increment();
         getDeliveryChannel().publish(createUpdateMessage(Operation.REMOVE, elements));
       }
       return modified;
@@ -249,7 +246,6 @@ public final class CommutativeTwoPhaseSet<E, K, T extends Comparable<T>>
       }
     }
     if (!elements.isEmpty()) {
-      version.increment();
       getDeliveryChannel().publish(createUpdateMessage(Operation.REMOVE, elements));
     }
   }

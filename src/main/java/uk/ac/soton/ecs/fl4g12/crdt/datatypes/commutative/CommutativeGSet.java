@@ -103,13 +103,13 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
   }
 
   private CommutativeGSetUpdate<E, K, T> createUpdateMessage(Set<E> elements) {
+    version.increment();
     return new CommutativeGSetUpdate<>(version.getDot(identifier), elements);
   }
 
   @Override
   public synchronized boolean add(E element) {
     if (state.add(element)) {
-      version.increment();
       getDeliveryChannel().publish(createUpdateMessage(element));
       return true;
     }
@@ -125,7 +125,6 @@ public final class CommutativeGSet<E, K, T extends Comparable<T>>
       }
     }
     if (!elements.isEmpty()) {
-      version.increment();
       getDeliveryChannel().publish(createUpdateMessage(elements));
       return true;
     }
