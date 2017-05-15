@@ -21,31 +21,23 @@
 
 package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IncrementableCounterConcurrencyAbstractIT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.NullStateDeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
+import uk.ac.soton.ecs.fl4g12.crdt.datatypes.GrowableSetConcurrencyAbstractIT;
+import static uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent.GSetTest.getGSet;
 
 /**
- * Test/Benchmark for concurrent operations on a {@link GCounter}.
+ *
  */
-public class GCounterConcurrencyIT
-    extends IncrementableCounterConcurrencyAbstractIT<Integer, GCounter<Integer, Integer>> {
-
-  private static final IdentifierFactory<Integer> ID_FACTORY =
-      new IncrementalIntegerIdentifierFactory();
+public class GSetConcurrencyIT
+    extends GrowableSetConcurrencyAbstractIT<Integer, GSet<Integer, Integer, Integer>> {
 
   @Override
-  public GCounter<Integer, Integer> getCounter() {
-    StateDeliveryChannel<Integer, GCounterState<Integer, Integer>> deliveryChannel =
-        new NullStateDeliveryChannel<>(ID_FACTORY);
-    return GCounter.newIntegerGCounter(deliveryChannel);
+  public GSet<Integer, Integer, Integer> getSet() {
+    return getGSet();
   }
 
   @Override
-  public Integer getValue(int count) {
-    return count;
+  public Integer getElement(int i) {
+    return i;
   }
 
 }

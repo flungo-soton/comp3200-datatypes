@@ -23,6 +23,7 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,37 +34,37 @@ import org.junit.rules.Timeout;
 import uk.ac.soton.ecs.fl4g12.crdt.util.ConcurrencyTestUtil;
 
 /**
- * Test/Benchmark for concurrent operations on an incrementable {@link Counter}.
  *
- * @param <E> the type of counter value that the test uses.
- * @param <C> the type of the counter being tested.
+ *
+ * @param <E> the type of values stored in the {@link Set}.
+ * @param <S> the type of {@link Set} being tested.
  */
-public abstract class IncrementableCounterConcurrencyAbstractIT<E, C extends Counter<E>>
-    implements CounterTestInterface<E, C> {
+public abstract class GrowableSetConcurrencyAbstractIT<E, S extends Set<E>>
+    implements SetTestInterface<E, S> {
 
   private static final Logger LOGGER =
-      Logger.getLogger(IncrementableCounterConcurrencyAbstractIT.class.getName());
+      Logger.getLogger(GrowableSetConcurrencyAbstractIT.class.getName());
 
   public static final int THREADS = 10;
 
   @Rule
   public Timeout timeout = new Timeout(60, TimeUnit.SECONDS);
 
-  @Override
-  public E getValue(int increments, int decrements) {
-    if (decrements != 0) {
-      throw new UnsupportedOperationException("Increment only!");
-    }
-    return getValue(increments);
-  }
-
-  private void testIncrement(int increments) throws Exception {
-    C counter = getCounter();
+  private void testAdd(int elements) throws Exception {
+    S set = getSet();
+    Set<E> expected = new HashSet<>();
 
     // Setup the threads
     Collection<Thread> threads = new HashSet<>();
     for (int i = 0; i < THREADS; i++) {
-      threads.add(new Thread(new CounterIncrementRunnable(counter, increments)));
+      int start = i * elements;
+      int stop = (i + 1) * elements;
+      // Create the thread
+      threads.add(new Thread(new SetAddRunnable(set, start, stop)));
+      // Add the expected elements that this thread will create
+      for (int j = start; j < stop; j++) {
+        expected.add(getElement(j));
+      }
     }
 
     // Start the threads and wait
@@ -71,70 +72,73 @@ public abstract class IncrementableCounterConcurrencyAbstractIT<E, C extends Cou
     ConcurrencyTestUtil.joinAll(threads);
 
     // Make assertions
-    Assert.assertEquals(getValue(THREADS * increments), counter.value());
+    Assert.assertEquals(expected, set);
   }
 
   /**
-   * Test 10 increments per thread.
+   * Test adding 10 elements to a set.
    *
    * @throws Exception if the test fails.
    */
   @Test
-  public void testIncrement_10() throws Exception {
-    LOGGER.log(Level.INFO, "Test 10 increments per thread");
-    testIncrement(10);
+  public void testAdd_10() throws Exception {
+    LOGGER.log(Level.INFO, "testAdd_10: Test adding 10 elements to a set");
+    testAdd(10);
   }
 
   /**
-   * Test 1000 increments per thread.
+   * Test adding 1000 elements to a set.
    *
    * @throws Exception if the test fails.
    */
   @Test
-  public void testIncrement_1000() throws Exception {
-    LOGGER.log(Level.INFO, "Test 1000 increments per thread");
-    testIncrement(1000);
+  public void testAdd_1000() throws Exception {
+    LOGGER.log(Level.INFO, "testAdd_1000: Test adding 1000 elements to a set");
+    testAdd(1000);
   }
 
   /**
-   * Test 100000 increments per thread.
+   * Test adding 100000 elements to a set.
    *
    * @throws Exception if the test fails.
    */
   @Test
-  public void testIncrement_100000() throws Exception {
-    LOGGER.log(Level.INFO, "Test 100000 increments per thread");
-    testIncrement(100000);
+  public void testAdd_100000() throws Exception {
+    LOGGER.log(Level.INFO, "testAdd_100000: Test adding 100000 elements to a set");
+    testAdd(100000);
   }
 
   /**
-   * Test 10000000 increments per thread.
+   * Test adding 10000000 elements to a set.
    *
    * @throws Exception if the test fails.
    */
   @Test
-  public void testIncrement_10000000() throws Exception {
-    LOGGER.log(Level.INFO, "Test 100000000 increments per thread");
-    testIncrement(10000000);
+  public void testAdd_10000000() throws Exception {
+    LOGGER.log(Level.INFO, "testAdd_10000000: Test adding 10000000 elements to a set");
+    testAdd(10000000);
   }
 
-  protected class CounterIncrementRunnable implements Runnable {
+  // TODO: Tests with addAll
 
-    private final C counter;
-    private final int increments;
+  protected class SetAddRunnable implements Runnable {
 
-    public CounterIncrementRunnable(C counter, int increments) {
-      this.counter = counter;
-      this.increments = increments;
+    private final S set;
+    private final int start;
+    private final int stop;
+
+    public SetAddRunnable(S set, int start, int stop) {
+      this.set = set;
+      this.start = start;
+      this.stop = stop;
     }
 
     @Override
     public void run() {
-      for (int i = 0; i < increments; i++) {
-        counter.increment();
+      for (int i = start; i < stop; i++) {
+        set.add(getElement(i));
       }
     }
 
   }
-
 }

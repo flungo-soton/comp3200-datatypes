@@ -33,7 +33,8 @@ import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFacto
 public class PNCounterConcurrencyIT
     extends CounterConcurrencyAbstractIT<Integer, PNCounter<Integer, Integer>> {
 
-  private static IdentifierFactory<Integer> ID_FACTORY = new IncrementalIntegerIdentifierFactory();
+  private static final IdentifierFactory<Integer> ID_FACTORY =
+      new IncrementalIntegerIdentifierFactory();
 
   @Override
   public PNCounter<Integer, Integer> getCounter() {

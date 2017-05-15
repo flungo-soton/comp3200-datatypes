@@ -19,33 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
+package uk.ac.soton.ecs.fl4g12.crdt.datatypes;
 
-import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IncrementableCounterConcurrencyAbstractIT;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.NullStateDeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IdentifierFactory;
-import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
+import java.util.Set;
 
 /**
- * Test/Benchmark for concurrent operations on a {@link GCounter}.
+ *
+ * @param <E> the type of values stored in the {@link Set}.
+ * @param <S> the type of {@link Set} being tested.
  */
-public class GCounterConcurrencyIT
-    extends IncrementableCounterConcurrencyAbstractIT<Integer, GCounter<Integer, Integer>> {
-
-  private static final IdentifierFactory<Integer> ID_FACTORY =
-      new IncrementalIntegerIdentifierFactory();
-
-  @Override
-  public GCounter<Integer, Integer> getCounter() {
-    StateDeliveryChannel<Integer, GCounterState<Integer, Integer>> deliveryChannel =
-        new NullStateDeliveryChannel<>(ID_FACTORY);
-    return GCounter.newIntegerGCounter(deliveryChannel);
-  }
-
-  @Override
-  public Integer getValue(int count) {
-    return count;
-  }
+public abstract class SetConcurrencyAbstractIT<E, S extends Set<E>>
+    extends GrowableSetConcurrencyAbstractIT<E, S> {
 
 }
