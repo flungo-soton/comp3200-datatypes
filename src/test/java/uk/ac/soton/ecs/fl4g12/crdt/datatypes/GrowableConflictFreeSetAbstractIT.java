@@ -58,13 +58,13 @@ public abstract class GrowableConflictFreeSetAbstractIT<E, K, T extends Comparab
   private static final Logger LOGGER =
       Logger.getLogger(GrowableConflictFreeSetAbstractIT.class.getName());
 
-  public static final int MAX_SETS = 10;
+  public static final int MAX_SETS = 8;
 
-  public static final int MAX_ELEMENTS = 1000;
+  public static final int MAX_ELEMENTS = 100;
 
   @Rule
   public Timeout timeout =
-      TestUtil.getTimeout(MAX_SETS * MAX_ELEMENTS * 5 + 5000, TimeUnit.MILLISECONDS);
+      TestUtil.getTimeout(MAX_SETS * MAX_ELEMENTS * 2 + 5000, TimeUnit.MILLISECONDS);
 
   /**
    * Get the {@linkplain Set} instance for testing. Sets should be configured with a delivery
