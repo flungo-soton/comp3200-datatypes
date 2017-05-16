@@ -24,14 +24,13 @@ package uk.ac.soton.ecs.fl4g12.crdt.datatypes.convergent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.IncrementableCounterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.NullStateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -40,17 +39,22 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
  * Tests for the {@linkplain GCounter} class.
  */
 public class GCounterTest
-    extends IncrementableCounterAbstractTest<Integer, GCounter<Integer, Object>> {
+    extends IncrementableCounterAbstractTest<Integer, GCounter<Integer, Integer>> {
 
   private static final Logger LOGGER = Logger.getLogger(GCounterTest.class.getName());
 
-  @Override
-  public GCounter<Integer, Object> getCounter() {
-    StateDeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
-        Mockito.mock(StateDeliveryChannel.class);
-    Mockito.doReturn(new Object()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(StatefulUpdatable.class));
+  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
+      new IncrementalIntegerIdentifierFactory();
+
+  public static GCounter<Integer, Integer> getGCounter() {
+    StateDeliveryChannel<Integer, GCounterState<Integer, Integer>> deliveryChannel = Mockito
+        .spy(new NullStateDeliveryChannel<Integer, GCounterState<Integer, Integer>>(ID_FACTORY));
     return GCounter.newIntegerGCounter(deliveryChannel);
+  }
+
+  @Override
+  public GCounter<Integer, Integer> getCounter() {
+    return getGCounter();
   }
 
   @Override
@@ -66,13 +70,13 @@ public class GCounterTest
   public void testIncrement_Publish() {
     LOGGER.log(Level.INFO, "testIncrement_Publish: "
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
-    final GCounter<Integer, Object> counter = getCounter();
+    final GCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
+    final VersionVector<Integer, Integer> expectedVersionVector =
         new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(counter.getIdentifier());
     expectedVersionVector.increment(counter.getIdentifier());
-    final StateDeliveryChannel<Object, GCounterState<Integer, Object>> deliveryChannel =
+    final StateDeliveryChannel<Integer, GCounterState<Integer, Integer>> deliveryChannel =
         counter.getDeliveryChannel();
 
     Mockito.reset(deliveryChannel);
@@ -95,12 +99,12 @@ public class GCounterTest
   @Test
   public void testSnapshot_Zero() {
     LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a zero counter.");
-    final GCounter<Integer, Object> counter = getCounter();
+    final GCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
+    final VersionVector<Integer, Integer> expectedVersionVector =
         new HashVersionVector<>(new IntegerVersion());
 
-    GCounterState<Integer, Object> state = counter.snapshot();
+    GCounterState<Integer, Integer> state = counter.snapshot();
 
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
@@ -122,15 +126,15 @@ public class GCounterTest
   @Test
   public void testSnapshot_Incremented() {
     LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of an incremented counter.");
-    final GCounter<Integer, Object> counter = getCounter();
+    final GCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
+    final VersionVector<Integer, Integer> expectedVersionVector =
         new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(counter.getIdentifier());
     expectedVersionVector.increment(counter.getIdentifier());
 
     counter.increment();
-    GCounterState<Integer, Object> state = counter.snapshot();
+    GCounterState<Integer, Integer> state = counter.snapshot();
 
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
@@ -155,8 +159,8 @@ public class GCounterTest
   public void testUpdate_NoChange() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_NoChange: Test update with no changes.");
 
-    final GCounter<Integer, Object> counter1 = getCounter();
-    final GCounter<Integer, Object> counter2 = getCounter();
+    final GCounter<Integer, Integer> counter1 = getCounter();
+    final GCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -185,8 +189,8 @@ public class GCounterTest
   public void testUpdate_LocalIncrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_LocalIncrement: Test update with a local increment.");
 
-    final GCounter<Integer, Object> counter1 = getCounter();
-    final GCounter<Integer, Object> counter2 = getCounter();
+    final GCounter<Integer, Integer> counter1 = getCounter();
+    final GCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -223,8 +227,8 @@ public class GCounterTest
   public void testUpdate_RemoteIncrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_RemoteIncrement: Test update with a remote increment.");
 
-    final GCounter<Integer, Object> counter1 = getCounter();
-    final GCounter<Integer, Object> counter2 = getCounter();
+    final GCounter<Integer, Integer> counter1 = getCounter();
+    final GCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -261,8 +265,8 @@ public class GCounterTest
   public void testUpdate_BothIncrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_BothIncrement: Test update with concurrent increments.");
 
-    final GCounter<Integer, Object> counter1 = getCounter();
-    final GCounter<Integer, Object> counter2 = getCounter();
+    final GCounter<Integer, Integer> counter1 = getCounter();
+    final GCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));

@@ -28,8 +28,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import uk.ac.soton.ecs.fl4g12.crdt.datatypes.CounterAbstractTest;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.DeliveryChannel;
+import uk.ac.soton.ecs.fl4g12.crdt.delivery.NullStateDeliveryChannel;
 import uk.ac.soton.ecs.fl4g12.crdt.delivery.StateDeliveryChannel;
-import uk.ac.soton.ecs.fl4g12.crdt.delivery.StatefulUpdatable;
+import uk.ac.soton.ecs.fl4g12.crdt.idenitifier.IncrementalIntegerIdentifierFactory;
 import uk.ac.soton.ecs.fl4g12.crdt.order.HashVersionVector;
 import uk.ac.soton.ecs.fl4g12.crdt.order.IntegerVersion;
 import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
@@ -37,17 +38,22 @@ import uk.ac.soton.ecs.fl4g12.crdt.order.VersionVector;
 /**
  * Tests for the {@linkplain PNCounter} class.
  */
-public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Integer, Object>> {
+public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Integer, Integer>> {
 
   private static final Logger LOGGER = Logger.getLogger(PNCounterTest.class.getName());
 
-  @Override
-  public PNCounter<Integer, Object> getCounter() {
-    StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
-        Mockito.mock(StateDeliveryChannel.class);
-    Mockito.doReturn(new Object()).doThrow(IllegalStateException.class).when(deliveryChannel)
-        .register(Mockito.any(StatefulUpdatable.class));
+  private static final IncrementalIntegerIdentifierFactory ID_FACTORY =
+      new IncrementalIntegerIdentifierFactory();
+
+  public static PNCounter<Integer, Integer> getPNCounter() {
+    StateDeliveryChannel<Integer, PNCounterState<Integer, Integer>> deliveryChannel = Mockito
+        .spy(new NullStateDeliveryChannel<Integer, PNCounterState<Integer, Integer>>(ID_FACTORY));
     return PNCounter.newIntegerPNCounter(deliveryChannel);
+  }
+
+  @Override
+  public PNCounter<Integer, Integer> getCounter() {
+    return getPNCounter();
   }
 
   @Override
@@ -63,12 +69,12 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testIncrement_Publish() {
     LOGGER.log(Level.INFO, "testIncrement_Publish: "
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
-    final PNCounter<Integer, Object> counter = getCounter();
+    final PNCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
-    final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
-    final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final VersionVector<Integer, Integer> expectedVersionVector = counter.getVersion().copy();
+    final VersionVector<Integer, Integer> expectedP = expectedVersionVector.copy();
+    final VersionVector<Integer, Integer> expectedN = expectedVersionVector.copy();
+    final StateDeliveryChannel<Integer, PNCounterState<Integer, Integer>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -100,12 +106,12 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testDecrement_Publish() {
     LOGGER.log(Level.INFO, "testIncrement_Publish: "
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
-    final PNCounter<Integer, Object> counter = getCounter();
+    final PNCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
-    final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
-    final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final VersionVector<Integer, Integer> expectedVersionVector = counter.getVersion().copy();
+    final VersionVector<Integer, Integer> expectedP = expectedVersionVector.copy();
+    final VersionVector<Integer, Integer> expectedN = expectedVersionVector.copy();
+    final StateDeliveryChannel<Integer, PNCounterState<Integer, Integer>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -137,12 +143,12 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testIncrementDecrement_Publish() {
     LOGGER.log(Level.INFO, "testIncrement_Publish: "
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
-    final PNCounter<Integer, Object> counter = getCounter();
+    final PNCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
-    final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
-    final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final VersionVector<Integer, Integer> expectedVersionVector = counter.getVersion().copy();
+    final VersionVector<Integer, Integer> expectedP = expectedVersionVector.copy();
+    final VersionVector<Integer, Integer> expectedN = expectedVersionVector.copy();
+    final StateDeliveryChannel<Integer, PNCounterState<Integer, Integer>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -177,12 +183,12 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testDecrementIncrement_Publish() {
     LOGGER.log(Level.INFO, "testIncrement_Publish: "
         + "Ensure that when the counter is incremented, that the change is published to the DeliveryChannel");
-    final PNCounter<Integer, Object> counter = getCounter();
+    final PNCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector = counter.getVersion().copy();
-    final VersionVector<Object, Integer> expectedP = expectedVersionVector.copy();
-    final VersionVector<Object, Integer> expectedN = expectedVersionVector.copy();
-    final StateDeliveryChannel<Object, PNCounterState<Integer, Object>> deliveryChannel =
+    final VersionVector<Integer, Integer> expectedVersionVector = counter.getVersion().copy();
+    final VersionVector<Integer, Integer> expectedP = expectedVersionVector.copy();
+    final VersionVector<Integer, Integer> expectedN = expectedVersionVector.copy();
+    final StateDeliveryChannel<Integer, PNCounterState<Integer, Integer>> deliveryChannel =
         counter.getDeliveryChannel();
 
     for (int i = 0; i < MAX_OPERATIONS; i++) {
@@ -215,12 +221,12 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   @Test
   public void testSnapshot_Zero() {
     LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a zero counter.");
-    final PNCounter<Integer, Object> counter = getCounter();
+    final PNCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
+    final VersionVector<Integer, Integer> expectedVersionVector =
         new HashVersionVector<>(new IntegerVersion());
 
-    PNCounterState<Integer, Object> state = counter.snapshot();
+    PNCounterState<Integer, Integer> state = counter.snapshot();
 
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
@@ -242,15 +248,15 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   @Test
   public void testSnapshot_Incremented() {
     LOGGER.log(Level.INFO, "testSnapshot_Zero: Test snapshot of a zero counter.");
-    final PNCounter<Integer, Object> counter = getCounter();
+    final PNCounter<Integer, Integer> counter = getCounter();
 
-    final VersionVector<Object, Integer> expectedVersionVector =
+    final VersionVector<Integer, Integer> expectedVersionVector =
         new HashVersionVector<>(new IntegerVersion());
     expectedVersionVector.init(counter.getIdentifier());
     expectedVersionVector.increment(counter.getIdentifier());
 
     counter.increment();
-    PNCounterState<Integer, Object> state = counter.snapshot();
+    PNCounterState<Integer, Integer> state = counter.snapshot();
 
     assertEquals("state identifier should be the same as the counter", counter.getIdentifier(),
         state.getIdentifier());
@@ -275,8 +281,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_NoChange() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_NoChange: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -305,8 +311,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_LocalIncrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_LocalIncrement: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -343,8 +349,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_RemoteIncrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_RemoteIncrement: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -381,8 +387,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_BothIncrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_BothIncrement: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -420,8 +426,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_LocalDecrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_LocalIncrement: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -458,8 +464,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_RemoteDecrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_RemoteIncrement: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -496,8 +502,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_BothDecrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_BothIncrement: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
@@ -535,8 +541,8 @@ public class PNCounterTest extends CounterAbstractTest<Integer, PNCounter<Intege
   public void testUpdate_IncrementDecrement() throws Exception {
     LOGGER.log(Level.INFO, "testUpdate_BothIncrement: Test update with no changes.");
 
-    final PNCounter<Integer, Object> counter1 = getCounter();
-    final PNCounter<Integer, Object> counter2 = getCounter();
+    final PNCounter<Integer, Integer> counter1 = getCounter();
+    final PNCounter<Integer, Integer> counter2 = getCounter();
 
     assertTrue("The counters should be identical to start with",
         counter1.getVersion().identical(counter2.getVersion()));
